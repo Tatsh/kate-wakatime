@@ -118,7 +118,7 @@ WakaTimeView::~WakaTimeView()
 QByteArray WakaTimeView::getUserAgent()
 {
     const char *version = KDE::versionString();
-    return QString("kate-wakatime/%1 (KDE %1) Katepart/%1").arg(WAKATIME_PLUGIN_VERSION).arg(version).toLocal8Bit();
+    return QString("kate-wakatime/%1 (KDE %2) Katepart/%2").arg(WAKATIME_PLUGIN_VERSION).arg(version).toLocal8Bit();
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
@@ -143,17 +143,18 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // They have it sending the real file path, maybe not respecting symlinks, etc
     filePath = fileInfo.canonicalFilePath();
+    //kDebug(debugArea()) << filePath;
 
     // Get the project name, by traversing up until .git or .svn is found
     QString projectName;
-    QDir currentDirectory = QDir(QFileInfo(fileInfo.canonicalPath()).canonicalPath());
+    QDir currentDirectory = QDir(fileInfo.canonicalPath());
     QDir projectDirectory;
     bool vcDirFound = false;
     QStringList filters;
     filters << ".git" << ".svn";
     QString typeOfVcs;
 
-    //kDebug(debugArea()) << currentDirectory.canonicalPath();
+    //kDebug(debugArea()) << currentDirectory;
     while (!vcDirFound) {
         if (currentDirectory.canonicalPath() == "/") {
             break;
@@ -187,6 +188,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     data.insert("time", current);
     if (projectName.length()) {
         data.insert("project", projectName);
+    }
+    else {
+        kDebug(debugArea()) << "No project name found";
     }
 //     if (typeOfVcs == ".git") {
 //         // git branch -a | fgrep '*' | awk '{ print $2 }', etc
@@ -316,7 +320,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
     }
 
     if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
-//         kDebug(debugArea()) << "Sent data successfully";
+        //kDebug(debugArea()) << "Sent data successfully";
 //         kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
 
         this->hasSent = true;
