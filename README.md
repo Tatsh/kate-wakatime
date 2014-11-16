@@ -49,4 +49,4 @@ Make sure you absolutely have your `~/.wakatime.cfg` file properly set.
 
 Short answer is no.
 
-See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/WakaTime/wakatimeplugin.cpp#L104) method if you want to be certain.
+See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L128) method if you want to be certain.
