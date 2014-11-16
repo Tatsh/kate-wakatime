@@ -32,6 +32,7 @@ class WakaTimeView : public QObject, public KXMLGUIClient
         void sendAction(KTextEditor::Document *doc, bool isWrite);
         QByteArray getUserAgent();
         void connectSignalsToSlots();
+        void connectDocumentSignals(KTextEditor::Document *);
 
     private:
         KTextEditor::View *m_view;

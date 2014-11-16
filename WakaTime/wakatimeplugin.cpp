@@ -241,34 +241,41 @@ void WakaTimeView::readConfig()
 
 void WakaTimeView::connectSignalsToSlots()
 {
-    //kDebug(debugArea()) << QString("Began polling at %1").arg(this->lastPoll.toString());
-
     foreach(KTextEditor::Document *document, Kate::application()->documentManager()->documents()) {
-        // When document goes from saved state to changed state (not yet saved on disk)
-        connect(
-            document, SIGNAL(modifiedChanged(KTextEditor::Document *)),
-            this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document *))
-        );
-
-        // When document is first saved?
-        connect(
-            document, SIGNAL(documentNameChanged(KTextEditor::Document*)),
-            this, SLOT(slotDocumentWrittenToDisk(KTextEditor::Document *))
-        );
-
-        // Written to disk
-        connect(
-            document, SIGNAL(documentSavedOrUploaded(KTextEditor::Document*,bool)),
-            this, SLOT(slotDocumentWrittenToDisk(KTextEditor::Document*))
-        );
-
-        // Text changes (might be heavy)
-        // This event unfortunately is emitted twice in separate threads for every key stroke (maybe key up and down is the reason)
-        connect(
-            document, SIGNAL(textChanged(KTextEditor::Document *)),
-            this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document*))
-        );
+        this->connectDocumentSignals(document);
     }
+}
+
+void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
+{
+    if (!document) {
+        return;
+    }
+
+    // When document goes from saved state to changed state (not yet saved on disk)
+    connect(
+        document, SIGNAL(modifiedChanged(KTextEditor::Document *)),
+        this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document *))
+    );
+
+    // When document is first saved?
+    connect(
+        document, SIGNAL(documentNameChanged(KTextEditor::Document*)),
+        this, SLOT(slotDocumentWrittenToDisk(KTextEditor::Document *))
+    );
+
+    // Written to disk
+    connect(
+        document, SIGNAL(documentSavedOrUploaded(KTextEditor::Document*,bool)),
+        this, SLOT(slotDocumentWrittenToDisk(KTextEditor::Document*))
+    );
+
+    // Text changes (might be heavy)
+    // This event unfortunately is emitted twice in separate threads for every key stroke (maybe key up and down is the reason)
+    connect(
+        document, SIGNAL(textChanged(KTextEditor::Document *)),
+        this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document*))
+    );
 }
 
 // Slots
