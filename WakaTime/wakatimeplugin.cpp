@@ -10,10 +10,6 @@
 #include <KAction>
 #include <KActionCollection>
 
-
-#include <kate/application.h>
-#include <kate/documentmanager.h>
-
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QSettings>
@@ -78,15 +74,13 @@ WakaTimeView::WakaTimeView(KTextEditor::View *view) :
     this->readConfig();
     this->userAgent = this->getUserAgent();
 
-    //kDebug(debugArea()) << QString("User agent: %1").arg(QString(this->userAgent));
-
     // Connect the request handling slot method
     connect(
         nam, SIGNAL(finished(QNetworkReply *)),
         this, SLOT(slotNetworkReplyFinshed(QNetworkReply *))
     );
 
-    this->connectSignalsToSlots();
+    this->connectDocumentSignals(view->document());
 }
 
 WakaTimeView::~WakaTimeView()
@@ -99,7 +93,7 @@ WakaTimeView::~WakaTimeView()
  */
 QByteArray WakaTimeView::getUserAgent()
 {
-    return QString("kate-wakatime/%1 (KDE %2) Kate/3.1x.x").arg(WAKATIME_PLUGIN_VERSION).arg(KDE::versionString()).toLocal8Bit();
+    return QString("kate-wakatime/%1 (KDE %2) Katepart/3.1x.x").arg(WAKATIME_PLUGIN_VERSION).arg(KDE::versionString()).toLocal8Bit();
 }
 
 /**
@@ -116,7 +110,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // Could be untitled, or a URI (including HTTP); only local files are handled for now
     if (!filePath.length()) {
-        kDebug(debugArea()) << "Nothing to send about";
+        //kDebug(debugArea()) << "Nothing to send about";
         return;
     }
 
@@ -218,7 +212,7 @@ void WakaTimeView::readConfig()
 {
     QString configFilePath = QDir::homePath() + QDir::separator() + ".wakatime.cfg";
     if (!QFile::exists(configFilePath)) {
-        kDebug(debugArea()) << QString("%1 does not exist").arg(configFilePath);
+        kError(debugArea()) << QString("%1 does not exist").arg(configFilePath);
         return;
     }
 
@@ -237,13 +231,6 @@ void WakaTimeView::readConfig()
     // Assume valid at this point
     this->apiKey = key;
     //kDebug(debugArea()) << QString("API key: %1").arg(this->apiKey);
-}
-
-void WakaTimeView::connectSignalsToSlots()
-{
-    foreach(KTextEditor::Document *document, Kate::application()->documentManager()->documents()) {
-        this->connectDocumentSignals(document);
-    }
 }
 
 void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
