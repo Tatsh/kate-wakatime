@@ -31,11 +31,19 @@
    cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX="" -DAutomoc4_DIR=/usr/lib/automoc4
    ```
 
+   MacPorts (tested on Mid-2012 MacBook Pro running Yosemite):
+
+   ```bash
+   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/local/ -DLIB_SUFFIX="" -DAutomoc4_DIR=/opt/local/lib/automoc4
+   ```
+
+   Finish the task:
+
    ```bash
    make
    ```
 
-6. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable.
+6. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable. You may need to run `kbuildsycoca4` as yourself once before launching Kate again (this is true on MacPorts).
 7. Once this plugin is installed, open Kate (or any other katepart editor (KWrite, etc)) and go to *Settings*, *Configure <name>...*, then in the dialog choose *Extensions*.
 8. Use the checkbox to enable *WakaTime* and click *OK*:
 
