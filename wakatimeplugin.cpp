@@ -201,6 +201,12 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     if (mode.length()) {
         data.insert("language", mode);
     }
+    else {
+        mode = doc->highlightingMode();
+        if (mode.length()) {
+            data.insert("language", mode);
+        }
+    }
 
     bool serializedOk;
     QByteArray requestContent = serializer.serialize(data, &serializedOk);
