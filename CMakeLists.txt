@@ -17,4 +17,3 @@ install(TARGETS ktexteditor_wakatime DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES wakatimeui.rc DESTINATION ${DATA_INSTALL_DIR}/ktexteditor_wakatime)
 
 install(FILES ktexteditor_wakatime.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-
