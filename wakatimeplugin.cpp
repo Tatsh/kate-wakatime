@@ -31,6 +31,7 @@
 #include <KAction>
 #include <KActionCollection>
 #include <KAboutData>
+#include <KTimeZone>
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -196,7 +197,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     QVariantMap data;
     data.insert("file", filePath);
-    data.insert("time", QDateTime::currentMSecsSinceEpoch() / 1000);
+    data.insert("time", current);
     if (projectName.length()) {
         data.insert("project", projectName);
     }
