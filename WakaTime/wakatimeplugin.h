@@ -5,28 +5,27 @@
 
 namespace KTextEditor
 {
-	class View;
+    class View;
 }
 
 class WakaTimeView;
 
-class WakaTimePlugin
-  : public KTextEditor::Plugin
+class WakaTimePlugin : public KTextEditor::Plugin
 {
-  public:
-    // Constructor
-    explicit WakaTimePlugin(QObject *parent = 0, const QVariantList &args = QVariantList());
-    // Destructor
-    virtual ~WakaTimePlugin();
+    public:
+        // Constructor
+        explicit WakaTimePlugin(QObject *parent = 0, const QVariantList &args = QVariantList());
+        // Destructor
+        virtual ~WakaTimePlugin();
 
-    void addView (KTextEditor::View *view);
-    void removeView (KTextEditor::View *view);
+        void addView (KTextEditor::View *view);
+        void removeView (KTextEditor::View *view);
 
-    void readConfig (KConfig *);
-    void writeConfig (KConfig *);
+        void readConfig (KConfig *);
+        void writeConfig (KConfig *);
 
-  private:
-    QList<class WakaTimeView*> m_views;
+    private:
+        QList<class WakaTimeView*> m_views;
 };
 
 #endif
