@@ -31,8 +31,8 @@ void WakaTimePlugin::addView(KTextEditor::View *view)
 
 void WakaTimePlugin::removeView(KTextEditor::View *view)
 {
-    for(int z = 0; z < m_views.size(); z++) {
-        if(m_views.at(z)->parentClient() == view) {
+    for (int z = 0; z < m_views.size(); z++) {
+        if (m_views.at(z)->parentClient() == view) {
             WakaTimeView *nview = m_views.at(z);
             m_views.removeAll(nview);
             delete nview;
