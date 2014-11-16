@@ -133,9 +133,11 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
-    static const int intervalMs = 900000; // ms
-    if (this->hasSent && (currentMs - this->lastPoll.currentMSecsSinceEpoch()) <= intervalMs) {
-        //kDebug(debugArea()) << "Not enough time has passed since last send";
+    static const qint64 intervalMs = 900000; // ms
+    const qint64 deltaMs = currentMs - this->lastPoll.currentMSecsSinceEpoch();
+    if (this->hasSent && deltaMs <= intervalMs) {
+        kDebug(debugArea()) << "Not enough time has passed since last send";
+        kDebug(debugArea()) << "Will try again in" << deltaMs / 1000 / 60 << " seconds";
         return;
     }
 
