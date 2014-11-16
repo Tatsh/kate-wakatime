@@ -22,13 +22,13 @@
    If on 64-bit:
 
    ```bash
-   cmake ../WakaTime -DCMAKE_INSTALL_PREFIX=/usr
+   cmake .. -DCMAKE_INSTALL_PREFIX=/usr
    ```
 
    If on 32-bit:
 
    ```bash
-   cmake ../WakaTime -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX="" -DAutomoc4_DIR=/usr/lib/automoc4
+   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX="" -DAutomoc4_DIR=/usr/lib/automoc4
    ```
 
    ```bash
