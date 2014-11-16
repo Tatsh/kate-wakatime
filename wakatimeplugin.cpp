@@ -138,7 +138,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     if (this->hasSent && deltaMs <= intervalMs) {
         kDebug(debugArea()) << "Not enough time has passed since last send";
-        kDebug(debugArea()) << "Will try again in" << deltaMs / 1000 / 60 << "minutes";
+        kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "minutes / 15";
         return;
     }
 
