@@ -1,3 +1,24 @@
+/**
+ * This file is part of kate-wakatime.
+ * Copyright 2014 Andrew Udvare <audvare@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License version
+ *   3, or (at your option) any later version, as published by the Free
+ *   Software Foundation.
+ *
+ *   This library is distributed in the hope that it will be useful, but
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Library General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with the kdelibs library; see the file COPYING.LIB. If
+ *   not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+ *   Fifth Floor, Boston, MA 02110-1301, USA. or see
+ *   <http://www.gnu.org/licenses/>.
+ */
+
 #include "wakatimeplugin.h"
 #include "wakatimeview.h"
 
@@ -9,6 +30,7 @@
 #include <KLocale>
 #include <KAction>
 #include <KActionCollection>
+#include <KAboutData>
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -23,7 +45,14 @@
 #include <qjson/serializer.h>
 
 K_PLUGIN_FACTORY(WakaTimePluginFactory, registerPlugin<WakaTimePlugin>("ktexteditor_wakatime");)
-K_EXPORT_PLUGIN(WakaTimePluginFactory("ktexteditor_wakatime", "ktexteditor_plugins"))
+K_EXPORT_PLUGIN(WakaTimePluginFactory(KAboutData(
+    "ktexteditor_kdatatool",
+    "ktexteditor_plugins",
+    ki18n("WakaTime"),
+    "0.1",
+    ki18n("Plugin for WakaTime integration"),
+    KAboutData::License_LGPL_V3
+)))
 
 int debugArea() {
     static int sArea = KDebug::registerArea("wakatime");
