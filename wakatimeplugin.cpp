@@ -231,8 +231,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     QString timeZone = KDateTime::currentLocalDateTime().timeZone().name();
     request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
 
-    // For now
+#ifndef NDEBUG
     request.setRawHeader("X-Ignore", QByteArray("If this request is bad, please ignore it while this plugin is being developed."));
+#endif
 
     nam->post(request, requestContent);
 }
