@@ -123,7 +123,8 @@ WakaTimeView::~WakaTimeView()
  */
 QByteArray WakaTimeView::getUserAgent()
 {
-    return QString("kate-wakatime/%1 (KDE %2) Katepart/3.1x.x").arg(WAKATIME_PLUGIN_VERSION).arg(KDE::versionString()).toLocal8Bit();
+    const char *version = KDE::versionString();
+    return QString("kate-wakatime/%1 (KDE %1) Katepart/%1").arg(WAKATIME_PLUGIN_VERSION).arg(version).toLocal8Bit();
 }
 
 /**
@@ -143,7 +144,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
         return;
     }
 
-    // TODO Compare date and make sure it has been at least 15 minutes
+    // Compare date and make sure it has been at least 15 minutes
     qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
     static int interval = (60 * 15) * 1000;
     if (this->hasSent && (current - this->lastPoll.currentMSecsSinceEpoch()) <= interval) {
