@@ -49,7 +49,7 @@ K_EXPORT_PLUGIN(WakaTimePluginFactory(KAboutData(
     "ktexteditor_kdatatool",
     "ktexteditor_plugins",
     ki18n("WakaTime"),
-    "0.1",
+    "0.2",
     ki18n("Plugin for WakaTime integration"),
     KAboutData::License_LGPL_V3
 )))
