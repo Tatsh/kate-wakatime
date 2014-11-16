@@ -87,9 +87,6 @@ void WakaTimePlugin::removeView(KTextEditor::View *view)
     }
 }
 
-/**
- * @todo Offline support (save a persistent queue until network connectivity is regained).
- */
 WakaTimeView::WakaTimeView(KTextEditor::View *view) :
     QObject(view),
     KXMLGUIClient(view),
@@ -118,22 +115,12 @@ WakaTimeView::~WakaTimeView()
     delete nam;
 }
 
-/**
- * @todo Correctly set Kate version.
- */
 QByteArray WakaTimeView::getUserAgent()
 {
     const char *version = KDE::versionString();
     return QString("kate-wakatime/%1 (KDE %1) Katepart/%1").arg(WAKATIME_PLUGIN_VERSION).arg(version).toLocal8Bit();
 }
 
-/**
- * @todo Respect 'hidefilenames' option.
- * @todo Handle number of lines changed?
- * @todo Get branch name of project (Git).
- * @todo Get branch name of project (Subversion).
- * @todo Better way to get project name?
- */
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 {
     QString filePath = doc->url().toLocalFile();
@@ -238,10 +225,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     nam->post(request, requestContent);
 }
 
-/**
- * @todo Alert user when an error occurs here.
- * @todo Make a dialog for configuration that edits ~/.wakatime.cfg
- */
 void WakaTimeView::readConfig()
 {
     QString configFilePath = QDir::homePath() + QDir::separator() + ".wakatime.cfg";
