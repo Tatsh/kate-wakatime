@@ -31,6 +31,7 @@
 #include <KAction>
 #include <KActionCollection>
 #include <KAboutData>
+#include <KDateTime>
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -127,7 +128,6 @@ QByteArray WakaTimeView::getUserAgent()
 
 /**
  * @todo Respect 'hidefilenames' option.
- * @todo 'TimeZone' HTTP header.
  * @todo Handle number of lines changed?
  * @todo Get branch name of project (Git).
  * @todo Get branch name of project (Subversion).
@@ -144,8 +144,8 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     }
 
     // TODO Compare date and make sure it has been at least 15 minutes
-    qint64 current = QDateTime::currentMSecsSinceEpoch();
-    static int interval = 60 * 15;
+    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
+    static int interval = (60 * 15) * 1000;
     if (this->hasSent && (current - this->lastPoll.currentMSecsSinceEpoch()) <= interval) {
         //kDebug(debugArea()) << "Not enough time has passed since last send";
         return;
@@ -196,7 +196,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     QVariantMap data;
     data.insert("file", filePath);
-    data.insert("time", QDateTime::currentMSecsSinceEpoch() / 1000);
+    data.insert("time", current);
     if (projectName.length()) {
         data.insert("project", projectName);
     }
@@ -226,6 +226,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setRawHeader("User-Agent", this->userAgent);
     request.setRawHeader("Authorization", authString.toLocal8Bit());
+
+    QString timeZone = KDateTime::currentLocalDateTime().timeZone().name();
+    request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
 
     // For now
     request.setRawHeader("X-Ignore", QByteArray("If this request is bad, please ignore it while this plugin is being developed."));
