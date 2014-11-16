@@ -263,11 +263,23 @@ void WakaTimeView::readConfig()
     //kDebug(debugArea()) << QString("API key: %1").arg(this->apiKey);
 }
 
+bool WakaTimeView::documentIsConnected(KTextEditor::Document *document)
+{
+    foreach(KTextEditor::Document *doc, this->connectedDocuments) {
+        if (doc == document) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
 {
-    if (!document) {
+    if (!document || this->documentIsConnected(document)) {
         return;
     }
+
+    kDebug(debugArea()) << "Called";
 
     // When document goes from saved state to changed state (not yet saved on disk)
     connect(
@@ -293,6 +305,8 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
         document, SIGNAL(textChanged(KTextEditor::Document *)),
         this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document*))
     );
+
+    this->connectedDocuments << document;
 }
 
 // Slots

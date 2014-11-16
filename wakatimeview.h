@@ -53,10 +53,12 @@ class WakaTimeView : public QObject, public KXMLGUIClient
         void sendAction(KTextEditor::Document *doc, bool isWrite);
         QByteArray getUserAgent();
         void connectDocumentSignals(KTextEditor::Document *);
+        bool documentIsConnected(KTextEditor::Document *);
 
     private:
         KTextEditor::View *m_view;
         QByteArray userAgent;
+        QList<KTextEditor::Document *> connectedDocuments;
 
         // Initialised in constructor definition
         QString apiKey;
