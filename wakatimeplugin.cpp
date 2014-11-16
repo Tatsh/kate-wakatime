@@ -132,9 +132,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     }
 
     // Compare date and make sure it has been at least 15 minutes
-    qint64 current = QDateTime::currentMSecsSinceEpoch() / 1000;
-    static int interval = (60 * 15) * 1000;
-    if (this->hasSent && (current - this->lastPoll.currentMSecsSinceEpoch()) <= interval) {
+    const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
+    static const int intervalMs = 900000; // ms
+    if (this->hasSent && (currentMs - this->lastPoll.currentMSecsSinceEpoch()) <= intervalMs) {
         //kDebug(debugArea()) << "Not enough time has passed since last send";
         return;
     }
@@ -185,7 +185,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     QVariantMap data;
     data.insert("file", filePath);
-    data.insert("time", current);
+    data.insert("time", currentMs / 1000);
     if (projectName.length()) {
         data.insert("project", projectName);
     }
