@@ -1,9 +1,0 @@
-<!DOCTYPE kpartgui>
-<kpartplugin name="ktexteditor_wakatime" library="ktexteditor_wakatime" version="2">
-    <MenuBar>
-        <Menu name="tools"><Text>&amp;Tools</Text>
-            <separator group="tools_operations" />
-            <Action name="tools_wakatime" group="tools_operations"/>
-        </Menu>
-    </MenuBar>
-</kpartplugin>
