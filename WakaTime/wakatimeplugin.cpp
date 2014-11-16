@@ -70,6 +70,7 @@ WakaTimeView::WakaTimeView(KTextEditor::View *view) :
     m_view(view),
     apiKey(""),
     hasSent(false),
+    lastPoll(QDateTime::currentDateTime()),
     nam(new QNetworkAccessManager(this))
 {
     setComponentData(WakaTimePluginFactory::componentData());
@@ -240,7 +241,6 @@ void WakaTimeView::readConfig()
 
 void WakaTimeView::connectSignalsToSlots()
 {
-    this->lastPoll = QDateTime::currentDateTime();
     //kDebug(debugArea()) << QString("Began polling at %1").arg(this->lastPoll.toString());
 
     foreach(KTextEditor::Document *document, Kate::application()->documentManager()->documents()) {

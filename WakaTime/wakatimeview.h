@@ -36,11 +36,11 @@ class WakaTimeView : public QObject, public KXMLGUIClient
     private:
         KTextEditor::View *m_view;
         QByteArray userAgent;
-        QDateTime lastPoll;
 
         // Initialised in constructor definition
         QString apiKey;
         bool hasSent;
+        QDateTime lastPoll;
         QNetworkAccessManager *nam;
 };
 
