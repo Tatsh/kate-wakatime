@@ -137,8 +137,8 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     static const qint64 intervalMs = 900000; // ms
 
     if (this->hasSent && deltaMs <= intervalMs) {
-        kDebug(debugArea()) << "Not enough time has passed since last send";
-        kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "minutes / 15";
+        //kDebug(debugArea()) << "Not enough time has passed since last send";
+        //kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 15 minutes";
         return;
     }
 
@@ -278,8 +278,6 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
     if (!document || this->documentIsConnected(document)) {
         return;
     }
-
-    kDebug(debugArea()) << "Called";
 
     // When document goes from saved state to changed state (not yet saved on disk)
     connect(
