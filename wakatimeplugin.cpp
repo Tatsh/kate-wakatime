@@ -133,11 +133,12 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
+    const qint64 deltaMs = currentMs - this->lastPoll.toMSecsSinceEpoch();
     static const qint64 intervalMs = 900000; // ms
-    const qint64 deltaMs = currentMs - this->lastPoll.currentMSecsSinceEpoch();
+
     if (this->hasSent && deltaMs <= intervalMs) {
         kDebug(debugArea()) << "Not enough time has passed since last send";
-        kDebug(debugArea()) << "Will try again in" << deltaMs / 1000 / 60 << " seconds";
+        kDebug(debugArea()) << "Will try again in" << deltaMs / 1000 / 60 << "minutes";
         return;
     }
 
@@ -322,8 +323,8 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
     }
 
     if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
-        //kDebug(debugArea()) << "Sent data successfully";
-//         kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
+        kDebug(debugArea()) << "Sent data successfully";
+        //kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
 
         this->hasSent = true;
         this->lastPoll = QDateTime::currentDateTime(); // Reset
