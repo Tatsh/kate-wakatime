@@ -329,7 +329,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
         this->lastPoll = QDateTime::currentDateTime(); // Reset
     }
     else {
-        kError(debugArea()) << "Request did not succeed";
+        kError(debugArea()) << "Request did not succeed, status code:" << statusCode.toInt();
 
         if (statusCode == 401) {
             kError(debugArea()) << "Check authentication details in ~/.wakatime.cfg";
