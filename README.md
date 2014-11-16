@@ -23,6 +23,7 @@
 5. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable.
 6. Once this plugin is installed, open Kate (or any other katepart editor (KWrite, etc)) and go to *Settings*, *Configure <name>...*, then in the dialog choose *Extensions*.
 7. Use the checkbox to enable *WakaTime* and click *OK*.
+8. Restart Kate to be sure the plugin initialises properly.
 
 Make sure you absolutely have your `~/.wakatime.cfg` file properly set.
 
