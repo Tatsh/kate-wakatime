@@ -1,3 +1,4 @@
 [Project]
 Manager=KDevCMakeManager
 Name=WakaTime
+VersionControlSupport=kdevgit
