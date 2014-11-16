@@ -21,13 +21,10 @@ class WakaTimePlugin
 
     void addView (KTextEditor::View *view);
     void removeView (KTextEditor::View *view);
- 
-    void readConfig();
-    void writeConfig();
- 
-//     void readConfig (KConfig *);
-//     void writeConfig (KConfig *);
- 
+
+    void readConfig (KConfig *);
+    void writeConfig (KConfig *);
+
   private:
     QList<class WakaTimeView*> m_views;
 };

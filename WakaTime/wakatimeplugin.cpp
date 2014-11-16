@@ -42,12 +42,14 @@ void WakaTimePlugin::removeView(KTextEditor::View *view)
 	}
 }
 
-void WakaTimePlugin::readConfig()
+void WakaTimePlugin::readConfig(KConfig *config)
 {
+    Q_UNUSED(config);
 }
 
-void WakaTimePlugin::writeConfig()
+void WakaTimePlugin::writeConfig(KConfig *config)
 {
+    Q_UNUSED(config);
 }
 
 WakaTimeView::WakaTimeView(KTextEditor::View *view)
@@ -56,12 +58,12 @@ WakaTimeView::WakaTimeView(KTextEditor::View *view)
 , m_view(view)
 {
 	setComponentData(WakaTimePluginFactory::componentData());
-	
+
 	KAction *action = new KAction(i18n("KTextEditor - WakaTime"), this);
 	actionCollection()->addAction("tools_wakatime", action);
 	//action->setShortcut(Qt::CTRL + Qt::Key_XYZ);
 	connect(action, SIGNAL(triggered()), this, SLOT(insertWakaTime()));
-	
+
 	setXMLFile("wakatimeui.rc");
 }
 
