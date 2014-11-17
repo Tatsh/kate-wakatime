@@ -285,12 +285,6 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document)
         this, SLOT(slotDocumentModifiedChanged(KTextEditor::Document *))
     );
 
-    // When document is first saved?
-    connect(
-        document, SIGNAL(documentNameChanged(KTextEditor::Document*)),
-        this, SLOT(slotDocumentWrittenToDisk(KTextEditor::Document *))
-    );
-
     // Written to disk
     connect(
         document, SIGNAL(documentSavedOrUploaded(KTextEditor::Document*,bool)),
