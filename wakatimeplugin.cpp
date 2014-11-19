@@ -93,7 +93,8 @@ WakaTimeView::WakaTimeView(KTextEditor::View *view) :
     m_view(view),
     apiKey(""),
     hasSent(false),
-    lastPoll(QDateTime::currentDateTime()),
+    lastTimeSent(QDateTime::currentDateTime()),
+    lastFile(""),
     nam(new QNetworkAccessManager(this))
 {
     setComponentData(WakaTimePluginFactory::componentData());
@@ -118,11 +119,16 @@ WakaTimeView::~WakaTimeView()
 QByteArray WakaTimeView::getUserAgent()
 {
     const char *version = KDE::versionString();
-    return QString("kate-wakatime/%1 (KDE %2) Katepart/%2").arg(WAKATIME_PLUGIN_VERSION).arg(version).toLocal8Bit();
+    return QString("(KDE %1) Katepart/%1 kate-wakatime/%2").arg(version).arg(WAKATIME_PLUGIN_VERSION).toLocal8Bit();
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 {
+
+    // TODO: Instead of using QJson, use the common Python wakatime api interface
+    // so we don't have to re-implement all the common features like syntax
+    // language detection, offline logging, project and branch detection, etc.
+
     QString filePath = doc->url().toLocalFile();
 
     // Could be untitled, or a URI (including HTTP); only local files are handled for now
@@ -131,22 +137,28 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
         return;
     }
 
-    // Compare date and make sure it has been at least 15 minutes
-    const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
-    const qint64 deltaMs = currentMs - this->lastPoll.toMSecsSinceEpoch();
-    static const qint64 intervalMs = 900000; // ms
-
-    if (this->hasSent && deltaMs <= intervalMs) {
-        //kDebug(debugArea()) << "Not enough time has passed since last send";
-        //kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 15 minutes";
-        return;
-    }
-
     QFileInfo fileInfo(filePath);
 
     // They have it sending the real file path, maybe not respecting symlinks, etc
     filePath = fileInfo.canonicalFilePath();
     //kDebug(debugArea()) << filePath;
+
+    // Compare date and make sure it has been at least 15 minutes
+    const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
+    const qint64 deltaMs = currentMs - this->lastTimeSent.toMSecsSinceEpoch();
+    QString lastFile = this->lastFile;
+    static const qint64 intervalMs = 120000; // ms
+
+    // If the current file has not changed and it has not been 2 minutes since
+    // the last heartbeat was sent, do NOT send this heartbeat. This does not
+    // apply to write events as they are always sent.
+    if (!isWrite) {
+        if (this->hasSent && deltaMs <= intervalMs && lastFile == filePath) {
+            //kDebug(debugArea()) << "Not enough time has passed since last send";
+            //kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 2 minutes";
+            return;
+        }
+    }
 
     // Get the project name, by traversing up until .git or .svn is found
     QString projectName;
@@ -236,6 +248,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 #endif
 
     nam->post(request, requestContent);
+
+    this->lastTimeSent = QDateTime::currentDateTime();
+    this->lastFile = filePath;
 }
 
 void WakaTimeView::readConfig()
@@ -333,7 +348,6 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
         //kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
 
         this->hasSent = true;
-        this->lastPoll = QDateTime::currentDateTime(); // Reset
     }
     else {
         kError(debugArea()) << "Request did not succeed, status code:" << statusCode.toInt();
