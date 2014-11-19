@@ -63,7 +63,8 @@ class WakaTimeView : public QObject, public KXMLGUIClient
         // Initialised in constructor definition
         QString apiKey;
         bool hasSent;
-        QDateTime lastPoll;
+        QDateTime lastTimeSent;
+        QString lastFileSent;
         QNetworkAccessManager *nam;
 };
 
