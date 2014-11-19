@@ -94,7 +94,7 @@ WakaTimeView::WakaTimeView(KTextEditor::View *view) :
     apiKey(""),
     hasSent(false),
     lastTimeSent(QDateTime::currentDateTime()),
-    lastFile(""),
+    lastFileSent(""),
     nam(new QNetworkAccessManager(this))
 {
     setComponentData(WakaTimePluginFactory::componentData());
@@ -146,14 +146,14 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
     const qint64 deltaMs = currentMs - this->lastTimeSent.toMSecsSinceEpoch();
-    QString lastFile = this->lastFile;
+    QString lastFileSent = this->lastFileSent;
     static const qint64 intervalMs = 120000; // ms
 
     // If the current file has not changed and it has not been 2 minutes since
     // the last heartbeat was sent, do NOT send this heartbeat. This does not
     // apply to write events as they are always sent.
     if (!isWrite) {
-        if (this->hasSent && deltaMs <= intervalMs && lastFile == filePath) {
+        if (this->hasSent && deltaMs <= intervalMs && lastFileSent == filePath) {
             //kDebug(debugArea()) << "Not enough time has passed since last send";
             //kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 2 minutes";
             return;
@@ -250,7 +250,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     nam->post(request, requestContent);
 
     this->lastTimeSent = QDateTime::currentDateTime();
-    this->lastFile = filePath;
+    this->lastFileSent = filePath;
 }
 
 void WakaTimeView::readConfig()
