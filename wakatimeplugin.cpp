@@ -55,7 +55,8 @@ K_EXPORT_PLUGIN(WakaTimePluginFactory(KAboutData(
     KAboutData::License_LGPL_V3
 )))
 
-int debugArea() {
+int debugArea()
+{
     static int sArea = KDebug::registerArea("wakatime");
     return sArea;
 }
@@ -133,7 +134,22 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // Could be untitled, or a URI (including HTTP); only local files are handled for now
     if (!filePath.length()) {
-        //kDebug(debugArea()) << "Nothing to send about";
+#ifndef NDEBUG
+        kDebug(debugArea()) << "Nothing to send about";
+#endif
+        return;
+    }
+
+    // Compare date and make sure it has been at least 15 minutes
+    const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
+    const qint64 deltaMs = currentMs - this->lastPoll.toMSecsSinceEpoch();
+    static const qint64 intervalMs = 900000; // ms
+
+    if (this->hasSent && deltaMs <= intervalMs) {
+#ifndef NDEBUG
+        kDebug(debugArea()) << "Not enough time has passed since last send";
+        kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 15 minutes";
+#endif
         return;
     }
 
@@ -141,7 +157,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // They have it sending the real file path, maybe not respecting symlinks, etc
     filePath = fileInfo.canonicalFilePath();
-    //kDebug(debugArea()) << filePath;
+#ifndef NDEBUG
+    kDebug(debugArea()) << filePath;
+#endif
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
@@ -169,7 +187,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     filters << ".git" << ".svn";
     QString typeOfVcs;
 
-    //kDebug(debugArea()) << currentDirectory;
+#ifndef NDEBUG
+    kDebug(debugArea()) << currentDirectory;
+#endif
     while (!vcDirFound) {
         if (currentDirectory.canonicalPath() == "/") {
             break;
@@ -275,7 +295,9 @@ void WakaTimeView::readConfig()
 
     // Assume valid at this point
     this->apiKey = key;
-    //kDebug(debugArea()) << QString("API key: %1").arg(this->apiKey);
+#ifndef NDEBUG
+    kDebug(debugArea()) << QString("API key: %1").arg(this->apiKey);
+#endif
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document)
@@ -334,8 +356,10 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
     bool parsedOk;
     QVariantMap received;
 
-    //kDebug(debugArea()) << "network reply finished slot handler";
-    //kDebug(debugArea()) << "Status code:" << statusCode.toInt();
+#ifndef NDEBUG
+    kDebug(debugArea()) << "network reply finished slot handler";
+    kDebug(debugArea()) << "Status code:" << statusCode.toInt();
+#endif
 
     received = parser.parse(reply->readAll(), &parsedOk).toMap();
     if (!parsedOk) {
@@ -345,7 +369,6 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
 
     if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
         kDebug(debugArea()) << "Sent data successfully";
-        //kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
 
         this->hasSent = true;
     }
