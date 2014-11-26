@@ -55,7 +55,8 @@ K_EXPORT_PLUGIN(WakaTimePluginFactory(KAboutData(
     KAboutData::License_LGPL_V3
 )))
 
-int debugArea() {
+int debugArea()
+{
     static int sArea = KDebug::registerArea("wakatime");
     return sArea;
 }
@@ -124,7 +125,6 @@ QByteArray WakaTimeView::getUserAgent()
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 {
-
     // TODO: Instead of using QJson, use the common Python wakatime api interface
     // so we don't have to re-implement all the common features like syntax
     // language detection, offline logging, project and branch detection, etc.
@@ -133,7 +133,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // Could be untitled, or a URI (including HTTP); only local files are handled for now
     if (!filePath.length()) {
-        //kDebug(debugArea()) << "Nothing to send about";
+#ifndef NDEBUG
+        kDebug(debugArea()) << "Nothing to send about";
+#endif
         return;
     }
 
@@ -141,7 +143,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
 
     // They have it sending the real file path, maybe not respecting symlinks, etc
     filePath = fileInfo.canonicalFilePath();
-    //kDebug(debugArea()) << filePath;
+#ifndef NDEBUG
+    kDebug(debugArea()) << "File path:" << filePath;
+#endif
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
@@ -154,8 +158,10 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     // apply to write events as they are always sent.
     if (!isWrite) {
         if (this->hasSent && deltaMs <= intervalMs && lastFileSent == filePath) {
-            //kDebug(debugArea()) << "Not enough time has passed since last send";
-            //kDebug(debugArea()) << "Delta: " << deltaMs / 1000 / 60 << "/ 2 minutes";
+#ifndef NDEBUG
+            kDebug(debugArea()) << "Not enough time has passed since last send";
+            kDebug(debugArea()) << "Delta:" << deltaMs / 1000 / 60 << "/ 2 minutes";
+#endif
             return;
         }
     }
@@ -169,7 +175,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     filters << ".git" << ".svn";
     QString typeOfVcs;
 
-    //kDebug(debugArea()) << currentDirectory;
     while (!vcDirFound) {
         if (currentDirectory.canonicalPath() == "/") {
             break;
@@ -205,7 +210,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
         data.insert("project", projectName);
     }
     else {
-        kDebug(debugArea()) << "No project name found";
+        kDebug(debugArea()) << "Warning: No project name found";
     }
 //     if (typeOfVcs == ".git") {
 //         // git branch -a | fgrep '*' | awk '{ print $2 }', etc
@@ -275,7 +280,6 @@ void WakaTimeView::readConfig()
 
     // Assume valid at this point
     this->apiKey = key;
-    //kDebug(debugArea()) << QString("API key: %1").arg(this->apiKey);
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document)
@@ -334,8 +338,9 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
     bool parsedOk;
     QVariantMap received;
 
-    //kDebug(debugArea()) << "network reply finished slot handler";
-    //kDebug(debugArea()) << "Status code:" << statusCode.toInt();
+#ifndef NDEBUG
+    kDebug(debugArea()) << "Status code:" << statusCode.toInt();
+#endif
 
     received = parser.parse(reply->readAll(), &parsedOk).toMap();
     if (!parsedOk) {
@@ -345,7 +350,6 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
 
     if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
         kDebug(debugArea()) << "Sent data successfully";
-        //kDebug(debugArea()) << "ID received:" << received["data"].toMap()["id"].toString();
 
         this->hasSent = true;
     }
