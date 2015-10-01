@@ -273,7 +273,7 @@ void WakaTimeView::readConfig(void)
     }
 
     QString key = config.value("settings/api_key").toString();
-    if (!key.trim().length()) {
+    if (!key.trimmed().length()) {
         kError(debugArea()) << "API Key is blank";
         return;
     }
