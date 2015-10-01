@@ -273,8 +273,8 @@ void WakaTimeView::readConfig(void)
     }
 
     QString key = config.value("settings/api_key").toString();
-    if (!key.trim()length()) {
-        kError(debugArea()) << "API key exists but is not correct length";
+    if (!key.trim().length()) {
+        kError(debugArea()) << "API Key is blank";
         return;
     }
 
@@ -357,7 +357,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
         kError(debugArea()) << "Request did not succeed, status code:" << statusCode.toInt();
 
         if (statusCode == 401) {
-	    /* A handler for an incorrect API key will be worked on shortly. */
+	    // TODO A handler for an incorrect API key will be worked on shortly.
             kError(debugArea()) << "Check authentication details in ~/.wakatime.cfg";
         }
 
