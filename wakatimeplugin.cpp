@@ -55,7 +55,7 @@ K_EXPORT_PLUGIN(WakaTimePluginFactory(KAboutData(
     KAboutData::License_LGPL_V3
 )))
 
-int debugArea()
+static int debugArea(void)
 {
     static int sArea = KDebug::registerArea("wakatime");
     return sArea;
@@ -117,7 +117,7 @@ WakaTimeView::~WakaTimeView()
     delete nam;
 }
 
-QByteArray WakaTimeView::getUserAgent()
+QByteArray WakaTimeView::getUserAgent(void)
 {
     const char *version = KDE::versionString();
     return QString("(KDE %1) Katepart/%1 kate-wakatime/%2").arg(version).arg(WAKATIME_PLUGIN_VERSION).toLocal8Bit();
@@ -258,7 +258,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     this->lastFileSent = filePath;
 }
 
-void WakaTimeView::readConfig()
+void WakaTimeView::readConfig(void)
 {
     QString configFilePath = QDir::homePath() + QDir::separator() + ".wakatime.cfg";
     if (!QFile::exists(configFilePath)) {
@@ -273,8 +273,8 @@ void WakaTimeView::readConfig()
     }
 
     QString key = config.value("settings/api_key").toString();
-    if (key.length() < 36) {
-        kError(debugArea()) << "API key exists but is not correct length";
+    if (!key.trimmed().length()) {
+        kError(debugArea()) << "API Key is blank";
         return;
     }
 
@@ -357,6 +357,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply)
         kError(debugArea()) << "Request did not succeed, status code:" << statusCode.toInt();
 
         if (statusCode == 401) {
+	    // TODO A handler for an incorrect API key will be worked on shortly.
             kError(debugArea()) << "Check authentication details in ~/.wakatime.cfg";
         }
 
