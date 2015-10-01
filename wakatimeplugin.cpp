@@ -117,7 +117,7 @@ WakaTimeView::~WakaTimeView()
     delete nam;
 }
 
-QByteArray WakaTimeView::getUserAgent()
+QByteArray WakaTimeView::getUserAgent(void)
 {
     const char *version = KDE::versionString();
     return QString("(KDE %1) Katepart/%1 kate-wakatime/%2").arg(version).arg(WAKATIME_PLUGIN_VERSION).toLocal8Bit();
