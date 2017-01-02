@@ -1,3 +1,7 @@
+# Note
+
+This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, use the [v0.4 release](https://github.com/Tatsh/kate-wakatime/releases).
+
 # How to use
 
 1. Get an account at [WakaTime](https://wakatime.com).
@@ -9,8 +13,7 @@
    api_key = myapikey-0000-0000-0000-000000000000
    ```
 
-4. Install QJson library.
-5. Clone this project and compile:
+4. Clone this project and compile:
 
    ```bash
    git clone git@github.com:Tatsh/kate-wakatime.git
@@ -28,13 +31,13 @@
    If on 32-bit:
 
    ```bash
-   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX="" -DAutomoc4_DIR=/usr/lib/automoc4
+   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX=""
    ```
 
    MacPorts (tested on Mid-2012 MacBook Pro running Yosemite):
 
    ```bash
-   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/local/ -DLIB_SUFFIX="" -DAutomoc4_DIR=/opt/local/lib/automoc4
+   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/local/ -DLIB_SUFFIX=""
    ```
 
    Finish the task:
@@ -43,7 +46,7 @@
    make
    ```
 
-6. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable. You may need to run `kbuildsycoca4` as yourself once before launching Kate again (this is true on MacPorts).
+6. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable. You may need to run `kbuildsycoca5` as yourself once before launching Kate again (this is true on MacPorts).
 7. Once this plugin is installed, open Kate (or any other katepart editor (KWrite, etc)) and go to *Settings*, *Configure <name>...*, then in the dialog choose *Extensions*.
 8. Use the checkbox to enable *WakaTime* and click *OK*:
 
@@ -57,4 +60,4 @@ Make sure you absolutely have your `~/.wakatime.cfg` file properly set.
 
 Short answer is no.
 
-See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L128) method if you want to be certain.
+See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L113) method if you want to be certain.
