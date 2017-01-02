@@ -1,0 +1,5 @@
+[Project]
+CreatedFrom=kate-wakatime.kdev4
+Manager=KDevCMakeManager
+Name=kate-wakatime
+VersionControlSupport=kdevgit
