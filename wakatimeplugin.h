@@ -24,30 +24,75 @@
 
 #include <KTextEditor/Plugin>
 
-#include <QtCore/QDateTime>
+#include <QDateTime>
+#include <QLoggingCategory>
+#include <QObject>
+#include <QVariant>
 
-#define WAKATIME_PLUGIN_VERSION "0.1"
+#define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
+#define kWakaTimePluginVersion "0.1"
+
+Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
 namespace KTextEditor
 {
     class Document;
+    class MainWindow;
     class View;
 }
 
 class QFile;
+class QNetworkAccessManager;
+class QNetworkReply;
+
 class WakaTimeView;
 
 class WakaTimePlugin : public KTextEditor::Plugin
 {
     public:
-        explicit WakaTimePlugin(QObject *parent = 0, const QVariantList &args = QVariantList());
+        explicit WakaTimePlugin(QObject *parent = 0, const QList<QVariant> & = QList<QVariant>());
         virtual ~WakaTimePlugin();
 
-        void addView (KTextEditor::View *view);
-        void removeView (KTextEditor::View *view);
+        QObject *createView(KTextEditor::MainWindow *mainWindow);
 
     private:
         QList<class WakaTimeView*> m_views;
+};
+
+class WakaTimeView : public QObject
+{
+    Q_OBJECT
+
+    public:
+        WakaTimeView(KTextEditor::MainWindow *mainWindow);
+        ~WakaTimeView();
+
+    private Q_SLOTS:
+        void slotDocumentModifiedChanged(KTextEditor::Document *);
+        void slotDocumentWrittenToDisk(KTextEditor::Document *);
+        void slotNetworkReplyFinshed(QNetworkReply *);
+        void viewCreated(KTextEditor::View *view);
+        void viewDestroyed(QObject *view);
+
+    private:
+        void readConfig();
+        void sendAction(KTextEditor::Document *doc, bool isWrite);
+        QByteArray getUserAgent();
+        void connectDocumentSignals(KTextEditor::Document *);
+        bool documentIsConnected(KTextEditor::Document *);
+        void disconnectDocumentSignals(KTextEditor::Document *document);
+
+    private:
+        KTextEditor::MainWindow *m_mainWindow;
+        QByteArray userAgent;
+        QString apiKey;
+        bool hasSent;
+        QList<KTextEditor::Document *> connectedDocuments;
+
+        // Initialised in constructor definition
+        QDateTime lastTimeSent;
+        QString lastFileSent;
+        QNetworkAccessManager *nam;
 };
 
 #endif
