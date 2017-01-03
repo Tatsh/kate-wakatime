@@ -159,7 +159,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
     static QStringList filters;
     static const QString gitStr = QString::fromLocal8Bit(".git");
     static const QString svnStr = QString::fromLocal8Bit(".svn");
-    static const QString rootSlash = QString::fromLocal8Bit("./");
+    static const QString rootSlash = QString::fromLocal8Bit("/");
     filters << gitStr << svnStr;
     QString typeOfVcs;
 
