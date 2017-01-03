@@ -172,7 +172,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite)
         foreach(QFileInfo entry, entries) {
             QString name = entry.fileName();
 
-            if ((!name.compare(gitStr) || name.compare(svnStr)) && entry.isDir()) {
+            if ((name.compare(gitStr) || name.compare(svnStr)) && entry.isDir()) {
                 vcDirFound = true;
                 projectName = currentDirectory.dirName();
                 projectDirectory = QDir(currentDirectory);
