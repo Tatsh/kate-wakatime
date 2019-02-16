@@ -30,16 +30,15 @@
 #include <QVariant>
 
 #define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
-#define kWakaTimePluginVersion "0.1"
+#define kWakaTimePluginVersion "1.0"
 
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
-namespace KTextEditor
-{
-    class Document;
-    class MainWindow;
-    class View;
-}
+namespace KTextEditor {
+class Document;
+class MainWindow;
+class View;
+} // namespace KTextEditor
 
 class QFile;
 class QNetworkAccessManager;
@@ -47,52 +46,51 @@ class QNetworkReply;
 
 class WakaTimeView;
 
-class WakaTimePlugin : public KTextEditor::Plugin
-{
-    public:
-        explicit WakaTimePlugin(QObject *parent = 0, const QList<QVariant> & = QList<QVariant>());
-        virtual ~WakaTimePlugin();
+class WakaTimePlugin : public KTextEditor::Plugin {
+public:
+    explicit WakaTimePlugin(QObject *parent = 0,
+                            const QList<QVariant> & = QList<QVariant>());
+    virtual ~WakaTimePlugin();
 
-        QObject *createView(KTextEditor::MainWindow *mainWindow);
+    QObject *createView(KTextEditor::MainWindow *mainWindow) override;
 
-    private:
-        QList<class WakaTimeView*> m_views;
+private:
+    QList<class WakaTimeView *> m_views;
 };
 
-class WakaTimeView : public QObject
-{
+class WakaTimeView : public QObject {
     Q_OBJECT
 
-    public:
-        WakaTimeView(KTextEditor::MainWindow *mainWindow);
-        ~WakaTimeView();
+public:
+    WakaTimeView(KTextEditor::MainWindow *mainWindow);
+    ~WakaTimeView();
 
-    private Q_SLOTS:
-        void slotDocumentModifiedChanged(KTextEditor::Document *);
-        void slotDocumentWrittenToDisk(KTextEditor::Document *);
-        void slotNetworkReplyFinshed(QNetworkReply *);
-        void viewCreated(KTextEditor::View *view);
-        void viewDestroyed(QObject *view);
+private Q_SLOTS:
+    void slotDocumentModifiedChanged(KTextEditor::Document *);
+    void slotDocumentWrittenToDisk(KTextEditor::Document *);
+    void slotNetworkReplyFinshed(QNetworkReply *);
+    void viewCreated(KTextEditor::View *view);
+    void viewDestroyed(QObject *view);
 
-    private:
-        void readConfig();
-        void sendAction(KTextEditor::Document *doc, bool isWrite);
-        QByteArray getUserAgent();
-        void connectDocumentSignals(KTextEditor::Document *);
-        bool documentIsConnected(KTextEditor::Document *);
-        void disconnectDocumentSignals(KTextEditor::Document *document);
+private:
+    void readConfig();
+    void sendAction(KTextEditor::Document *doc, bool isWrite);
+    QByteArray getUserAgent();
+    void connectDocumentSignals(KTextEditor::Document *);
+    bool documentIsConnected(KTextEditor::Document *);
+    void disconnectDocumentSignals(KTextEditor::Document *document);
 
-    private:
-        KTextEditor::MainWindow *m_mainWindow;
-        QByteArray userAgent;
-        QString apiKey;
-        bool hasSent;
-        QList<KTextEditor::Document *> connectedDocuments;
+private:
+    KTextEditor::MainWindow *m_mainWindow;
+    QByteArray userAgent;
+    QString apiKey;
+    bool hasSent;
+    QList<KTextEditor::Document *> connectedDocuments;
 
-        // Initialised in constructor definition
-        QDateTime lastTimeSent;
-        QString lastFileSent;
-        QNetworkAccessManager *nam;
+    // Initialised in constructor definition
+    QDateTime lastTimeSent;
+    QString lastFileSent;
+    QNetworkAccessManager *nam;
 };
 
 #endif
