@@ -269,7 +269,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
                        .trimmed();
 #endif
             qCDebug(gLogWakaTime)
-                << "If this is not expected, please file a bug report."
+                << "If this is not expected, please file a bug report.";
         }
     }
 #ifndef NDEBUG
@@ -295,6 +295,26 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         }
     }
 
+    static const QString keyEntity = QString::fromLocal8Bit("entity");
+    static const QString keyType = QString::fromLocal8Bit("type");
+    static const QString valueFile = QString::fromLocal8Bit("file");
+    static const QString keyCategory = QString::fromLocal8Bit("category");
+    static const QString keyLines = QString::fromLocal8Bit("lines");
+    static const QString keyLineNo = QString::fromLocal8Bit("lineno");
+    static const QString keyCursorPos = QString::fromLocal8Bit("cursorpos");
+    static const QString valueCoding = QString::fromLocal8Bit("coding");
+    data.insert(keyEntity, filePath);
+    data.insert(keyType, valueFile);
+    data.insert(keyLines, doc->lines());
+    data.insert(keyCategory, valueCoding);
+    foreach (KTextEditor::View *view, m_mainWindow->views()) {
+        if (view->document() == doc) {
+            data.insert(keyLineNo, view->cursorPosition().line() + 1);
+            data.insert(keyCursorPos, view->cursorPosition().column() + 1);
+            break;
+        }
+    }
+
     object = QJsonDocument::fromVariant(data);
     QByteArray requestContent = object.toJson();
     static const QString contentType =
@@ -309,6 +329,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
 
 #ifndef NDEBUG
+    qCDebug(gLogWakaTime) << object;
     request.setRawHeader("X-Ignore",
                          QByteArray("If this request is bad, please ignore it "
                                     "while this plugin is being developed."));
