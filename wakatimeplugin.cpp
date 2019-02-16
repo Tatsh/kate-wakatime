@@ -365,6 +365,7 @@ void WakaTimeView::readConfig(void) {
 
     // Assume valid at this point
     this->apiKey = key;
+    this->hideFilenames = config.value(QString::fromLocal8Bit("settings/hidefilenames")).toBool();
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {

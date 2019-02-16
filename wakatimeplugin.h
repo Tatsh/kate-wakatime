@@ -85,6 +85,7 @@ private:
     KTextEditor::MainWindow *m_mainWindow;
     QByteArray userAgent;
     QString apiKey;
+    bool hideFilenames;
     bool hasSent;
     QList<KTextEditor::Document *> connectedDocuments;
 
