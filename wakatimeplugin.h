@@ -79,6 +79,7 @@ private:
     void connectDocumentSignals(KTextEditor::Document *);
     bool documentIsConnected(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *document);
+    QString getBinPath(QString binName);
 
 private:
     KTextEditor::MainWindow *m_mainWindow;
@@ -91,6 +92,7 @@ private:
     QDateTime lastTimeSent;
     QString lastFileSent;
     QNetworkAccessManager *nam;
+    QMap<QString, QString> binPathCache;
 };
 
 #endif

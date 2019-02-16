@@ -33,6 +33,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
+#include <QtCore/QProcess>
 #include <QtCore/QSettings>
 #include <QtCore/QTimeZone>
 #include <QtCore/QUrl>
@@ -66,7 +67,8 @@ void WakaTimeView::viewDestroyed(QObject *view) {
 WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     : QObject(mainWindow), m_mainWindow(mainWindow), hasSent(false),
       lastTimeSent(QDateTime::currentDateTime()),
-      nam(new QNetworkAccessManager(this)) {
+      nam(new QNetworkAccessManager(this)),
+      binPathCache(QMap<QString, QString>()) {
     this->apiKey = QString::fromLocal8Bit("", 0);
     this->lastFileSent = QString::fromLocal8Bit("", 0);
 
@@ -95,6 +97,34 @@ WakaTimeView::~WakaTimeView() {
 
 QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
     return new WakaTimeView(mainWindow);
+}
+
+QString WakaTimeView::getBinPath(QString binName) {
+#ifdef Q_OS_WIN
+    return QString();
+#endif
+
+    if (binPathCache.contains(binName)) {
+        return binPathCache.value(binName);
+    }
+
+    static const QString slash = QString::fromLocal8Bit("/");
+    static const QString colon = QString::fromLocal8Bit(":");
+
+    QStringList paths = QString::fromUtf8(getenv("PATH"))
+                            .split(colon, QString::SkipEmptyParts);
+    foreach (QString path, paths) {
+        QStringList dirListing = QDir(path).entryList();
+        foreach (QString entry, dirListing) {
+            if (entry == binName) {
+                entry = path.append(slash).append(entry);
+                binPathCache[binName] = entry;
+                return entry;
+            }
+        }
+    }
+
+    return QString();
 }
 
 QByteArray WakaTimeView::getUserAgent(void) {
@@ -203,10 +233,51 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     } else {
         qCDebug(gLogWakaTime) << "Warning: No project name found";
     }
-    //     if (typeOfVcs == ".git") {
-    //         // git branch -a | fgrep '*' | awk '{ print $2 }', etc
-    //     }
-    // data.insert("lines");
+    static const QString git = QString::fromLocal8Bit("git");
+    static QString gitPath = getBinPath(git);
+    if (!gitPath.isNull()) {
+        static const QString cmd = gitPath.append(
+            QString::fromLocal8Bit(" symbolic-ref --short HEAD"));
+        QProcess proc;
+        proc.setWorkingDirectory(projectDirectory.canonicalPath());
+#ifndef NDEBUG
+        qCDebug(gLogWakaTime)
+            << "Running " << cmd << " in " << projectDirectory.canonicalPath();
+#endif
+        proc.start(cmd);
+        if (proc.waitForFinished()) {
+            QByteArray out = proc.readAllStandardOutput();
+            QString branch =
+                QString::fromStdString(out.toStdString()).trimmed();
+            if (!branch.isNull() && branch.size() > 0) {
+                static const QString keyBranch =
+                    QString::fromLocal8Bit("branch");
+                data.insert(keyBranch, branch);
+            }
+        } else {
+            qCDebug(gLogWakaTime) << "Failed to get branch (git)";
+#ifndef NDEBUG
+            qCDebug(gLogWakaTime)
+                << "stderr: "
+                << QString::fromStdString(
+                       proc.readAllStandardError().toStdString())
+                       .trimmed();
+            qCDebug(gLogWakaTime)
+                << "stdout: "
+                << QString::fromStdString(
+                       proc.readAllStandardOutput().toStdString())
+                       .trimmed();
+#endif
+            qCDebug(gLogWakaTime)
+                << "If this is not expected, please file a bug report."
+        }
+    }
+#ifndef NDEBUG
+    if (gitPath.isNull()) {
+        qCDebug(gLogWakaTime) << "\"git\" not found in PATH";
+    }
+#endif
+
     if (isWrite) {
         static const QString keyIsWrite = QString::fromLocal8Bit("is_write");
         data.insert(keyIsWrite, isWrite);
