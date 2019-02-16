@@ -32,9 +32,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
-// #ifndef QT5
 #include <QtCore/QJsonDocument>
-// #endif
 #include <QtCore/QSettings>
 #include <QtCore/QTimeZone>
 #include <QtCore/QUrl>
@@ -107,11 +105,6 @@ QByteArray WakaTimeView::getUserAgent(void) {
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
-    // TODO: Instead of using QJson, use the common Python wakatime api
-    // interface so we don't have to re-implement all the common features like
-    // syntax language detection, offline logging, project and branch
-    // detection, etc.
-
     QString filePath = doc->url().toLocalFile();
 
     // Could be untitled, or a URI (including HTTP); only local files are
@@ -242,7 +235,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 
     const QDateTime dt = QDateTime::currentDateTime();
     const QString timeZone = QTimeZone::systemTimeZone().displayName(dt);
-    // QString timeZone = KDateTime::currentLocalDateTime().timeZone().name();
     request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
 
 #ifndef NDEBUG
