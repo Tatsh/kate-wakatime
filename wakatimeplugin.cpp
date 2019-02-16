@@ -222,10 +222,8 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     QJsonDocument object;
 
     QVariantMap data;
-    static const QString keyFile = QString::fromLocal8Bit("file");
     static const QString keyTime = QString::fromLocal8Bit("time");
 
-    data.insert(keyFile, filePath);
     data.insert(keyTime, currentMs / 1000);
     if (projectName.length()) {
         static const QString keyProject = QString::fromLocal8Bit("project");
@@ -235,7 +233,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     }
     static const QString git = QString::fromLocal8Bit("git");
     static QString gitPath = getBinPath(git);
-    if (!gitPath.isNull()) {
+    if (!gitPath.isNull() && !hideFilenames) {
         static const QString cmd = gitPath.append(
             QString::fromLocal8Bit(" symbolic-ref --short HEAD"));
         QProcess proc;
@@ -295,24 +293,33 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         }
     }
 
-    static const QString keyEntity = QString::fromLocal8Bit("entity");
     static const QString keyType = QString::fromLocal8Bit("type");
-    static const QString valueFile = QString::fromLocal8Bit("file");
     static const QString keyCategory = QString::fromLocal8Bit("category");
-    static const QString keyLines = QString::fromLocal8Bit("lines");
-    static const QString keyLineNo = QString::fromLocal8Bit("lineno");
-    static const QString keyCursorPos = QString::fromLocal8Bit("cursorpos");
+    static const QString valueFile = QString::fromLocal8Bit("file");
     static const QString valueCoding = QString::fromLocal8Bit("coding");
-    data.insert(keyEntity, filePath);
+    static const QString keyEntity = QString::fromLocal8Bit("entity");
+
     data.insert(keyType, valueFile);
-    data.insert(keyLines, doc->lines());
     data.insert(keyCategory, valueCoding);
-    foreach (KTextEditor::View *view, m_mainWindow->views()) {
-        if (view->document() == doc) {
-            data.insert(keyLineNo, view->cursorPosition().line() + 1);
-            data.insert(keyCursorPos, view->cursorPosition().column() + 1);
-            break;
+
+    if (!hideFilenames) {
+        static const QString keyLines = QString::fromLocal8Bit("lines");
+        static const QString keyLineNo = QString::fromLocal8Bit("lineno");
+        static const QString keyCursorPos =
+            QString::fromLocal8Bit("cursorpos");
+        data.insert(keyEntity, filePath);
+        data.insert(keyLines, doc->lines());
+        foreach (KTextEditor::View *view, m_mainWindow->views()) {
+            if (view->document() == doc) {
+                data.insert(keyLineNo, view->cursorPosition().line() + 1);
+                data.insert(keyCursorPos, view->cursorPosition().column() + 1);
+                break;
+            }
         }
+    } else {
+        data.insert(keyEntity,
+                    QString::fromLocal8Bit("HIDDEN.%1")
+                        .arg(fileInfo.completeSuffix()));
     }
 
     object = QJsonDocument::fromVariant(data);
