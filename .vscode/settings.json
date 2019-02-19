@@ -9,7 +9,8 @@
         "qdatetime": "cpp",
         "kxmlguiclient": "cpp",
         "kpluginfactory": "cpp",
-        "kaboutdata": "cpp"
+        "kaboutdata": "cpp",
+        "qdialog": "cpp"
     },
     "C_Cpp.default.includePath": ["/opt/local/include", "/opt/local/include/KF5", "/opt/local/include/qt5"]
 }
