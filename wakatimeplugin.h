@@ -34,6 +34,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include "ui_configdialog.h"
+
 #define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
 #define kWakaTimePluginVersion "1.0"
 
@@ -80,6 +82,7 @@ private Q_SLOTS:
 
 private:
     void readConfig();
+    void writeConfig();
     void sendAction(KTextEditor::Document *doc, bool isWrite);
     QByteArray getUserAgent();
     void connectDocumentSignals(KTextEditor::Document *);

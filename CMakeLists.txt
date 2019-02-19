@@ -27,6 +27,7 @@ find_package(KF5TextEditor NO_MODULE)
 
 set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp)
 
+ki18n_wrap_ui(ktexteditor_wakatime_SRCS configdialog.ui)
 qt5_add_resources(ktexteditor_wakatime_SRCS plugin.qrc)
 
 add_library(ktexteditor_wakatime MODULE ${ktexteditor_wakatime_SRCS})

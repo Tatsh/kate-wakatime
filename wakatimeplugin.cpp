@@ -21,7 +21,9 @@
 
 #include "wakatimeplugin.h"
 
+#include <KTextEditor/Application>
 #include <KTextEditor/Document>
+#include <KTextEditor/Editor>
 #include <KTextEditor/MainWindow>
 #include <KTextEditor/View>
 
@@ -32,6 +34,7 @@
 #include <KPluginLoader>
 #include <KXMLGUIFactory>
 
+#include <QDialog>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
@@ -112,7 +115,39 @@ QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
 }
 
 void WakaTimeView::slotConfigureWakaTime() {
+    if (!KTextEditor::Editor::instance()->application()->activeMainWindow()) {
+        return;
+    }
 
+    KTextEditor::View *kv(KTextEditor::Editor::instance()
+                              ->application()
+                              ->activeMainWindow()
+                              ->activeView());
+    if (!kv) {
+        return;
+    }
+
+    QDialog dialog(KTextEditor::Editor::instance()
+                       ->application()
+                       ->activeMainWindow()
+                       ->window());
+    Ui::ConfigureWakaTimeDialog ui;
+    ui.setupUi(&dialog);
+    ui.lineEdit_apiKey->setText(this->apiKey);
+    if (this->apiKey.isNull() || !this->apiKey.size()) {
+        ui.lineEdit_apiKey->setFocus();
+    }
+    ui.checkBox_hideFilenames->setChecked(this->hideFilenames);
+
+    dialog.setWindowTitle(i18n("Configure WakaTime"));
+    if (dialog.exec() == QDialog::Accepted) {
+        QString newApiKey = ui.lineEdit_apiKey->text();
+        if (newApiKey.size() == 36) {
+            this->apiKey = newApiKey;
+        }
+        this->hideFilenames = ui.checkBox_hideFilenames->isChecked();
+        this->writeConfig();
+    }
 }
 
 QString WakaTimeView::getBinPath(QString binName) {
@@ -362,6 +397,25 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 
     this->lastTimeSent = QDateTime::currentDateTime();
     this->lastFileSent = filePath;
+}
+
+void WakaTimeView::writeConfig(void) {
+    QString configFilePath = QDir::homePath() + QDir::separator() +
+                             QString::fromLocal8Bit(".wakatime.cfg");
+    if (!QFile::exists(configFilePath)) {
+        qCDebug(gLogWakaTime)
+            << QString::fromUtf8("%1 does not exist").arg(configFilePath);
+        return;
+    }
+    QSettings config(configFilePath, QSettings::IniFormat);
+    config.setValue(QString::fromLocal8Bit("settings/api_key"), this->apiKey);
+    config.setValue(QString::fromLocal8Bit("settings/hidefilenames"),
+                    this->hideFilenames);
+    config.sync();
+    QSettings::Status status;
+    if ((status = config.status()) != QSettings::NoError) {
+        qCDebug(gLogWakaTime) << "Failed to save WakaTime settings: " << status;
+    }
 }
 
 void WakaTimeView::readConfig(void) {
