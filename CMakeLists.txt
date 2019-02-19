@@ -53,4 +53,9 @@ set(WAKATIME_ICONS
     ${CMAKE_CURRENT_SOURCE_DIR}/icons/48-apps-wakatime.png
     ${CMAKE_CURRENT_SOURCE_DIR}/icons/64-apps-wakatime.png)
 
-ecm_install_icons(ICONS ${WAKATIME_ICONS} DESTINATION ${ICON_INSTALL_DIR} THEME hicolor)
+ecm_install_icons(ICONS
+                  ${WAKATIME_ICONS}
+                  DESTINATION
+                  ${ICON_INSTALL_DIR}
+                  THEME
+                  hicolor)

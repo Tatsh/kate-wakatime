@@ -25,8 +25,9 @@
 
 #include "offlinequeue.h"
 
-OfflineQueue::OfflineQueue() : db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"))), m_failed(false)
-{
+OfflineQueue::OfflineQueue()
+    : db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"))),
+      m_failed(false) {
 }
 
 OfflineQueue::~OfflineQueue() {
@@ -40,7 +41,8 @@ QSqlDatabase &OfflineQueue::connect() {
         return db;
     }
 
-    db.setDatabaseName(QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.db"));
+    db.setDatabaseName(QDir::homePath() + QDir::separator() +
+                       QStringLiteral(".wakatime.db"));
     if (!db.open()) {
         m_failed = true;
         return db;
@@ -48,27 +50,27 @@ QSqlDatabase &OfflineQueue::connect() {
     QStringList tables = db.tables();
     if (!tables.contains(QStringLiteral("heartbeat_2"))) {
         QSqlQuery q(db);
-        q.exec(QStringLiteral("CREATE TABLE heartbeat_2 (id TEXT, heartbeat TEXT)"));
+        q.exec(QStringLiteral(
+            "CREATE TABLE heartbeat_2 (id TEXT, heartbeat TEXT)"));
     }
     return db;
 }
 
-void OfflineQueue::push(QStringList& heartbeat)
-{
+void OfflineQueue::push(QStringList &heartbeat) {
     connect();
     if (m_failed) {
         return;
     }
 
     QSqlQuery q(db);
-    q.prepare(QStringLiteral("INSERT INTO heartbeat_2 (id, heartbeat) VALUES (:id, :heartbeat)"));
+    q.prepare(QStringLiteral(
+        "INSERT INTO heartbeat_2 (id, heartbeat) VALUES (:id, :heartbeat)"));
     q.bindValue(QStringLiteral(":id"), heartbeat.at(0));
     q.bindValue(QStringLiteral(":heartbeat"), heartbeat.at(1));
     m_failed = !q.exec();
 }
 
-QStringList OfflineQueue::pop()
-{
+QStringList OfflineQueue::pop() {
     connect();
     if (m_failed) {
         return QStringList();
@@ -91,7 +93,8 @@ QStringList OfflineQueue::pop()
             QString id = q.value(0).toString();
             heartbeat << id;
             heartbeat << q.value(1).toString();
-            q.prepare(QStringLiteral("DELETE FROM heartbeat_2 WHERE id = :id"));
+            q.prepare(
+                QStringLiteral("DELETE FROM heartbeat_2 WHERE id = :id"));
             q.bindValue(QStringLiteral(":id"), id);
             if (!q.exec()) {
                 tries--;
@@ -106,15 +109,13 @@ QStringList OfflineQueue::pop()
     return heartbeat;
 }
 
-void OfflineQueue::pushMany(QList<QStringList>& heartbeats)
-{
+void OfflineQueue::pushMany(QList<QStringList> &heartbeats) {
     for (QStringList heartbeat : heartbeats) {
         push(heartbeat);
     }
 }
 
-QList<QStringList> OfflineQueue::popMany(int limit)
-{
+QList<QStringList> OfflineQueue::popMany(int limit) {
     QList<QStringList> ret;
     for (int i = 0; limit == -1 || i < limit; i++) {
         QStringList poppedRecord = pop();

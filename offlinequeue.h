@@ -24,8 +24,7 @@
 
 #include <QtSql/QSqlDatabase>
 
-class OfflineQueue
-{
+class OfflineQueue {
 public:
     OfflineQueue();
     ~OfflineQueue();
