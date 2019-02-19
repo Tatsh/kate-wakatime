@@ -37,7 +37,7 @@
 #include "ui_configdialog.h"
 
 #define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
-#define kWakaTimePluginVersion "1.0"
+#define kWakaTimePluginVersion "1.1.0"
 
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
