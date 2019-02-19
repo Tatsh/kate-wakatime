@@ -80,6 +80,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     QAction *a =
         actionCollection()->addAction(QStringLiteral("configure_wakatime"));
     a->setText(i18n("Configure WakaTime..."));
+    a->setIcon(QIcon::fromTheme(QStringLiteral("wakatime")));
     connect(
         a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);

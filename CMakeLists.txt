@@ -6,6 +6,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"katewakatime\")
 
 find_package(ECM 1.1.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+include(ECMInstallIcons)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -39,3 +40,16 @@ target_link_libraries(ktexteditor_wakatime KF5::TextEditor)
 
 install(TARGETS ktexteditor_wakatime
         DESTINATION ${PLUGIN_INSTALL_DIR}/ktexteditor)
+
+set(WAKATIME_ICONS
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/512-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/16-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/22-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/sc-apps-wakatime.svg
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/128-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/256-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/32-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/48-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/64-apps-wakatime.png)
+
+ecm_install_icons(ICONS ${WAKATIME_ICONS} DESTINATION ${ICON_INSTALL_DIR} THEME hicolor)
