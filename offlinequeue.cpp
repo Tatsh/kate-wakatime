@@ -21,6 +21,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QVariant>
+#include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 
 #include "offlinequeue.h"

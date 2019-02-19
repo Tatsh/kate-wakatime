@@ -22,7 +22,7 @@
 #ifndef OFFLINEQUEUE_H
 #define OFFLINEQUEUE_H
 
-#include <QtSql/QSqlDatabase>
+class QSqlDatabase;
 
 class OfflineQueue {
 public:
