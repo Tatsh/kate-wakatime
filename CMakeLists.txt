@@ -25,8 +25,9 @@ add_definitions(-DQT_USE_QSTRINGBUILDER
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(KF5TextEditor NO_MODULE)
+find_package(Qt5Sql REQUIRED)
 
-set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp)
+set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp offlinequeue.cpp)
 
 ki18n_wrap_ui(ktexteditor_wakatime_SRCS configdialog.ui)
 qt5_add_resources(ktexteditor_wakatime_SRCS plugin.qrc)
@@ -36,7 +37,7 @@ add_library(ktexteditor_wakatime MODULE ${ktexteditor_wakatime_SRCS})
 kcoreaddons_desktop_to_json(ktexteditor_wakatime ktexteditor_wakatime.desktop
                             DEFAULT_SERVICE_TYPE)
 
-target_link_libraries(ktexteditor_wakatime KF5::TextEditor)
+target_link_libraries(ktexteditor_wakatime KF5::TextEditor Qt5::Sql)
 
 install(TARGETS ktexteditor_wakatime
         DESTINATION ${PLUGIN_INSTALL_DIR}/ktexteditor)
