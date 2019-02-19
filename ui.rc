@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kpartgui>
+<gui name="katewakatime" library="libkatewakatime" version="4" translationDomain="katewakatime">
+  <MenuBar>
+    <Menu name="settings">
+      <text>&amp;Settings</text>
+      <Action name="configure_wakatime"/>
+    </Menu>
+  </MenuBar>
+</gui>
+<!-- kate: space-indent on; indent-width 4; replace-tabs on; -->

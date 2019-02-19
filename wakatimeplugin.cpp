@@ -27,8 +27,10 @@
 
 #include <KAboutData>
 #include <KActionCollection>
+#include <KLocalizedString>
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <KXMLGUIFactory>
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>
@@ -69,6 +71,15 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
       lastTimeSent(QDateTime::currentDateTime()),
       nam(new QNetworkAccessManager(this)),
       binPathCache(QMap<QString, QString>()) {
+    KXMLGUIClient::setComponentName(QStringLiteral("katewakatime"),
+                                    i18n("WakaTime"));
+    setXMLFile(QStringLiteral("ui.rc"));
+    QAction *a = actionCollection()->addAction(QStringLiteral("configure_wakatime"));
+    a->setText(i18n("Configure WakaTime..."));
+    connect(
+        a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
+    mainWindow->guiFactory()->addClient(this);
+
     this->apiKey = QString::fromLocal8Bit("", 0);
     this->lastFileSent = QString::fromLocal8Bit("", 0);
 
@@ -93,10 +104,15 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
 
 WakaTimeView::~WakaTimeView() {
     delete nam;
+    m_mainWindow->guiFactory()->removeClient(this);
 }
 
 QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
     return new WakaTimeView(mainWindow);
+}
+
+void WakaTimeView::slotConfigureWakaTime() {
+
 }
 
 QString WakaTimeView::getBinPath(QString binName) {

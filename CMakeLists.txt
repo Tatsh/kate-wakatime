@@ -2,6 +2,8 @@ project(ktexteditor_wakatime)
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
+add_definitions(-DTRANSLATION_DOMAIN=\"katewakatime\")
+
 find_package(ECM 1.1.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -24,6 +26,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 find_package(KF5TextEditor NO_MODULE)
 
 set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp)
+
+qt5_add_resources(ktexteditor_wakatime_SRCS plugin.qrc)
 
 add_library(ktexteditor_wakatime MODULE ${ktexteditor_wakatime_SRCS})
 

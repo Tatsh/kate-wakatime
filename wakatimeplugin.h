@@ -22,7 +22,12 @@
 #ifndef WAKATIMEPLUGIN_H
 #define WAKATIMEPLUGIN_H
 
+// #include <KTextEditor/Application>
+// #include <KTextEditor/Command>
+// #include <KTextEditor/Document>
+// #include <KTextEditor/MainWindow>
 #include <KTextEditor/Plugin>
+#include <KTextEditor/View>
 
 #include <QDateTime>
 #include <QLoggingCategory>
@@ -58,19 +63,20 @@ private:
     QList<class WakaTimeView *> m_views;
 };
 
-class WakaTimeView : public QObject {
+class WakaTimeView : public QObject, public KXMLGUIClient {
     Q_OBJECT
 
 public:
-    WakaTimeView(KTextEditor::MainWindow *mainWindow);
+    WakaTimeView(KTextEditor::MainWindow *);
     ~WakaTimeView();
 
 private Q_SLOTS:
     void slotDocumentModifiedChanged(KTextEditor::Document *);
     void slotDocumentWrittenToDisk(KTextEditor::Document *);
     void slotNetworkReplyFinshed(QNetworkReply *);
-    void viewCreated(KTextEditor::View *view);
-    void viewDestroyed(QObject *view);
+    void slotConfigureWakaTime();
+    void viewCreated(KTextEditor::View *);
+    void viewDestroyed(QObject *);
 
 private:
     void readConfig();
