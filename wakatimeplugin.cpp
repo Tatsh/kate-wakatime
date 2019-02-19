@@ -77,7 +77,8 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     KXMLGUIClient::setComponentName(QStringLiteral("katewakatime"),
                                     i18n("WakaTime"));
     setXMLFile(QStringLiteral("ui.rc"));
-    QAction *a = actionCollection()->addAction(QStringLiteral("configure_wakatime"));
+    QAction *a =
+        actionCollection()->addAction(QStringLiteral("configure_wakatime"));
     a->setText(i18n("Configure WakaTime..."));
     connect(
         a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
@@ -414,7 +415,8 @@ void WakaTimeView::writeConfig(void) {
     config.sync();
     QSettings::Status status;
     if ((status = config.status()) != QSettings::NoError) {
-        qCDebug(gLogWakaTime) << "Failed to save WakaTime settings: " << status;
+        qCDebug(gLogWakaTime)
+            << "Failed to save WakaTime settings: " << status;
     }
 }
 
