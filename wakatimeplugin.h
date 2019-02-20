@@ -22,17 +22,11 @@
 #ifndef WAKATIMEPLUGIN_H
 #define WAKATIMEPLUGIN_H
 
-// #include <KTextEditor/Application>
-// #include <KTextEditor/Command>
-// #include <KTextEditor/Document>
-// #include <KTextEditor/MainWindow>
 #include <KTextEditor/Plugin>
 #include <KTextEditor/View>
 
-#include <QDateTime>
-#include <QLoggingCategory>
-#include <QObject>
-#include <QVariant>
+#include <QtCore/QDateTime>
+#include <QtCore/QLoggingCategory>
 
 #include "ui_configdialog.h"
 
@@ -47,6 +41,7 @@ class MainWindow;
 class View;
 } // namespace KTextEditor
 
+class QDateTime;
 class QFile;
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -83,12 +78,12 @@ private Q_SLOTS:
 private:
     void readConfig();
     void writeConfig();
-    void sendAction(KTextEditor::Document *doc, bool isWrite);
+    void sendAction(KTextEditor::Document *, bool);
     QByteArray getUserAgent();
     void connectDocumentSignals(KTextEditor::Document *);
     bool documentIsConnected(KTextEditor::Document *);
-    void disconnectDocumentSignals(KTextEditor::Document *document);
-    QString getBinPath(QString binName);
+    void disconnectDocumentSignals(KTextEditor::Document *);
+    QString getBinPath(QString);
 
 private:
     KTextEditor::MainWindow *m_mainWindow;
