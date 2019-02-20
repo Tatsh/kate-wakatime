@@ -93,9 +93,9 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
 
     // Connect the request handling slot method
     connect(nam,
-            SIGNAL(finished(QNetworkReply *)),
+            &QNetworkAccessManager::finished,
             this,
-            SLOT(slotNetworkReplyFinshed(QNetworkReply *)));
+            &WakaTimeView::slotNetworkReplyFinshed);
 
     connect(m_mainWindow,
             &KTextEditor::MainWindow::viewCreated,
@@ -467,23 +467,23 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document) {
     // When document goes from saved state to changed state (not yet saved on
     // disk)
     connect(document,
-            SIGNAL(modifiedChanged(KTextEditor::Document *)),
+            &KTextEditor::Document::modifiedChanged,
             this,
-            SLOT(slotDocumentModifiedChanged(KTextEditor::Document *)));
+            &WakaTimeView::slotDocumentModifiedChanged);
 
     // Written to disk
     connect(document,
-            SIGNAL(documentSavedOrUploaded(KTextEditor::Document *, bool)),
+            &KTextEditor::Document::documentSavedOrUploaded,
             this,
-            SLOT(slotDocumentWrittenToDisk(KTextEditor::Document *)));
+            &WakaTimeView::slotDocumentWrittenToDisk);
 
     // Text changes (might be heavy)
     // This event unfortunately is emitted twice in separate threads for every
     // key stroke (maybe key up and down is the reason)
     connect(document,
-            SIGNAL(textChanged(KTextEditor::Document *)),
+            &KTextEditor::Document::textChanged,
             this,
-            SLOT(slotDocumentModifiedChanged(KTextEditor::Document *)));
+            &WakaTimeView::slotDocumentModifiedChanged);
 
     this->connectedDocuments << document;
 }
