@@ -79,7 +79,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>API key</string>
+    <string>API key:</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBox_hideFilenames">
