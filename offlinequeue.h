@@ -22,7 +22,11 @@
 #ifndef OFFLINEQUEUE_H
 #define OFFLINEQUEUE_H
 
-class QSqlDatabase;
+#include <QtCore/QLoggingCategory>
+#include <QtCore/QObject>
+#include <QtSql/QSqlDatabase>
+
+Q_DECLARE_LOGGING_CATEGORY(gLogOfflineQueue)
 
 class OfflineQueue {
 public:

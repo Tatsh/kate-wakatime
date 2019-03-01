@@ -1,6 +1,6 @@
 /*
- * <one line to give the program's name and a brief idea of what it does.>
- * Copyright 2019  <copyright holder> <email>
+ * Offline queue database for WakaTime.
+ * Copyright 2019 Andrew Udvare <audvare@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,6 +26,8 @@
 
 #include "offlinequeue.h"
 
+Q_LOGGING_CATEGORY(gLogOfflineQueue, "offlinequeue")
+
 OfflineQueue::OfflineQueue()
     : db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"))),
       m_failed(false) {
@@ -38,28 +40,39 @@ OfflineQueue::~OfflineQueue() {
 }
 
 QSqlDatabase &OfflineQueue::connect() {
-    if (db.isOpen() || m_failed) {
+    if (db.isOpen()) {
+        qCDebug(gLogOfflineQueue)
+            << "connect(): Returning existing db instance";
         return db;
     }
+    if (m_failed) {
+        return db;
+    }
+
+    qCDebug(gLogOfflineQueue) << "connect()";
 
     db.setDatabaseName(QDir::homePath() + QDir::separator() +
                        QStringLiteral(".wakatime.db"));
     if (!db.open()) {
+        qCCritical(gLogOfflineQueue) << "db.open() failed!";
         m_failed = true;
         return db;
     }
     QStringList tables = db.tables();
     if (!tables.contains(QStringLiteral("heartbeat_2"))) {
+        qCDebug(gLogOfflineQueue) << "Creating database table heartbeat_2";
         QSqlQuery q(db);
         q.exec(QStringLiteral(
             "CREATE TABLE heartbeat_2 (id TEXT, heartbeat TEXT)"));
     }
+    qCDebug(gLogOfflineQueue) << "connect() successful";
     return db;
 }
 
 void OfflineQueue::push(QStringList &heartbeat) {
     connect();
     if (m_failed) {
+        qCCritical(gLogOfflineQueue) << "push(): Failed to connect";
         return;
     }
 
@@ -69,24 +82,31 @@ void OfflineQueue::push(QStringList &heartbeat) {
     q.bindValue(QStringLiteral(":id"), heartbeat.at(0));
     q.bindValue(QStringLiteral(":heartbeat"), heartbeat.at(1));
     m_failed = !q.exec();
+    if (m_failed) {
+        qCCritical(gLogOfflineQueue) << "push(): Failed to insert row";
+    }
 }
 
 QStringList OfflineQueue::pop() {
     connect();
     if (m_failed) {
+        qCCritical(gLogOfflineQueue) << "pop(): Failed to connect";
         return QStringList();
     }
 
     int tries = 3;
     bool loop = true;
     QStringList heartbeat;
+
     while (loop && tries > -1) {
         QSqlQuery q(db);
         if (!q.exec(QStringLiteral("BEGIN IMMEDIATE"))) {
+            qCCritical(gLogOfflineQueue) << "pop(): BEGIN IMMEDIATE failed!";
             tries--;
             continue;
         }
         if (!q.exec(QStringLiteral("SELECT * FROM heartbeat_2 LIMIT 1"))) {
+            qCCritical(gLogOfflineQueue) << "pop(): SELECT failed!";
             tries--;
             continue;
         }
@@ -94,15 +114,19 @@ QStringList OfflineQueue::pop() {
             QString id = q.value(0).toString();
             heartbeat << id;
             heartbeat << q.value(1).toString();
-            q.prepare(
-                QStringLiteral("DELETE FROM heartbeat_2 WHERE id = :id"));
-            q.bindValue(QStringLiteral(":id"), id);
-            if (!q.exec()) {
-                tries--;
-                continue;
-            } else {
+            QSqlQuery delQuery(db);
+            const QString queryStr =
+                QStringLiteral("DELETE FROM heartbeat_2 WHERE id = '%1'")
+                    .arg(id);
+            if (delQuery.exec(queryStr)) {
+                db.commit();
+                qCDebug(gLogOfflineQueue)
+                    << "pop(): executed" << delQuery.executedQuery();
                 loop = false;
                 break;
+            } else {
+                qCCritical(gLogOfflineQueue) << "pop(): DELETE failed!";
+                tries--;
             }
         }
     }
