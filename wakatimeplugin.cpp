@@ -53,6 +53,12 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
                            "ktexteditor_wakatime.json",
                            registerPlugin<WakaTimePlugin>();)
 
+const QByteArray timeZoneBytes() {
+    const QDateTime dt = QDateTime::currentDateTime();
+    const QString timeZone = QTimeZone::systemTimeZone().displayName(dt);
+    return timeZone.toLocal8Bit();
+}
+
 WakaTimePlugin::WakaTimePlugin(QObject *parent, const QVariantList &args)
     : KTextEditor::Plugin(parent) {
     Q_UNUSED(args);
@@ -106,6 +112,8 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     foreach (KTextEditor::View *view, m_mainWindow->views()) {
         this->connectDocumentSignals(view->document());
     }
+
+    sendQueuedHeartbeats();
 }
 
 WakaTimeView::~WakaTimeView() {
@@ -362,14 +370,62 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             QStringLiteral("HIDDEN.%1").arg(fileInfo.completeSuffix()));
     }
 
-
     this->sendHeartbeat(data, isWrite);
 
     this->lastTimeSent = QDateTime::currentDateTime();
     this->lastFileSent = filePath;
 }
 
-void WakaTimeView::sendHeartbeat(QVariantMap data, bool isWrite, bool saveToQueue) {
+void WakaTimeView::sendQueuedHeartbeats() {
+    if (nam->networkAccessible() != QNetworkAccessManager::Accessible) {
+        return;
+    }
+    QString heartbeats = QStringLiteral("[");
+    int i = 0;
+    const int limit = 25;
+    const QList<QStringList> list = queue->popMany(limit);
+    const int size = list.size();
+    if (!size) {
+        return;
+    }
+    foreach (QStringList heartbeat, list) {
+        QString jsonBody = heartbeat.at(1);
+        if (i < (size - 1)) {
+            jsonBody.append(QStringLiteral(","));
+        }
+        heartbeats.append(jsonBody);
+        i++;
+    }
+    heartbeats.append(QStringLiteral("]"));
+    qCDebug(gLogWakaTime()) << "offline heartbeats" << heartbeats;
+    static QUrl url(QStringLiteral(kWakaTimeViewHeartbeatsBulkUrl));
+    static const QString contentType = QStringLiteral("application/json");
+    QNetworkRequest request(url);
+    QByteArray requestContent = heartbeats.toUtf8();
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
+    request.setRawHeader("User-Agent", this->userAgent);
+    request.setRawHeader("Authorization", apiAuthBytes());
+    request.setRawHeader("TimeZone", timeZoneBytes());
+#ifndef NDEBUG
+    request.setRawHeader("X-Ignore",
+                         QByteArray("If this request is bad, please ignore it "
+                         "while this plugin is being developed."));
+#endif
+
+    nam->post(request, requestContent);
+}
+
+QByteArray WakaTimeView::apiAuthBytes() {
+    static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
+    return QStringLiteral("Basic %1")
+        .arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()))
+        .toLocal8Bit();
+}
+
+void WakaTimeView::sendHeartbeat(const QVariantMap &data,
+                                 bool isWrite,
+                                 bool saveToQueue) {
     QJsonDocument object = QJsonDocument::fromVariant(data);
     QByteArray requestContent = object.toJson();
     static const QString contentType = QStringLiteral("application/json");
@@ -379,20 +435,14 @@ void WakaTimeView::sendHeartbeat(QVariantMap data, bool isWrite, bool saveToQueu
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setRawHeader("User-Agent", this->userAgent);
-
-    static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
-    static const QString authString = QStringLiteral("Basic %1").arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()));
-    request.setRawHeader("Authorization", authString.toLocal8Bit());
-
-    const QDateTime dt = QDateTime::currentDateTime();
-    const QString timeZone = QTimeZone::systemTimeZone().displayName(dt);
-    request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
+    request.setRawHeader("Authorization", apiAuthBytes());
+    request.setRawHeader("TimeZone", timeZoneBytes());
 
     qCDebug(gLogWakaTime) << object;
 #ifndef NDEBUG
     request.setRawHeader("X-Ignore",
                          QByteArray("If this request is bad, please ignore it "
-                         "while this plugin is being developed."));
+                                    "while this plugin is being developed."));
 #endif
 
     if (saveToQueue) {
@@ -407,14 +457,14 @@ void WakaTimeView::sendHeartbeat(QVariantMap data, bool isWrite, bool saveToQueu
 
         // time-type-category-project-branch-entity-is_write
         const QString rowId =
-        QStringLiteral("%1-%2-%3-%4-%5-%6-%7")
-        .arg(data[keyTime].toString(),
-             data[keyType].toString(),
-             data[keyCategory].toString(),
-             data[keyProject].toString(),
-             data[keyBranch].toString(),
-             data[keyEntity].toString(),
-             isWrite ? QStringLiteral("1") : QStringLiteral("0"));
+            QStringLiteral("%1-%2-%3-%4-%5-%6-%7")
+                .arg(data[keyTime].toString(),
+                     data[keyType].toString(),
+                     data[keyCategory].toString(),
+                     data[keyProject].toString(),
+                     data[keyBranch].toString(),
+                     data[keyEntity].toString(),
+                     isWrite ? QStringLiteral("1") : QStringLiteral("0"));
         const QString rowData = QString::fromUtf8(requestContent.constData());
         QStringList row;
         row << rowId << rowData;
@@ -551,10 +601,13 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
 
     const QVariantMap received = doc.toVariant().toMap();
 
-    if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
+    if (reply->error() == QNetworkReply::NoError && (statusCode == 201 || statusCode == 202)) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
+        qCDebug(gLogWakaTime) << "Received:" << doc;
 
-        queue->pop();
+        if (statusCode == 201) { // 202 only happens from the bulk request
+            queue->pop();
+        }
         this->hasSent = true;
     } else {
         qCDebug(gLogWakaTime)

@@ -31,6 +31,8 @@
 #include "ui_configdialog.h"
 
 #define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
+#define kWakaTimeViewHeartbeatsBulkUrl                                        \
+    "https://api.wakatime.com/api/v1/users/current/heartbeats.bulk"
 #define kWakaTimePluginVersion "1.1.0"
 
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
@@ -85,7 +87,9 @@ private:
     bool documentIsConnected(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
     QString getBinPath(QString);
-    void sendHeartbeat(QVariantMap, bool, bool saveToQueue = true);
+    void sendHeartbeat(const QVariantMap &, bool, bool saveToQueue = true);
+    void sendQueuedHeartbeats();
+    QByteArray apiAuthBytes();
 
 private:
     KTextEditor::MainWindow *m_mainWindow;
