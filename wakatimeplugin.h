@@ -46,6 +46,7 @@ class QFile;
 class QNetworkAccessManager;
 class QNetworkReply;
 
+class OfflineQueue;
 class WakaTimeView;
 
 class WakaTimePlugin : public KTextEditor::Plugin {
@@ -98,6 +99,7 @@ private:
     QString lastFileSent;
     QNetworkAccessManager *nam;
     QMap<QString, QString> binPathCache;
+    OfflineQueue *queue;
 };
 
 #endif

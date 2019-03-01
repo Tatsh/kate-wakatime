@@ -20,6 +20,7 @@
  */
 
 #include "wakatimeplugin.h"
+#include "offlinequeue.h"
 
 #include <KTextEditor/Application>
 #include <KTextEditor/Document>
@@ -73,7 +74,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     : QObject(mainWindow), m_mainWindow(mainWindow), hasSent(false),
       lastTimeSent(QDateTime::currentDateTime()),
       nam(new QNetworkAccessManager(this)),
-      binPathCache(QMap<QString, QString>()) {
+      binPathCache(QMap<QString, QString>()), queue(new OfflineQueue()) {
     KXMLGUIClient::setComponentName(QStringLiteral("katewakatime"),
                                     i18n("WakaTime"));
     setXMLFile(QStringLiteral("ui.rc"));
@@ -182,8 +183,7 @@ QString WakaTimeView::getBinPath(QString binName) {
 
 QByteArray WakaTimeView::getUserAgent(void) {
     return QStringLiteral("(KDE %1) Katepart/%1 kate-wakatime/%2")
-        .arg(QStringLiteral("5"))
-        .arg(QStringLiteral(kWakaTimePluginVersion))
+        .arg(QStringLiteral("5"), QStringLiteral(kWakaTimePluginVersion))
         .toLocal8Bit();
 }
 
@@ -276,10 +276,11 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 
     QVariantMap data;
     static const QString keyTime = QStringLiteral("time");
+    static const QString keyProject = QStringLiteral("project");
+    static const QString keyBranch = QStringLiteral("branch");
 
     data.insert(keyTime, currentMs / 1000);
     if (projectName.length()) {
-        static const QString keyProject = QStringLiteral("project");
         data.insert(keyProject, projectName);
     } else {
         qCDebug(gLogWakaTime) << "Warning: No project name found";
@@ -300,7 +301,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             QByteArray out = proc.readAllStandardOutput();
             QString branch = QString::fromUtf8(out.constData()).trimmed();
             if (!branch.isNull() && branch.size() > 0) {
-                static const QString keyBranch = QStringLiteral("branch");
                 data.insert(keyBranch, branch);
             }
         } else {
@@ -308,11 +308,11 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 #ifndef NDEBUG
             qCDebug(gLogWakaTime)
                 << "stderr: "
-                << QStringLiteral(proc.readAllStandardError().constData())
+                << QString::fromUtf8(proc.readAllStandardError().constData())
                        .trimmed();
             qCDebug(gLogWakaTime)
                 << "stdout: "
-                << QStringLiteral(proc.readAllStandardOutput().constData())
+                << QString::fromUtf8(proc.readAllStandardOutput().constData())
                        .trimmed();
 #endif
             qCDebug(gLogWakaTime)
@@ -388,6 +388,21 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
                          QByteArray("If this request is bad, please ignore it "
                                     "while this plugin is being developed."));
 #endif
+
+    // time-type-category-project-branch-entity-is_write
+    const QString rowId =
+        QStringLiteral("%1-%2-%3-%4-%5-%6-%7")
+            .arg(data[keyTime].toString(),
+                 data[keyType].toString(),
+                 data[keyCategory].toString(),
+                 data[keyProject].toString(),
+                 data[keyBranch].toString(),
+                 data[keyEntity].toString(),
+                 isWrite ? QStringLiteral("1") : QStringLiteral("0"));
+    const QString rowData = QString::fromUtf8(requestContent.constData());
+    QStringList row;
+    row << rowId << rowData;
+    queue->push(row);
 
     nam->post(request, requestContent);
 
@@ -525,6 +540,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
     if (reply->error() == QNetworkReply::NoError && statusCode == 201) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
 
+        queue->pop();
         this->hasSent = true;
     } else {
         qCDebug(gLogWakaTime)
