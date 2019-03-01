@@ -36,7 +36,7 @@ public:
     void push(QStringList &);
     QStringList pop();
     void pushMany(QList<QStringList> &);
-    QList< QStringList > popMany(const int);
+    QList<QStringList> popMany(const int);
 
 private:
     QSqlDatabase db;

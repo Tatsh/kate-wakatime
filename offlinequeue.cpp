@@ -112,7 +112,8 @@ QStringList OfflineQueue::pop() {
             const QString queryStr =
                 QStringLiteral("DELETE FROM heartbeat_2 WHERE id = '%1'")
                     .arg(id);
-            if (q.exec(QStringLiteral("BEGIN IMMEDIATE")) && delQuery.exec(queryStr)) {
+            if (q.exec(QStringLiteral("BEGIN IMMEDIATE")) &&
+                delQuery.exec(queryStr)) {
                 db.commit();
                 qCDebug(gLogOfflineQueue)
                     << "pop(): executed" << delQuery.executedQuery();

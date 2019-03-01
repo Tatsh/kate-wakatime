@@ -410,7 +410,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
 #ifndef NDEBUG
     request.setRawHeader("X-Ignore",
                          QByteArray("If this request is bad, please ignore it "
-                         "while this plugin is being developed."));
+                                    "while this plugin is being developed."));
 #endif
 
     nam->post(request, requestContent);
@@ -601,7 +601,8 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
 
     const QVariantMap received = doc.toVariant().toMap();
 
-    if (reply->error() == QNetworkReply::NoError && (statusCode == 201 || statusCode == 202)) {
+    if (reply->error() == QNetworkReply::NoError &&
+        (statusCode == 201 || statusCode == 202)) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
         qCDebug(gLogWakaTime) << "Received:" << doc;
 
