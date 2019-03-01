@@ -85,8 +85,8 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
         a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);
 
-    this->apiKey = QString::fromLocal8Bit("", 0);
-    this->lastFileSent = QString::fromLocal8Bit("", 0);
+    this->apiKey = QStringLiteral("");
+    this->lastFileSent = QStringLiteral("");
 
     this->readConfig();
     this->userAgent = this->getUserAgent();
@@ -161,8 +161,8 @@ QString WakaTimeView::getBinPath(QString binName) {
         return binPathCache.value(binName);
     }
 
-    static const QString slash = QString::fromLocal8Bit("/");
-    static const QString colon = QString::fromLocal8Bit(":");
+    static const QString slash = QStringLiteral("/");
+    static const QString colon = QStringLiteral(":");
 
     QStringList paths = QString::fromUtf8(getenv("PATH"))
                             .split(colon, QString::SkipEmptyParts);
@@ -181,9 +181,9 @@ QString WakaTimeView::getBinPath(QString binName) {
 }
 
 QByteArray WakaTimeView::getUserAgent(void) {
-    return QString::fromLocal8Bit("(KDE %1) Katepart/%1 kate-wakatime/%2")
-        .arg(QString::fromLocal8Bit("5"))
-        .arg(QString::fromLocal8Bit(kWakaTimePluginVersion))
+    return QStringLiteral("(KDE %1) Katepart/%1 kate-wakatime/%2")
+        .arg(QStringLiteral("5"))
+        .arg(QStringLiteral(kWakaTimePluginVersion))
         .toLocal8Bit();
 }
 
@@ -236,9 +236,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     QDir projectDirectory;
     bool vcDirFound = false;
     static QStringList filters;
-    static const QString gitStr = QString::fromLocal8Bit(".git");
-    static const QString svnStr = QString::fromLocal8Bit(".svn");
-    static const QString rootSlash = QString::fromLocal8Bit("/");
+    static const QString gitStr = QStringLiteral(".git");
+    static const QString svnStr = QStringLiteral(".svn");
+    static const QString rootSlash = QStringLiteral("/");
     filters << gitStr << svnStr;
     QString typeOfVcs;
 
@@ -266,29 +266,29 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         currentDirectory.cdUp();
     }
 
-    static QUrl url(QString::fromLocal8Bit(kWakaTimeViewActionUrl));
+    static QUrl url(QStringLiteral(kWakaTimeViewActionUrl));
     QNetworkRequest request(url);
     static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
     static const QString authString =
-        QString::fromLocal8Bit("Basic %1")
+        QStringLiteral("Basic %1")
             .arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()));
     QJsonDocument object;
 
     QVariantMap data;
-    static const QString keyTime = QString::fromLocal8Bit("time");
+    static const QString keyTime = QStringLiteral("time");
 
     data.insert(keyTime, currentMs / 1000);
     if (projectName.length()) {
-        static const QString keyProject = QString::fromLocal8Bit("project");
+        static const QString keyProject = QStringLiteral("project");
         data.insert(keyProject, projectName);
     } else {
         qCDebug(gLogWakaTime) << "Warning: No project name found";
     }
-    static const QString git = QString::fromLocal8Bit("git");
+    static const QString git = QStringLiteral("git");
     static QString gitPath = getBinPath(git);
     if (!gitPath.isNull() && !hideFilenames) {
-        static const QString cmd = gitPath.append(
-            QString::fromLocal8Bit(" symbolic-ref --short HEAD"));
+        static const QString cmd =
+            gitPath.append(QStringLiteral(" symbolic-ref --short HEAD"));
         QProcess proc;
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
 #ifndef NDEBUG
@@ -298,11 +298,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         proc.start(cmd);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
-            QString branch =
-                QString::fromStdString(out.toStdString()).trimmed();
+            QString branch = QString::fromUtf8(out.constData()).trimmed();
             if (!branch.isNull() && branch.size() > 0) {
-                static const QString keyBranch =
-                    QString::fromLocal8Bit("branch");
+                static const QString keyBranch = QStringLiteral("branch");
                 data.insert(keyBranch, branch);
             }
         } else {
@@ -310,13 +308,11 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 #ifndef NDEBUG
             qCDebug(gLogWakaTime)
                 << "stderr: "
-                << QString::fromStdString(
-                       proc.readAllStandardError().toStdString())
+                << QStringLiteral(proc.readAllStandardError().constData())
                        .trimmed();
             qCDebug(gLogWakaTime)
                 << "stdout: "
-                << QString::fromStdString(
-                       proc.readAllStandardOutput().toStdString())
+                << QStringLiteral(proc.readAllStandardOutput().constData())
                        .trimmed();
 #endif
             qCDebug(gLogWakaTime)
@@ -330,13 +326,13 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 #endif
 
     if (isWrite) {
-        static const QString keyIsWrite = QString::fromLocal8Bit("is_write");
+        static const QString keyIsWrite = QStringLiteral("is_write");
         data.insert(keyIsWrite, isWrite);
     }
 
     // This is good enough for the language most of the time
     QString mode = doc->mode();
-    static const QString keyLanguage = QString::fromLocal8Bit("language");
+    static const QString keyLanguage = QStringLiteral("language");
     if (mode.length()) {
         data.insert(keyLanguage, mode);
     } else {
@@ -346,20 +342,19 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         }
     }
 
-    static const QString keyType = QString::fromLocal8Bit("type");
-    static const QString keyCategory = QString::fromLocal8Bit("category");
-    static const QString valueFile = QString::fromLocal8Bit("file");
-    static const QString valueCoding = QString::fromLocal8Bit("coding");
-    static const QString keyEntity = QString::fromLocal8Bit("entity");
+    static const QString keyType = QStringLiteral("type");
+    static const QString keyCategory = QStringLiteral("category");
+    static const QString valueFile = QStringLiteral("file");
+    static const QString valueCoding = QStringLiteral("coding");
+    static const QString keyEntity = QStringLiteral("entity");
 
     data.insert(keyType, valueFile);
     data.insert(keyCategory, valueCoding);
 
     if (!hideFilenames) {
-        static const QString keyLines = QString::fromLocal8Bit("lines");
-        static const QString keyLineNo = QString::fromLocal8Bit("lineno");
-        static const QString keyCursorPos =
-            QString::fromLocal8Bit("cursorpos");
+        static const QString keyLines = QStringLiteral("lines");
+        static const QString keyLineNo = QStringLiteral("lineno");
+        static const QString keyCursorPos = QStringLiteral("cursorpos");
         data.insert(keyEntity, filePath);
         data.insert(keyLines, doc->lines());
         foreach (KTextEditor::View *view, m_mainWindow->views()) {
@@ -370,15 +365,14 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             }
         }
     } else {
-        data.insert(keyEntity,
-                    QString::fromLocal8Bit("HIDDEN.%1")
-                        .arg(fileInfo.completeSuffix()));
+        data.insert(
+            keyEntity,
+            QStringLiteral("HIDDEN.%1").arg(fileInfo.completeSuffix()));
     }
 
     object = QJsonDocument::fromVariant(data);
     QByteArray requestContent = object.toJson();
-    static const QString contentType =
-        QString::fromLocal8Bit("application/json");
+    static const QString contentType = QStringLiteral("application/json");
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setRawHeader("User-Agent", this->userAgent);
@@ -402,16 +396,16 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 }
 
 void WakaTimeView::writeConfig(void) {
-    QString configFilePath = QDir::homePath() + QDir::separator() +
-                             QString::fromLocal8Bit(".wakatime.cfg");
+    QString configFilePath =
+        QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
     if (!QFile::exists(configFilePath)) {
         qCDebug(gLogWakaTime)
-            << QString::fromUtf8("%1 does not exist").arg(configFilePath);
+            << QStringLiteral("%1 does not exist").arg(configFilePath);
         return;
     }
     QSettings config(configFilePath, QSettings::IniFormat);
-    config.setValue(QString::fromLocal8Bit("settings/api_key"), this->apiKey);
-    config.setValue(QString::fromLocal8Bit("settings/hidefilenames"),
+    config.setValue(QStringLiteral("settings/api_key"), this->apiKey);
+    config.setValue(QStringLiteral("settings/hidefilenames"),
                     this->hideFilenames);
     config.sync();
     QSettings::Status status;
@@ -422,22 +416,21 @@ void WakaTimeView::writeConfig(void) {
 }
 
 void WakaTimeView::readConfig(void) {
-    QString configFilePath = QDir::homePath() + QDir::separator() +
-                             QString::fromLocal8Bit(".wakatime.cfg");
+    QString configFilePath =
+        QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
     if (!QFile::exists(configFilePath)) {
         qCDebug(gLogWakaTime)
-            << QString::fromUtf8("%1 does not exist").arg(configFilePath);
+            << QStringLiteral("%1 does not exist").arg(configFilePath);
         return;
     }
 
     QSettings config(configFilePath, QSettings::IniFormat);
-    if (!config.contains(QString::fromLocal8Bit("settings/api_key"))) {
+    if (!config.contains(QStringLiteral("settings/api_key"))) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
         return;
     }
 
-    QString key =
-        config.value(QString::fromLocal8Bit("settings/api_key")).toString();
+    QString key = config.value(QStringLiteral("settings/api_key")).toString();
     if (!key.trimmed().length()) {
         qCDebug(gLogWakaTime) << "API Key is blank";
         return;
@@ -446,8 +439,7 @@ void WakaTimeView::readConfig(void) {
     // Assume valid at this point
     this->apiKey = key;
     this->hideFilenames =
-        config.value(QString::fromLocal8Bit("settings/hidefilenames"))
-            .toBool();
+        config.value(QStringLiteral("settings/hidefilenames")).toBool();
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
@@ -537,7 +529,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
     } else {
         qCDebug(gLogWakaTime)
             << "Request did not succeed, status code:" << statusCode.toInt();
-        static const QString errorsKeyStr = QString::fromLocal8Bit("errors");
+        static const QString errorsKeyStr = QStringLiteral("errors");
 
         if (statusCode == 401) {
             // TODO A handler for an incorrect API key will be worked on
