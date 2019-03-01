@@ -201,9 +201,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // Could be untitled, or a URI (including HTTP); only local files are
     // handled for now
     if (!filePath.length()) {
-#ifndef NDEBUG
         qCDebug(gLogWakaTime) << "Nothing to send about";
-#endif
         return;
     }
 
@@ -212,9 +210,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // They have it sending the real file path, maybe not respecting symlinks,
     // etc
     filePath = fileInfo.canonicalFilePath();
-#ifndef NDEBUG
     qCDebug(gLogWakaTime) << "File path:" << filePath;
-#endif
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
@@ -227,12 +223,10 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // apply to write events as they are always sent.
     if (!isWrite) {
         if (hasSent && deltaMs <= intervalMs && lastFileSent == filePath) {
-#ifndef NDEBUG
             qCDebug(gLogWakaTime)
                 << "Not enough time has passed since last send";
             qCDebug(gLogWakaTime)
                 << "Delta:" << deltaMs / 1000 / 60 << "/ 2 minutes";
-#endif
             return;
         }
     }
@@ -291,10 +285,8 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             gitPath.append(QStringLiteral(" symbolic-ref --short HEAD"));
         QProcess proc;
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
-#ifndef NDEBUG
         qCDebug(gLogWakaTime)
-            << "Running " << cmd << " in " << projectDirectory.canonicalPath();
-#endif
+            << "Running " << cmd << "in" << projectDirectory.canonicalPath();
         proc.start(cmd);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
@@ -304,25 +296,21 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             }
         } else {
             qCDebug(gLogWakaTime) << "Failed to get branch (git)";
-#ifndef NDEBUG
             qCDebug(gLogWakaTime)
-                << "stderr: "
+                << "stderr:"
                 << QString::fromUtf8(proc.readAllStandardError().constData())
                        .trimmed();
             qCDebug(gLogWakaTime)
-                << "stdout: "
+                << "stdout:"
                 << QString::fromUtf8(proc.readAllStandardOutput().constData())
                        .trimmed();
-#endif
-            qCDebug(gLogWakaTime)
+            qCInfo(gLogWakaTime)
                 << "If this is not expected, please file a bug report.";
         }
     }
-#ifndef NDEBUG
     if (gitPath.isNull()) {
-        qCDebug(gLogWakaTime) << "\"git\" not found in PATH";
+        qCInfo(gLogWakaTime) << "\"git\" not found in PATH";
     }
-#endif
 
     if (isWrite) {
         static const QString keyIsWrite = QStringLiteral("is_write");
@@ -584,10 +572,7 @@ void WakaTimeView::slotDocumentWrittenToDisk(KTextEditor::Document *doc) {
 void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
     const QVariant statusCode =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-#ifndef NDEBUG
     qCDebug(gLogWakaTime) << "Status code:" << statusCode.toInt();
-#endif
 
     const QByteArray contents = reply->readAll();
     const QJsonDocument doc = QJsonDocument::fromJson(contents);
