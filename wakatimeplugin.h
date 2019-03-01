@@ -101,7 +101,7 @@ private:
 
     // Initialised in constructor definition
     QDateTime lastTimeSent;
-    QString lastFileSent;
+    QString m_lastFileSent;
     QNetworkAccessManager *nam;
     QMap<QString, QString> binPathCache;
     OfflineQueue *queue;

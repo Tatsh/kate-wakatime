@@ -93,7 +93,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     mainWindow->guiFactory()->addClient(this);
 
     apiKey = QStringLiteral("");
-    lastFileSent = QStringLiteral("");
+    m_lastFileSent = QStringLiteral("");
 
     readConfig();
     userAgent = getUserAgent();
@@ -215,7 +215,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
     const qint64 deltaMs = currentMs - lastTimeSent.toMSecsSinceEpoch();
-    QString lastFileSent = lastFileSent;
+    QString lastFileSent = m_lastFileSent;
     static const qint64 intervalMs = 120000; // ms
 
     // If the current file has not changed and it has not been 2 minutes since
