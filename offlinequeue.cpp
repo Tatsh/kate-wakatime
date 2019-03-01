@@ -22,6 +22,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QVariant>
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
 #include "offlinequeue.h"
@@ -48,8 +49,6 @@ QSqlDatabase &OfflineQueue::connect() {
     if (m_failed) {
         return db;
     }
-
-    qCDebug(gLogOfflineQueue) << "connect()";
 
     db.setDatabaseName(QDir::homePath() + QDir::separator() +
                        QStringLiteral(".wakatime.db"));
@@ -100,11 +99,6 @@ QStringList OfflineQueue::pop() {
 
     while (loop && tries > -1) {
         QSqlQuery q(db);
-        if (!q.exec(QStringLiteral("BEGIN IMMEDIATE"))) {
-            qCCritical(gLogOfflineQueue) << "pop(): BEGIN IMMEDIATE failed!";
-            tries--;
-            continue;
-        }
         if (!q.exec(QStringLiteral("SELECT * FROM heartbeat_2 LIMIT 1"))) {
             qCCritical(gLogOfflineQueue) << "pop(): SELECT failed!";
             tries--;
@@ -118,17 +112,18 @@ QStringList OfflineQueue::pop() {
             const QString queryStr =
                 QStringLiteral("DELETE FROM heartbeat_2 WHERE id = '%1'")
                     .arg(id);
-            if (delQuery.exec(queryStr)) {
+            if (q.exec(QStringLiteral("BEGIN IMMEDIATE")) && delQuery.exec(queryStr)) {
                 db.commit();
                 qCDebug(gLogOfflineQueue)
                     << "pop(): executed" << delQuery.executedQuery();
-                loop = false;
                 break;
             } else {
+                db.rollback();
                 qCCritical(gLogOfflineQueue) << "pop(): DELETE failed!";
                 tries--;
             }
         }
+        loop = false;
     }
 
     return heartbeat;
@@ -140,7 +135,7 @@ void OfflineQueue::pushMany(QList<QStringList> &heartbeats) {
     }
 }
 
-QList<QStringList> OfflineQueue::popMany(int limit) {
+QList<QStringList> OfflineQueue::popMany(const int limit) {
     QList<QStringList> ret;
     for (int i = 0; limit == -1 || i < limit; i++) {
         QStringList poppedRecord = pop();

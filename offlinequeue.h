@@ -33,10 +33,10 @@ public:
     OfflineQueue();
     ~OfflineQueue();
     QSqlDatabase &connect();
-    void push(QStringList &heartbeat);
+    void push(QStringList &);
     QStringList pop();
-    void pushMany(QList<QStringList> &heartbeats);
-    QList<QStringList> popMany(int limit = -1);
+    void pushMany(QList<QStringList> &);
+    QList< QStringList > popMany(const int);
 
 private:
     QSqlDatabase db;
