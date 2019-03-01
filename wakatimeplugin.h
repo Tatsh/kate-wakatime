@@ -85,6 +85,7 @@ private:
     bool documentIsConnected(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
     QString getBinPath(QString);
+    void sendHeartbeat(QVariantMap, bool, bool saveToQueue = true);
 
 private:
     KTextEditor::MainWindow *m_mainWindow;

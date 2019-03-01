@@ -266,14 +266,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         currentDirectory.cdUp();
     }
 
-    static QUrl url(QStringLiteral(kWakaTimeViewActionUrl));
-    QNetworkRequest request(url);
-    static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
-    static const QString authString =
-        QStringLiteral("Basic %1")
-            .arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()));
-    QJsonDocument object;
-
     QVariantMap data;
     static const QString keyTime = QStringLiteral("time");
     static const QString keyProject = QStringLiteral("project");
@@ -370,44 +362,66 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             QStringLiteral("HIDDEN.%1").arg(fileInfo.completeSuffix()));
     }
 
-    object = QJsonDocument::fromVariant(data);
+
+    this->sendHeartbeat(data, isWrite);
+
+    this->lastTimeSent = QDateTime::currentDateTime();
+    this->lastFileSent = filePath;
+}
+
+void WakaTimeView::sendHeartbeat(QVariantMap data, bool isWrite, bool saveToQueue) {
+    QJsonDocument object = QJsonDocument::fromVariant(data);
     QByteArray requestContent = object.toJson();
     static const QString contentType = QStringLiteral("application/json");
 
+    static QUrl url(QStringLiteral(kWakaTimeViewActionUrl));
+    QNetworkRequest request(url);
+
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setRawHeader("User-Agent", this->userAgent);
+
+    static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
+    static const QString authString = QStringLiteral("Basic %1").arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()));
     request.setRawHeader("Authorization", authString.toLocal8Bit());
 
     const QDateTime dt = QDateTime::currentDateTime();
     const QString timeZone = QTimeZone::systemTimeZone().displayName(dt);
     request.setRawHeader("TimeZone", timeZone.toLocal8Bit());
 
-#ifndef NDEBUG
     qCDebug(gLogWakaTime) << object;
+#ifndef NDEBUG
     request.setRawHeader("X-Ignore",
                          QByteArray("If this request is bad, please ignore it "
-                                    "while this plugin is being developed."));
+                         "while this plugin is being developed."));
 #endif
 
-    // time-type-category-project-branch-entity-is_write
-    const QString rowId =
+    if (saveToQueue) {
+        static const QString keyType = QStringLiteral("type");
+        static const QString keyCategory = QStringLiteral("category");
+        static const QString valueFile = QStringLiteral("file");
+        static const QString valueCoding = QStringLiteral("coding");
+        static const QString keyEntity = QStringLiteral("entity");
+        static const QString keyTime = QStringLiteral("time");
+        static const QString keyProject = QStringLiteral("project");
+        static const QString keyBranch = QStringLiteral("branch");
+
+        // time-type-category-project-branch-entity-is_write
+        const QString rowId =
         QStringLiteral("%1-%2-%3-%4-%5-%6-%7")
-            .arg(data[keyTime].toString(),
-                 data[keyType].toString(),
-                 data[keyCategory].toString(),
-                 data[keyProject].toString(),
-                 data[keyBranch].toString(),
-                 data[keyEntity].toString(),
-                 isWrite ? QStringLiteral("1") : QStringLiteral("0"));
-    const QString rowData = QString::fromUtf8(requestContent.constData());
-    QStringList row;
-    row << rowId << rowData;
-    queue->push(row);
+        .arg(data[keyTime].toString(),
+             data[keyType].toString(),
+             data[keyCategory].toString(),
+             data[keyProject].toString(),
+             data[keyBranch].toString(),
+             data[keyEntity].toString(),
+             isWrite ? QStringLiteral("1") : QStringLiteral("0"));
+        const QString rowData = QString::fromUtf8(requestContent.constData());
+        QStringList row;
+        row << rowId << rowData;
+        queue->push(row);
+    }
 
     nam->post(request, requestContent);
-
-    this->lastTimeSent = QDateTime::currentDateTime();
-    this->lastFileSent = filePath;
 }
 
 void WakaTimeView::writeConfig(void) {
