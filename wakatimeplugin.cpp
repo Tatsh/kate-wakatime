@@ -68,11 +68,11 @@ WakaTimePlugin::~WakaTimePlugin() {
 }
 
 void WakaTimeView::viewCreated(KTextEditor::View *view) {
-    this->connectDocumentSignals(view->document());
+    connectDocumentSignals(view->document());
 }
 
 void WakaTimeView::viewDestroyed(QObject *view) {
-    this->disconnectDocumentSignals(
+    disconnectDocumentSignals(
         static_cast<KTextEditor::View *>(view)->document());
 }
 
@@ -92,11 +92,11 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
         a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);
 
-    this->apiKey = QStringLiteral("");
-    this->lastFileSent = QStringLiteral("");
+    apiKey = QStringLiteral("");
+    lastFileSent = QStringLiteral("");
 
-    this->readConfig();
-    this->userAgent = this->getUserAgent();
+    readConfig();
+    userAgent = getUserAgent();
 
     // Connect the request handling slot method
     connect(nam,
@@ -110,7 +110,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
             &WakaTimeView::viewCreated);
 
     foreach (KTextEditor::View *view, m_mainWindow->views()) {
-        this->connectDocumentSignals(view->document());
+        connectDocumentSignals(view->document());
     }
 
     sendQueuedHeartbeats();
@@ -144,20 +144,20 @@ void WakaTimeView::slotConfigureWakaTime() {
                        ->window());
     Ui::ConfigureWakaTimeDialog ui;
     ui.setupUi(&dialog);
-    ui.lineEdit_apiKey->setText(this->apiKey);
-    if (this->apiKey.isNull() || !this->apiKey.size()) {
+    ui.lineEdit_apiKey->setText(apiKey);
+    if (apiKey.isNull() || !apiKey.size()) {
         ui.lineEdit_apiKey->setFocus();
     }
-    ui.checkBox_hideFilenames->setChecked(this->hideFilenames);
+    ui.checkBox_hideFilenames->setChecked(hideFilenames);
 
     dialog.setWindowTitle(i18n("Configure WakaTime"));
     if (dialog.exec() == QDialog::Accepted) {
         QString newApiKey = ui.lineEdit_apiKey->text();
         if (newApiKey.size() == 36) {
-            this->apiKey = newApiKey;
+            apiKey = newApiKey;
         }
-        this->hideFilenames = ui.checkBox_hideFilenames->isChecked();
-        this->writeConfig();
+        hideFilenames = ui.checkBox_hideFilenames->isChecked();
+        writeConfig();
     }
 }
 
@@ -218,16 +218,15 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 
     // Compare date and make sure it has been at least 15 minutes
     const qint64 currentMs = QDateTime::currentMSecsSinceEpoch();
-    const qint64 deltaMs = currentMs - this->lastTimeSent.toMSecsSinceEpoch();
-    QString lastFileSent = this->lastFileSent;
+    const qint64 deltaMs = currentMs - lastTimeSent.toMSecsSinceEpoch();
+    QString lastFileSent = lastFileSent;
     static const qint64 intervalMs = 120000; // ms
 
     // If the current file has not changed and it has not been 2 minutes since
     // the last heartbeat was sent, do NOT send this heartbeat. This does not
     // apply to write events as they are always sent.
     if (!isWrite) {
-        if (this->hasSent && deltaMs <= intervalMs &&
-            lastFileSent == filePath) {
+        if (hasSent && deltaMs <= intervalMs && lastFileSent == filePath) {
 #ifndef NDEBUG
             qCDebug(gLogWakaTime)
                 << "Not enough time has passed since last send";
@@ -370,10 +369,10 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             QStringLiteral("HIDDEN.%1").arg(fileInfo.completeSuffix()));
     }
 
-    this->sendHeartbeat(data, isWrite);
+    sendHeartbeat(data, isWrite);
 
-    this->lastTimeSent = QDateTime::currentDateTime();
-    this->lastFileSent = filePath;
+    lastTimeSent = QDateTime::currentDateTime();
+    lastFileSent = filePath;
 }
 
 void WakaTimeView::sendQueuedHeartbeats() {
@@ -404,7 +403,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
     QByteArray requestContent = heartbeats.toUtf8();
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
-    request.setRawHeader("User-Agent", this->userAgent);
+    request.setRawHeader("User-Agent", userAgent);
     request.setRawHeader("Authorization", apiAuthBytes());
     request.setRawHeader("TimeZone", timeZoneBytes());
 #ifndef NDEBUG
@@ -417,7 +416,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
 }
 
 QByteArray WakaTimeView::apiAuthBytes() {
-    static const QByteArray apiKeyBytes = this->apiKey.toLocal8Bit();
+    static const QByteArray apiKeyBytes = apiKey.toLocal8Bit();
     return QStringLiteral("Basic %1")
         .arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()))
         .toLocal8Bit();
@@ -434,7 +433,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
-    request.setRawHeader("User-Agent", this->userAgent);
+    request.setRawHeader("User-Agent", userAgent);
     request.setRawHeader("Authorization", apiAuthBytes());
     request.setRawHeader("TimeZone", timeZoneBytes());
 
@@ -483,9 +482,8 @@ void WakaTimeView::writeConfig(void) {
         return;
     }
     QSettings config(configFilePath, QSettings::IniFormat);
-    config.setValue(QStringLiteral("settings/api_key"), this->apiKey);
-    config.setValue(QStringLiteral("settings/hidefilenames"),
-                    this->hideFilenames);
+    config.setValue(QStringLiteral("settings/api_key"), apiKey);
+    config.setValue(QStringLiteral("settings/hidefilenames"), hideFilenames);
     config.sync();
     QSettings::Status status;
     if ((status = config.status()) != QSettings::NoError) {
@@ -516,13 +514,13 @@ void WakaTimeView::readConfig(void) {
     }
 
     // Assume valid at this point
-    this->apiKey = key;
-    this->hideFilenames =
+    apiKey = key;
+    hideFilenames =
         config.value(QStringLiteral("settings/hidefilenames")).toBool();
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
-    foreach (KTextEditor::Document *doc, this->connectedDocuments) {
+    foreach (KTextEditor::Document *doc, connectedDocuments) {
         if (doc == document) {
             return true;
         }
@@ -531,7 +529,7 @@ bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
 }
 
 void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document) {
-    if (!document || this->documentIsConnected(document)) {
+    if (!document || documentIsConnected(document)) {
         return;
     }
 
@@ -556,11 +554,11 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document) {
             this,
             &WakaTimeView::slotDocumentModifiedChanged);
 
-    this->connectedDocuments << document;
+    connectedDocuments << document;
 }
 
 void WakaTimeView::disconnectDocumentSignals(KTextEditor::Document *document) {
-    if (!this->documentIsConnected(document)) {
+    if (!documentIsConnected(document)) {
         return;
     }
 
@@ -571,16 +569,16 @@ void WakaTimeView::disconnectDocumentSignals(KTextEditor::Document *document) {
                SIGNAL(documentSavedOrUploaded(KTextEditor::Document *, bool)));
     disconnect(document, SIGNAL(textChanged(KTextEditor::Document *)));
 
-    this->connectedDocuments.removeOne(document);
+    connectedDocuments.removeOne(document);
 }
 
 // Slots
 void WakaTimeView::slotDocumentModifiedChanged(KTextEditor::Document *doc) {
-    this->sendAction(doc, false);
+    sendAction(doc, false);
 }
 
 void WakaTimeView::slotDocumentWrittenToDisk(KTextEditor::Document *doc) {
-    this->sendAction(doc, true);
+    sendAction(doc, true);
 }
 
 void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
@@ -609,7 +607,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
         if (statusCode == 201) { // 202 only happens from the bulk request
             queue->pop();
         }
-        this->hasSent = true;
+        hasSent = true;
     } else {
         qCDebug(gLogWakaTime)
             << "Request did not succeed, status code:" << statusCode.toInt();
