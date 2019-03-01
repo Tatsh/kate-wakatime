@@ -6,15 +6,7 @@ This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, us
 
 1. Get an account at [WakaTime](https://wakatime.com).
 2. Get your [API key](https://wakatime.com/settings).
-3. Create a file `~/.wakatime.cfg` and make sure it looks similar to this:
-
-   ```ini
-   [settings]
-   api_key = myapikey-0000-0000-0000-000000000000
-   ```
-
-4. Clone this project and compile:
-
+3. Clone this project and compile:
    ```bash
    git clone git@github.com:Tatsh/kate-wakatime.git
    cd kate-wakatime
@@ -22,42 +14,37 @@ This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, us
    cd build
    ```
 
-   If on 64-bit:
+   Linux:
 
    ```bash
    cmake .. -DCMAKE_INSTALL_PREFIX=/usr
    ```
 
-   If on 32-bit:
+   MacPorts:
 
    ```bash
-   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DLIB_SUFFIX=""
-   ```
-
-   MacPorts (tested on Mid-2012 MacBook Pro running Yosemite):
-
-   ```bash
-   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/local/ -DLIB_SUFFIX=""
+   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/local/
    ```
 
    Finish the task:
 
    ```bash
    make
+   sudo make install
    ```
 
-6. You can choose to install with `sudo make install` or you can set the `KDEDIRS` environment variable. You may need to run `kbuildsycoca5` as yourself once before launching Kate again (this is true on MacPorts).
-7. Once this plugin is installed, open Kate (or any other katepart editor (KWrite, etc)) and go to *Settings*, *Configure <name>...*, then in the dialog choose *Extensions*.
-8. Use the checkbox to enable *WakaTime* and click *OK*:
+4. Once this plugin is installed, open Kate and go to *Settings*, *Configure Kate...*, then in the dialog choose *Plugins*.
+5. Use the checkbox to enable *WakaTime* and click *OK*:
 
-   ![screenie](https://cloud.githubusercontent.com/assets/724848/5060831/c4f5d0ca-6d24-11e4-8257-568e697a197b.png)
+   ![screenshot](https://user-images.githubusercontent.com/724848/53671349-f6a91280-3c4b-11e9-88b9-01f2cdc3cf67.png)
 
-9. Restart Kate to be sure the plugin initialises properly.
+6. Restart Kate to be sure the plugin initialises properly.
+7. Go to *Settings*, *Configure WakaTime...*. In the dialog, fill in your API key. Click *OK* to save.
 
-Make sure you absolutely have your `~/.wakatime.cfg` file properly set.
+To be certain this will work, check the file at `~/.wakatime.cfg`.
 
 # Is this a keylogger?
 
 Short answer is no.
 
-See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L113) method if you want to be certain.
+See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L198) method if you want to be certain.
