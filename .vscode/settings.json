@@ -10,7 +10,8 @@
         "kxmlguiclient": "cpp",
         "kpluginfactory": "cpp",
         "kaboutdata": "cpp",
-        "qdialog": "cpp"
+        "qdialog": "cpp",
+        "string_view": "cpp"
     },
     "C_Cpp.default.includePath": ["/opt/local/include", "/opt/local/include/KF5", "/opt/local/include/qt5"]
 }
