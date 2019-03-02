@@ -31,6 +31,7 @@
 #include <KAboutData>
 #include <KActionCollection>
 #include <KLocalizedString>
+#include <KMessageBox>
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KXMLGUIFactory>
@@ -288,7 +289,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         QProcess proc;
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
         qCDebug(gLogWakaTime)
-            << "Running " << cmd << "in" << projectDirectory.canonicalPath();
+            << "Running" << cmd << "in" << projectDirectory.canonicalPath();
         proc.start(cmd);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
@@ -406,7 +407,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
 }
 
 QByteArray WakaTimeView::apiAuthBytes() {
-    static const QByteArray apiKeyBytes = apiKey.toLocal8Bit();
+    const QByteArray apiKeyBytes = apiKey.toLocal8Bit();
     return QStringLiteral("Basic %1")
         .arg(QString::fromLocal8Bit(apiKeyBytes.toBase64()))
         .toLocal8Bit();
@@ -585,10 +586,9 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
         static const QString errorsKeyStr = QStringLiteral("errors");
 
         if (statusCode == 401) {
-            // TODO A handler for an incorrect API key will be worked on
-            // shortly.
-            qCDebug(gLogWakaTime)
-                << "Check authentication details in ~/.wakatime.cfg";
+            KMessageBox::error(nullptr,
+                               i18n("WakaTime could not authenticate the last "
+                                    "request. Verify your API key setting."));
         }
 
         foreach (QVariant error, received[errorsKeyStr].toList()) {
