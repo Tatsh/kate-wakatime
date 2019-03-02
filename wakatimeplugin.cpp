@@ -40,7 +40,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QProcess>
-#include <QtCore/QSettings>
 #include <QtCore/QTimeZone>
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkAccessManager>
@@ -94,6 +93,9 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
 
     apiKey = QStringLiteral("");
     m_lastFileSent = QStringLiteral("");
+    QString configFilePath =
+        QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
+    config = new QSettings(configFilePath, QSettings::IniFormat, this);
 
     readConfig();
     userAgent = getUserAgent();
@@ -462,41 +464,25 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 }
 
 void WakaTimeView::writeConfig(void) {
-    QString configFilePath =
-        QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
-    if (!QFile::exists(configFilePath)) {
-        qCDebug(gLogWakaTime)
-            << QStringLiteral("%1 does not exist").arg(configFilePath);
-        return;
-    }
-    QSettings config(configFilePath, QSettings::IniFormat);
-    config.setValue(QStringLiteral("settings/api_key"), apiKey);
-    config.setValue(QStringLiteral("settings/hidefilenames"), hideFilenames);
-    config.sync();
+    config->setValue(QStringLiteral("settings/api_key"), apiKey);
+    config->setValue(QStringLiteral("settings/hidefilenames"), hideFilenames);
+    config->sync();
     QSettings::Status status;
-    if ((status = config.status()) != QSettings::NoError) {
-        qCDebug(gLogWakaTime)
-            << "Failed to save WakaTime settings: " << status;
+    if ((status = config->status()) != QSettings::NoError) {
+        qCDebug(gLogWakaTime) << "Failed to save WakaTime settings:" << status;
     }
 }
 
 void WakaTimeView::readConfig(void) {
-    QString configFilePath =
-        QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
-    if (!QFile::exists(configFilePath)) {
-        qCDebug(gLogWakaTime)
-            << QStringLiteral("%1 does not exist").arg(configFilePath);
-        return;
-    }
+    const QString apiKeyPath = QStringLiteral("settings/api_key");
 
-    QSettings config(configFilePath, QSettings::IniFormat);
-    if (!config.contains(QStringLiteral("settings/api_key"))) {
+    if (!config->contains(apiKeyPath)) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
         return;
     }
 
-    QString key = config.value(QStringLiteral("settings/api_key")).toString();
-    if (!key.trimmed().length()) {
+    QString key = config->value(apiKeyPath).toString().trimmed();
+    if (!key.length()) {
         qCDebug(gLogWakaTime) << "API Key is blank";
         return;
     }
@@ -504,7 +490,7 @@ void WakaTimeView::readConfig(void) {
     // Assume valid at this point
     apiKey = key;
     hideFilenames =
-        config.value(QStringLiteral("settings/hidefilenames")).toBool();
+        config->value(QStringLiteral("settings/hidefilenames")).toBool();
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {

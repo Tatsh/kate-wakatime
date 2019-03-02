@@ -27,6 +27,7 @@
 
 #include <QtCore/QDateTime>
 #include <QtCore/QLoggingCategory>
+#include <QtCore/QSettings>
 
 #include "ui_configdialog.h"
 
@@ -105,6 +106,7 @@ private:
     QNetworkAccessManager *nam;
     QMap<QString, QString> binPathCache;
     OfflineQueue *queue;
+    QSettings *config;
 };
 
 #endif
