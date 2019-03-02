@@ -1,6 +1,6 @@
 # Note
 
-This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, use the [v0.4 release](https://github.com/Tatsh/kate-wakatime/releases).
+This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tatsh/kate-wakatime/releases).
 
 # How to use
 
