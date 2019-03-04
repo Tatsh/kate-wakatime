@@ -83,7 +83,6 @@ private:
     void readConfig();
     void writeConfig();
     void sendAction(KTextEditor::Document *, bool);
-    QByteArray getUserAgent();
     void connectDocumentSignals(KTextEditor::Document *);
     bool documentIsConnected(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);

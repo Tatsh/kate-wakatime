@@ -96,10 +96,11 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     m_lastFileSent = QString();
     QString configFilePath =
         QDir::homePath() + QDir::separator() + QLatin1String(".wakatime.cfg");
+    userAgent = QByteArrayLiteral("(KDE 5) Katepart/" kWakaTimePluginVersion
+                                  " kate-wakatime/" kWakaTimePluginVersion);
     config = new QSettings(configFilePath, QSettings::IniFormat, this);
 
     readConfig();
-    userAgent = getUserAgent();
 
     // Connect the request handling slot method
     connect(nam,
@@ -190,11 +191,6 @@ QString WakaTimeView::getBinPath(QString binName) {
     }
 
     return QString();
-}
-
-QByteArray WakaTimeView::getUserAgent(void) {
-    return QByteArray("(KDE 5) Katepart/" kWakaTimePluginVersion
-                      " kate-wakatime/" kWakaTimePluginVersion);
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
