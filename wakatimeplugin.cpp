@@ -165,6 +165,9 @@ void WakaTimeView::slotConfigureWakaTime() {
     }
 }
 
+static const char *const kDefaultPath =
+    "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
+
 QString WakaTimeView::getBinPath(QString binName) {
 #ifdef Q_OS_WIN
     return QString();
@@ -177,8 +180,10 @@ QString WakaTimeView::getBinPath(QString binName) {
     static const QString slash = QLatin1String("/");
     static const QString colon = QLatin1String(":");
 
-    QStringList paths = QString::fromUtf8(getenv("PATH"))
+    const char *const path = getenv("PATH");
+    QStringList paths = QString::fromUtf8(path ? path : kDefaultPath)
                             .split(colon, QString::SkipEmptyParts);
+
     foreach (QString path, paths) {
         QStringList dirListing = QDir(path).entryList();
         foreach (QString entry, dirListing) {
