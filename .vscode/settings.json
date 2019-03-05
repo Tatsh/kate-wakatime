@@ -11,7 +11,9 @@
         "kpluginfactory": "cpp",
         "kaboutdata": "cpp",
         "qdialog": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp"
     },
     "C_Cpp.default.includePath": ["/opt/local/include", "/opt/local/include/KF5", "/opt/local/include/qt5"]
 }
