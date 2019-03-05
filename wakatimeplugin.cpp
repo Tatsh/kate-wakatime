@@ -128,7 +128,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
             this,
             &WakaTimeView::viewCreated);
 
-    foreach (KTextEditor::View *view, m_mainWindow->views()) {
+    for (KTextEditor::View *view : m_mainWindow->views()) {
         connectDocumentSignals(view->document());
     }
 
@@ -200,9 +200,9 @@ QString WakaTimeView::getBinPath(QString binName) {
     QStringList paths = QString::fromUtf8(path ? path : kDefaultPath)
                             .split(colon, QString::SkipEmptyParts);
 
-    foreach (QString path, paths) {
+    for (QString path : paths) {
         QStringList dirListing = QDir(path).entryList();
-        foreach (QString entry, dirListing) {
+        for (QString entry : dirListing) {
             if (entry == binName) {
                 entry = path.append(slash).append(entry);
                 binPathCache[binName] = entry;
@@ -270,7 +270,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         QFileInfoList entries = currentDirectory.entryInfoList(
             QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
 
-        foreach (QFileInfo entry, entries) {
+        for (QFileInfo entry : entries) {
             QString name = entry.fileName();
 
             if ((name.compare(gitStr) || name.compare(svnStr)) &&
@@ -363,7 +363,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         static const QString keyCursorPos = QLatin1String("cursorpos");
         data.insert(keyEntity, filePath);
         data.insert(keyLines, doc->lines());
-        foreach (KTextEditor::View *view, m_mainWindow->views()) {
+        for (KTextEditor::View *view : m_mainWindow->views()) {
             if (view->document() == doc) {
                 data.insert(keyLineNo, view->cursorPosition().line() + 1);
                 data.insert(keyCursorPos, view->cursorPosition().column() + 1);
@@ -394,7 +394,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
     if (!size) {
         return;
     }
-    foreach (QStringList heartbeat, list) {
+    for (QStringList heartbeat : list) {
         QString jsonBody = heartbeat.at(1);
         if (i < (size - 1)) {
             jsonBody.append(QLatin1String(","));
@@ -515,7 +515,7 @@ void WakaTimeView::readConfig(void) {
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
-    foreach (KTextEditor::Document *doc, connectedDocuments) {
+    for (KTextEditor::Document *doc : connectedDocuments) {
         if (doc == document) {
             return true;
         }
@@ -611,7 +611,7 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
                                     "request. Verify your API key setting."));
         }
 
-        foreach (QVariant error, received[errorsKeyStr].toList()) {
+        for (QVariant error : received[errorsKeyStr].toList()) {
             qCDebug(gLogWakaTime) << error.toByteArray();
         }
     }
