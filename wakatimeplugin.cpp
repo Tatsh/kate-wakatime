@@ -122,6 +122,8 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
 
 WakaTimeView::~WakaTimeView() {
     delete nam;
+    delete queue;
+    delete config;
     m_mainWindow->guiFactory()->removeClient(this);
 }
 
