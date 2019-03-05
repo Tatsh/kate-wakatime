@@ -68,6 +68,13 @@ class WakaTimeView : public QObject, public KXMLGUIClient {
     Q_OBJECT
 
 public:
+    enum WakaTimeApiHttpHeaders {
+        AuthorizationHeader,
+        TimeZoneHeader,
+        XHostname,
+        XIgnoreHeader
+    };
+
     WakaTimeView(KTextEditor::MainWindow *);
     ~WakaTimeView();
 

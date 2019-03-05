@@ -59,6 +59,21 @@ const QByteArray timeZoneBytes() {
     return timeZone.toLocal8Bit();
 }
 
+static QByteArray headerName(WakaTimeView::WakaTimeApiHttpHeaders header) {
+    switch (header) {
+    case WakaTimeView::AuthorizationHeader:
+        return QByteArrayLiteral("Authorization");
+    case WakaTimeView::TimeZoneHeader:
+        return QByteArrayLiteral("TimeZone");
+    case WakaTimeView::XIgnoreHeader:
+        return QByteArrayLiteral("X-Ignore");
+    case WakaTimeView::XHostname:
+        return QByteArrayLiteral("X-Hostname");
+    }
+
+    return QByteArray();
+}
+
 WakaTimePlugin::WakaTimePlugin(QObject *parent, const QVariantList &args)
     : KTextEditor::Plugin(parent) {
     Q_UNUSED(args);
@@ -167,9 +182,6 @@ void WakaTimeView::slotConfigureWakaTime() {
     }
 }
 
-static const char *const kDefaultPath =
-    "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
-
 QString WakaTimeView::getBinPath(QString binName) {
 #ifdef Q_OS_WIN
     return QString();
@@ -179,6 +191,8 @@ QString WakaTimeView::getBinPath(QString binName) {
         return binPathCache.value(binName);
     }
 
+    static const char *const kDefaultPath =
+        "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
     static const QString slash = QLatin1String("/");
     static const QString colon = QLatin1String(":");
 
@@ -396,13 +410,16 @@ void WakaTimeView::sendQueuedHeartbeats() {
     QByteArray requestContent = heartbeats.toUtf8();
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
-    request.setRawHeader("User-Agent", userAgent);
-    request.setRawHeader("Authorization", apiAuthBytes());
-    request.setRawHeader("TimeZone", timeZoneBytes());
+    request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
+    request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
+                         apiAuthBytes());
+    request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
+                         timeZoneBytes());
 #ifndef NDEBUG
-    request.setRawHeader("X-Ignore",
-                         QByteArray("If this request is bad, please ignore it "
-                                    "while this plugin is being developed."));
+    request.setRawHeader(
+        headerName(WakaTimeView::XIgnoreHeader),
+        QLatin1String("If this request is bad, please ignore it "
+                      "while this plugin is being developed."));
 #endif
 
     nam->post(request, requestContent);
@@ -425,13 +442,15 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
-    request.setRawHeader("User-Agent", userAgent);
-    request.setRawHeader("Authorization", apiAuthBytes());
-    request.setRawHeader("TimeZone", timeZoneBytes());
+    request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
+    request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
+                         apiAuthBytes());
+    request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
+                         timeZoneBytes());
 
     qCDebug(gLogWakaTime) << object;
 #ifndef NDEBUG
-    request.setRawHeader("X-Ignore",
+    request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
                                     "while this plugin is being developed."));
 #endif
@@ -469,8 +488,8 @@ void WakaTimeView::writeConfig(void) {
     config->setValue(QLatin1String("settings/api_key"), apiKey);
     config->setValue(QLatin1String("settings/hidefilenames"), hideFilenames);
     config->sync();
-    QSettings::Status status;
-    if ((status = config->status()) != QSettings::NoError) {
+    QSettings::Status status = config->status();
+    if (status != QSettings::NoError) {
         qCDebug(gLogWakaTime) << "Failed to save WakaTime settings:" << status;
     }
 }
