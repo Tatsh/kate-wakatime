@@ -450,9 +450,10 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 
     qCDebug(gLogWakaTime) << object;
 #ifndef NDEBUG
-    request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
-                         QByteArray("If this request is bad, please ignore it "
-                                    "while this plugin is being developed."));
+    request.setRawHeader(
+        headerName(WakaTimeView::XIgnoreHeader),
+        QLatin1String("If this request is bad, please ignore it "
+                      "while this plugin is being developed."));
 #endif
 
     if (saveToQueue) {
