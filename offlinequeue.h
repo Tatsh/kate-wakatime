@@ -1,6 +1,6 @@
 /*
- * <one line to give the program's name and a brief idea of what it does.>
- * Copyright 2019  <copyright holder> <email>
+ * Offline queue interface.
+ * Copyright 2019 Andrew Udvare <audvare@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
