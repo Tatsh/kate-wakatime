@@ -28,15 +28,15 @@
 #include <KTextEditor/MainWindow>
 #include <KTextEditor/View>
 
-#include <KAboutData>
-#include <KActionCollection>
-#include <KLocalizedString>
-#include <KMessageBox>
-#include <KPluginFactory>
-#include <KPluginLoader>
-#include <KXMLGUIFactory>
+#include <KCoreAddons/KAboutData>
+#include <KCoreAddons/KPluginFactory>
+#include <KCoreAddons/KPluginLoader>
+#include <KI18n/KLocalizedString>
+#include <KXmlGui/KActionCollection>
+#include <KXmlGui/KXMLGUIFactory>
+#include <KWidgetsAddons/KMessageBox>
 
-#include <QDialog>
+#include <QtCore/QDateTime>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
@@ -46,6 +46,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
+#include <QtWidgets/QDialog>
 
 Q_LOGGING_CATEGORY(gLogWakaTime, "wakatime")
 
