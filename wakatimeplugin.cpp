@@ -32,9 +32,9 @@
 #include <KCoreAddons/KPluginFactory>
 #include <KCoreAddons/KPluginLoader>
 #include <KI18n/KLocalizedString>
+#include <KWidgetsAddons/KMessageBox>
 #include <KXmlGui/KActionCollection>
 #include <KXmlGui/KXMLGUIFactory>
-#include <KWidgetsAddons/KMessageBox>
 
 #include <QtCore/QDateTime>
 #include <QtCore/QDir>
@@ -93,10 +93,9 @@ void WakaTimeView::viewDestroyed(QObject *view) {
 }
 
 WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
-    : QObject(mainWindow), m_mainWindow(mainWindow), apiKey(QString()), hasSent(false),
-      lastTimeSent(QDateTime::currentDateTime()),
-      m_lastFileSent(QString()),
-      nam(new QNetworkAccessManager(this)),
+    : QObject(mainWindow), m_mainWindow(mainWindow), apiKey(QString()),
+      hasSent(false), lastTimeSent(QDateTime::currentDateTime()),
+      m_lastFileSent(QString()), nam(new QNetworkAccessManager(this)),
       binPathCache(QMap<QString, QString>()), queue(new OfflineQueue()) {
     KXMLGUIClient::setComponentName(QLatin1String("katewakatime"),
                                     i18n("WakaTime"));
