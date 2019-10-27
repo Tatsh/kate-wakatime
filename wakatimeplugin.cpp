@@ -94,9 +94,9 @@ void WakaTimeView::viewDestroyed(QObject *view) {
 
 WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     : QObject(mainWindow), m_mainWindow(mainWindow), apiKey(QString()),
-      hasSent(false), lastTimeSent(QDateTime::currentDateTime()),
-      m_lastFileSent(QString()), nam(new QNetworkAccessManager(this)),
-      binPathCache(QMap<QString, QString>()), queue(new OfflineQueue()) {
+      binPathCache(QMap<QString, QString>()), hasSent(false),
+      lastFileSent(QString()), lastTimeSent(QDateTime::currentDateTime()),
+      nam(new QNetworkAccessManager(this)), queue(new OfflineQueue()) {
     KXMLGUIClient::setComponentName(QLatin1String("katewakatime"),
                                     i18n("WakaTime"));
     setXMLFile(QLatin1String("ui.rc"));
@@ -239,7 +239,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // the last heartbeat was sent, do NOT send this heartbeat. This does not
     // apply to write events as they are always sent.
     if (!isWrite) {
-        if (hasSent && deltaMs <= intervalMs && m_lastFileSent == filePath) {
+        if (hasSent && deltaMs <= intervalMs && lastFileSent == filePath) {
             qCDebug(gLogWakaTime)
                 << "Not enough time has passed since last send";
             qCDebug(gLogWakaTime)
@@ -377,7 +377,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     sendHeartbeat(data, isWrite);
 
     lastTimeSent = QDateTime::currentDateTime();
-    m_lastFileSent = filePath;
+    lastFileSent = filePath;
 }
 
 void WakaTimeView::sendQueuedHeartbeats() {

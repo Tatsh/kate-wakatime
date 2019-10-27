@@ -78,40 +78,40 @@ public:
     ~WakaTimeView();
 
 private Q_SLOTS:
+    void slotConfigureWakaTime();
     void slotDocumentModifiedChanged(KTextEditor::Document *);
     void slotDocumentWrittenToDisk(KTextEditor::Document *);
     void slotNetworkReplyFinshed(QNetworkReply *);
-    void slotConfigureWakaTime();
     void viewCreated(KTextEditor::View *);
     void viewDestroyed(QObject *);
 
 private:
-    void readConfig();
-    void writeConfig();
-    void sendAction(KTextEditor::Document *, bool);
-    void connectDocumentSignals(KTextEditor::Document *);
+    QByteArray apiAuthBytes();
     bool documentIsConnected(KTextEditor::Document *);
+    void connectDocumentSignals(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
     QString getBinPath(QString);
+    void readConfig();
+    void sendAction(KTextEditor::Document *, bool);
     void sendHeartbeat(const QVariantMap &, bool, bool saveToQueue = true);
     void sendQueuedHeartbeats();
-    QByteArray apiAuthBytes();
+    void writeConfig();
 
 private:
     KTextEditor::MainWindow *m_mainWindow;
-    QByteArray userAgent;
     QString apiKey;
-    bool hideFilenames;
+    QMap<QString, QString> binPathCache;
     bool hasSent;
-    QList<KTextEditor::Document *> connectedDocuments;
+    bool hideFilenames;
 
     // Initialised in constructor definition
-    QDateTime lastTimeSent;
-    QString m_lastFileSent;
-    QNetworkAccessManager *nam;
-    QMap<QString, QString> binPathCache;
-    OfflineQueue *queue;
+    QList<KTextEditor::Document *> connectedDocuments;
     QSettings *config;
+    QString lastFileSent;
+    QDateTime lastTimeSent;
+    QNetworkAccessManager *nam;
+    OfflineQueue *queue;
+    QByteArray userAgent;
 };
 
 #endif
