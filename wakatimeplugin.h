@@ -78,7 +78,7 @@ private Q_SLOTS:
     void slotConfigureWakaTime();
     void slotDocumentModifiedChanged(KTextEditor::Document *);
     void slotDocumentWrittenToDisk(KTextEditor::Document *);
-    void slotNetworkReplyFinshed(QNetworkReply *);
+    void slotNetworkReplyFinished(QNetworkReply *);
     void viewCreated(KTextEditor::View *);
     void viewDestroyed(QObject *);
 
