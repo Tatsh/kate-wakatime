@@ -403,7 +403,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
     }
     heartbeats.append(QLatin1String("]"));
     qCDebug(gLogWakaTime()) << "offline heartbeats" << heartbeats;
-    static QUrl url(QString(apiUrl).append('/v1/actions'));
+    static QUrl url(QString("%1/v1/actions").arg(apiUrl));
     static const QString contentType = QLatin1String("application/json");
     QNetworkRequest request(url);
     QByteArray requestContent = heartbeats.toUtf8();
@@ -436,7 +436,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QByteArray requestContent = object.toJson();
     static const QString contentType = QLatin1String("application/json");
 
-    static QUrl url(QString(apiUrl).append('/v1/actions'));
+    static QUrl url(QString("%1/v1/actions").arg(apiUrl));
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
