@@ -414,6 +414,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
                          apiAuthBytes());
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
+    
 #ifndef NDEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
@@ -607,10 +608,12 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
         }
         hasSent = true;
     } else {
+        qCDebug(gLogWakaTime) << "URL:" << reply->url().toString();
         qCDebug(gLogWakaTime)
             << "Request did not succeed, status code:" << statusCode.toInt();
         static const QString errorsKeyStr = QLatin1String("errors");
 
+        qCDebug(gLogWakaTime) << reply->rawHeaderList();
         if (statusCode == 401) {
             KMessageBox::error(nullptr,
                                i18n("WakaTime could not authenticate the last "
