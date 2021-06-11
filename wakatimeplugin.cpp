@@ -120,7 +120,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     connect(nam,
             &QNetworkAccessManager::finished,
             this,
-            &WakaTimeView::slotNetworkReplyFinshed);
+            &WakaTimeView::slotNetworkReplyFinished);
 
     connect(m_mainWindow,
             &KTextEditor::MainWindow::viewCreated,
@@ -583,7 +583,7 @@ void WakaTimeView::slotDocumentWrittenToDisk(KTextEditor::Document *doc) {
     sendAction(doc, true);
 }
 
-void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
+void WakaTimeView::slotNetworkReplyFinished(QNetworkReply *reply) {
     const QVariant statusCode =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     qCDebug(gLogWakaTime) << "Status code:" << statusCode.toInt();
