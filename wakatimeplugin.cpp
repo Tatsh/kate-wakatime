@@ -168,6 +168,7 @@ void WakaTimeView::slotConfigureWakaTime() {
     if (apiKey.isNull() || !apiKey.size()) {
         ui.lineEdit_apiKey->setFocus();
     }
+    ui.lineEdit_apiUrl->setText(apiUrl);
     ui.checkBox_hideFilenames->setChecked(hideFilenames);
 
     dialog.setWindowTitle(i18n("Configure WakaTime"));
@@ -402,7 +403,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
     }
     heartbeats.append(QLatin1String("]"));
     qCDebug(gLogWakaTime()) << "offline heartbeats" << heartbeats;
-    static QUrl url(QLatin1String(kWakaTimeViewHeartbeatsBulkUrl));
+    static QUrl url(QString(apiUrl).append('/v1/actions'));
     static const QString contentType = QLatin1String("application/json");
     QNetworkRequest request(url);
     QByteArray requestContent = heartbeats.toUtf8();
@@ -435,7 +436,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QByteArray requestContent = object.toJson();
     static const QString contentType = QLatin1String("application/json");
 
-    static QUrl url(QLatin1String(kWakaTimeViewActionUrl));
+    static QUrl url(QString(apiUrl).append('/v1/actions'));
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
@@ -483,6 +484,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 
 void WakaTimeView::writeConfig(void) {
     config->setValue(QLatin1String("settings/api_key"), apiKey);
+    config->setValue(QLatin1String("settings/api_url"), apiUrl);
     config->setValue(QLatin1String("settings/hidefilenames"), hideFilenames);
     config->sync();
     QSettings::Status status = config->status();
@@ -493,6 +495,7 @@ void WakaTimeView::writeConfig(void) {
 
 void WakaTimeView::readConfig(void) {
     const QString apiKeyPath = QLatin1String("settings/api_key");
+    const QString apiUrlPath = QLatin1String("settings/api_url");
 
     if (!config->contains(apiKeyPath)) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
@@ -505,8 +508,14 @@ void WakaTimeView::readConfig(void) {
         return;
     }
 
+    QString url = QString("https://wakatime.com/api");
+    if (config->contains(apiUrlPath) && config->value(apiUrlPath).toString().trimmed().length() ) {
+        QString url = QString(config->value(apiUrlPath).toString()).trimmed();
+    }
+
     // Assume valid at this point
     apiKey = key;
+    apiUrl = url;
     hideFilenames =
         config->value(QLatin1String("settings/hidefilenames")).toBool();
 }
