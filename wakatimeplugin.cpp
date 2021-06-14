@@ -300,11 +300,13 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     static QString gitPath = getBinPath(git);
     if (!gitPath.isNull() && !hideFilenames) {
         QProcess proc;
-        const QStringList arguments {"symbolic-ref --short HEAD"};
+        QStringList arguments;
+        arguments << QStringLiteral("symbolic-ref")
+                  << QStringLiteral("--short") << QStringLiteral("HEAD");
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
-        qCDebug(gLogWakaTime)
-            << "Running" << gitPath << arguments << "in" << projectDirectory.canonicalPath();
-        proc.start(gitPath, arguments , QIODevice::ReadWrite | QIODevice::Text);
+        qCDebug(gLogWakaTime) << "Running" << gitPath << arguments << "in"
+                              << projectDirectory.canonicalPath();
+        proc.start(gitPath, arguments, QIODevice::ReadWrite | QIODevice::Text);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
             QString branch = QString::fromUtf8(out.constData()).trimmed();
@@ -401,7 +403,9 @@ void WakaTimeView::sendQueuedHeartbeats() {
         i++;
     }
     heartbeats.append(QLatin1String("]"));
-    static QUrl url(QString("%1/v1/users/current/heartbeats.bulk").arg(apiUrl));
+    static QUrl url(
+        QString(QStringLiteral("%1/v1/users/current/heartbeats.bulk"))
+            .arg(apiUrl));
     static const QString contentType = QLatin1String("application/json");
     QNetworkRequest request(url);
     QByteArray requestContent = heartbeats.toUtf8();
@@ -412,7 +416,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
                          WakaTimeView::apiAuthBytes());
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
-    
+
 #ifndef NDEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
@@ -508,7 +512,8 @@ void WakaTimeView::readConfig(void) {
     }
 
     QString url = QStringLiteral("https://wakatime.com/api");
-    if (config->contains(apiUrlPath) && QString(config->value(apiUrlPath).toString()).trimmed().length()) {
+    if (config->contains(apiUrlPath) &&
+        QString(config->value(apiUrlPath).toString()).trimmed().length()) {
         url = QString(config->value(apiUrlPath).toString()).trimmed();
     }
 
