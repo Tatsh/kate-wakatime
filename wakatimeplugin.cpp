@@ -198,7 +198,7 @@ QString WakaTimeView::getBinPath(QString binName) {
 
     const char *const path = getenv("PATH");
     QStringList paths = QString::fromUtf8(path ? path : kDefaultPath)
-                            .split(colon, QString::SkipEmptyParts);
+                            .split(colon, Qt::SkipEmptyParts);
 
     for (QString path : paths) {
         QStringList dirListing = QDir(path).entryList();
@@ -299,13 +299,12 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     static const QString git = QLatin1String("git");
     static QString gitPath = getBinPath(git);
     if (!gitPath.isNull() && !hideFilenames) {
-        static const QString cmd =
-            gitPath.append(QLatin1String(" symbolic-ref --short HEAD"));
         QProcess proc;
+        const QStringList arguments {"symbolic-ref --short HEAD"};
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
         qCDebug(gLogWakaTime)
-            << "Running" << cmd << "in" << projectDirectory.canonicalPath();
-        proc.start(cmd);
+            << "Running" << gitPath << arguments << "in" << projectDirectory.canonicalPath();
+        proc.start(gitPath, arguments , QIODevice::ReadWrite | QIODevice::Text);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
             QString branch = QString::fromUtf8(out.constData()).trimmed();
