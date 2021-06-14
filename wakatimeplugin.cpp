@@ -507,7 +507,7 @@ void WakaTimeView::readConfig(void) {
         return;
     }
 
-    QString url = QString("https://wakatime.com/api");
+    QString url = QStringLiteral("https://wakatime.com/api");
     if (config->contains(apiUrlPath) && QString(config->value(apiUrlPath).toString()).trimmed().length()) {
         url = QString(config->value(apiUrlPath).toString()).trimmed();
     }
