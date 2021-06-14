@@ -120,7 +120,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     connect(nam,
             &QNetworkAccessManager::finished,
             this,
-            &WakaTimeView::slotNetworkReplyFinshed);
+            &WakaTimeView::slotNetworkReplyFinished);
 
     connect(m_mainWindow,
             &KTextEditor::MainWindow::viewCreated,
@@ -168,6 +168,7 @@ void WakaTimeView::slotConfigureWakaTime() {
     if (apiKey.isNull() || !apiKey.size()) {
         ui.lineEdit_apiKey->setFocus();
     }
+    ui.lineEdit_apiUrl->setText(apiUrl);
     ui.checkBox_hideFilenames->setChecked(hideFilenames);
 
     dialog.setWindowTitle(i18n("Configure WakaTime"));
@@ -197,7 +198,7 @@ QString WakaTimeView::getBinPath(QString binName) {
 
     const char *const path = getenv("PATH");
     QStringList paths = QString::fromUtf8(path ? path : kDefaultPath)
-                            .split(colon, QString::SkipEmptyParts);
+                            .split(colon, Qt::SkipEmptyParts);
 
     for (QString path : paths) {
         QStringList dirListing = QDir(path).entryList();
@@ -298,13 +299,14 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     static const QString git = QLatin1String("git");
     static QString gitPath = getBinPath(git);
     if (!gitPath.isNull() && !hideFilenames) {
-        static const QString cmd =
-            gitPath.append(QLatin1String(" symbolic-ref --short HEAD"));
         QProcess proc;
+        QStringList arguments;
+        arguments << QStringLiteral("symbolic-ref")
+                  << QStringLiteral("--short") << QStringLiteral("HEAD");
         proc.setWorkingDirectory(projectDirectory.canonicalPath());
-        qCDebug(gLogWakaTime)
-            << "Running" << cmd << "in" << projectDirectory.canonicalPath();
-        proc.start(cmd);
+        qCDebug(gLogWakaTime) << "Running" << gitPath << arguments << "in"
+                              << projectDirectory.canonicalPath();
+        proc.start(gitPath, arguments, QIODevice::ReadWrite | QIODevice::Text);
         if (proc.waitForFinished()) {
             QByteArray out = proc.readAllStandardOutput();
             QString branch = QString::fromUtf8(out.constData()).trimmed();
@@ -401,8 +403,9 @@ void WakaTimeView::sendQueuedHeartbeats() {
         i++;
     }
     heartbeats.append(QLatin1String("]"));
-    qCDebug(gLogWakaTime()) << "offline heartbeats" << heartbeats;
-    static QUrl url(QLatin1String(kWakaTimeViewHeartbeatsBulkUrl));
+    static QUrl url(
+        QString(QStringLiteral("%1/v1/users/current/heartbeats.bulk"))
+            .arg(apiUrl));
     static const QString contentType = QLatin1String("application/json");
     QNetworkRequest request(url);
     QByteArray requestContent = heartbeats.toUtf8();
@@ -410,9 +413,10 @@ void WakaTimeView::sendQueuedHeartbeats() {
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
     request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
-                         apiAuthBytes());
+                         WakaTimeView::apiAuthBytes());
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
+
 #ifndef NDEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
@@ -435,13 +439,13 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QByteArray requestContent = object.toJson();
     static const QString contentType = QLatin1String("application/json");
 
-    static QUrl url(QLatin1String(kWakaTimeViewActionUrl));
+    static QUrl url(QString(QStringLiteral("%1/v1/actions")).arg(apiUrl));
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
     request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
     request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
-                         apiAuthBytes());
+                         WakaTimeView::apiAuthBytes());
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
 
@@ -483,6 +487,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 
 void WakaTimeView::writeConfig(void) {
     config->setValue(QLatin1String("settings/api_key"), apiKey);
+    config->setValue(QLatin1String("settings/api_url"), apiUrl);
     config->setValue(QLatin1String("settings/hidefilenames"), hideFilenames);
     config->sync();
     QSettings::Status status = config->status();
@@ -493,6 +498,7 @@ void WakaTimeView::writeConfig(void) {
 
 void WakaTimeView::readConfig(void) {
     const QString apiKeyPath = QLatin1String("settings/api_key");
+    const QString apiUrlPath = QLatin1String("settings/api_url");
 
     if (!config->contains(apiKeyPath)) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
@@ -505,8 +511,15 @@ void WakaTimeView::readConfig(void) {
         return;
     }
 
+    QString url = QStringLiteral("https://wakatime.com/api");
+    if (config->contains(apiUrlPath) &&
+        QString(config->value(apiUrlPath).toString()).trimmed().length()) {
+        url = QString(config->value(apiUrlPath).toString()).trimmed();
+    }
+
     // Assume valid at this point
     apiKey = key;
+    apiUrl = url;
     hideFilenames =
         config->value(QLatin1String("settings/hidefilenames")).toBool();
 }
@@ -573,7 +586,7 @@ void WakaTimeView::slotDocumentWrittenToDisk(KTextEditor::Document *doc) {
     sendAction(doc, true);
 }
 
-void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
+void WakaTimeView::slotNetworkReplyFinished(QNetworkReply *reply) {
     const QVariant statusCode =
         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     qCDebug(gLogWakaTime) << "Status code:" << statusCode.toInt();
@@ -591,13 +604,13 @@ void WakaTimeView::slotNetworkReplyFinshed(QNetworkReply *reply) {
     if (reply->error() == QNetworkReply::NoError &&
         (statusCode == 201 || statusCode == 202)) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
-        qCDebug(gLogWakaTime) << "Received:" << doc;
 
         if (statusCode == 201) { // 202 only happens from the bulk request
             queue->pop();
         }
         hasSent = true;
     } else {
+        qCDebug(gLogWakaTime) << "URL:" << reply->url().toString();
         qCDebug(gLogWakaTime)
             << "Request did not succeed, status code:" << statusCode.toInt();
         static const QString errorsKeyStr = QLatin1String("errors");

@@ -31,10 +31,7 @@
 
 #include "ui_configdialog.h"
 
-#define kWakaTimeViewActionUrl "https://wakatime.com/api/v1/actions"
-#define kWakaTimeViewHeartbeatsBulkUrl                                        \
-    "https://api.wakatime.com/api/v1/users/current/heartbeats.bulk"
-#define kWakaTimePluginVersion "1.3.4"
+#define kWakaTimePluginVersion "1.3.5"
 
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
@@ -81,7 +78,7 @@ private Q_SLOTS:
     void slotConfigureWakaTime();
     void slotDocumentModifiedChanged(KTextEditor::Document *);
     void slotDocumentWrittenToDisk(KTextEditor::Document *);
-    void slotNetworkReplyFinshed(QNetworkReply *);
+    void slotNetworkReplyFinished(QNetworkReply *);
     void viewCreated(KTextEditor::View *);
     void viewDestroyed(QObject *);
 
@@ -100,6 +97,7 @@ private:
 private:
     KTextEditor::MainWindow *m_mainWindow;
     QString apiKey;
+    QString apiUrl;
     QMap<QString, QString> binPathCache;
     bool hasSent;
     bool hideFilenames;
