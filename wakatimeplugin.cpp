@@ -402,7 +402,6 @@ void WakaTimeView::sendQueuedHeartbeats() {
         i++;
     }
     heartbeats.append(QLatin1String("]"));
-    qCDebug(gLogWakaTime()) << "offline heartbeats" << heartbeats;
     static QUrl url(QString("%1/v1/users/current/heartbeats.bulk").arg(apiUrl));
     static const QString contentType = QLatin1String("application/json");
     QNetworkRequest request(url);
@@ -510,8 +509,8 @@ void WakaTimeView::readConfig(void) {
     }
 
     QString url = QString("https://wakatime.com/api");
-    if (config->contains(apiUrlPath) && config->value(apiUrlPath).toString().trimmed().length() ) {
-        QString url = QString(config->value(apiUrlPath).toString()).trimmed();
+    if (config->contains(apiUrlPath) && QString(config->value(apiUrlPath).toString()).trimmed().length()) {
+        url = QString(config->value(apiUrlPath).toString()).trimmed();
     }
 
     // Assume valid at this point
@@ -601,7 +600,6 @@ void WakaTimeView::slotNetworkReplyFinished(QNetworkReply *reply) {
     if (reply->error() == QNetworkReply::NoError &&
         (statusCode == 201 || statusCode == 202)) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
-        qCDebug(gLogWakaTime) << "Received:" << doc;
 
         if (statusCode == 201) { // 202 only happens from the bulk request
             queue->pop();
