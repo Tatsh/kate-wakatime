@@ -439,7 +439,8 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QByteArray requestContent = object.toJson();
     static const QString contentType = QLatin1String("application/json");
 
-    static QUrl url(QString(QStringLiteral("%1/v1/actions")).arg(apiUrl));
+    static QUrl url(
+        QString(QStringLiteral("%1/v1/users/current/heartbeats")).arg(apiUrl));
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
