@@ -417,7 +417,7 @@ void WakaTimeView::sendQueuedHeartbeats() {
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
 
-#ifndef NDEBUG
+#ifdef QT_DEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
                                     "while this plugin is being developed."));
@@ -453,7 +453,7 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
                          timeZoneBytes());
 
     qCDebug(gLogWakaTime) << "Single heartbeat in array:" << object;
-#ifndef NDEBUG
+#ifdef QT_DEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
                                     "while this plugin is being developed."));
