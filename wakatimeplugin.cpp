@@ -22,6 +22,8 @@
 #include "wakatimeplugin.h"
 #include "offlinequeue.h"
 
+#include <sys/utsname.h>
+
 #include <KTextEditor/Application>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
@@ -110,11 +112,22 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
 
     QString configFilePath =
         QDir::homePath() + QDir::separator() + QLatin1String(".wakatime.cfg");
-    userAgent = QByteArrayLiteral("(KDE 5) Katepart/" kWakaTimePluginVersion
-                                  " kate-wakatime/" kWakaTimePluginVersion);
+    struct utsname buf;
     config = new QSettings(configFilePath, QSettings::IniFormat, this);
-
     readConfig();
+    int unameRes = uname(&buf);
+    static const QString unk = QStringLiteral("Unknown");
+    userAgent =
+        QString(QStringLiteral("wakatime/%1 (%2-%3-%4-%5) KTextEditor/%6 kate-wakatime/%7"))
+            .arg(QString(config->value(QLatin1String("internal/cli_version"))
+                     .toString())
+                     .trimmed())
+            .arg(unameRes == 0 ? QString::fromUtf8(buf.sysname) : unk)
+            .arg(unameRes == 0 ? QString::fromUtf8(buf.release) : unk)
+            .arg(unameRes == 0 ? QString::fromUtf8(buf.nodename) : unk)
+            .arg(unameRes == 0 ? QString::fromUtf8(buf.machine) : unk)
+            .arg(unk)
+            .arg(QStringLiteral(kWakaTimePluginVersion)).toUtf8();
 
     // Connect the request handling slot method
     connect(nam,
