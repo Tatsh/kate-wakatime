@@ -115,7 +115,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>API url:</string>
+    <string>API URL:</string>
    </property>
   </widget>
  </widget>
