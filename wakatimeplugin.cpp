@@ -453,7 +453,6 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
                          timeZoneBytes());
 
     qCDebug(gLogWakaTime) << "Single heartbeat in array:" << object;
-    ;
 #ifndef NDEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
