@@ -118,16 +118,19 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     int unameRes = uname(&buf);
     static const QString unk = QStringLiteral("Unknown");
     userAgent =
-        QString(QStringLiteral("wakatime/%1 (%2-%3-%4-%5) KTextEditor/%6 kate-wakatime/%7"))
+        QString(
+            QStringLiteral(
+                "wakatime/%1 (%2-%3-%4-%5) KTextEditor/%6 kate-wakatime/%7"))
             .arg(QString(config->value(QLatin1String("internal/cli_version"))
-                     .toString())
+                             .toString())
                      .trimmed())
             .arg(unameRes == 0 ? QString::fromUtf8(buf.sysname) : unk)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.release) : unk)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.nodename) : unk)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.machine) : unk)
             .arg(unk)
-            .arg(QStringLiteral(kWakaTimePluginVersion)).toUtf8();
+            .arg(QStringLiteral(kWakaTimePluginVersion))
+            .toUtf8();
 
     // Connect the request handling slot method
     connect(nam,
