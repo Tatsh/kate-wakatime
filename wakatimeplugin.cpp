@@ -68,8 +68,8 @@ static QByteArray headerName(WakaTimeView::WakaTimeApiHttpHeaders header) {
         return QByteArrayLiteral("TimeZone");
     case WakaTimeView::XIgnoreHeader:
         return QByteArrayLiteral("X-Ignore");
-    case WakaTimeView::XHostname:
-        return QByteArrayLiteral("X-Hostname");
+    case WakaTimeView::XMachineName:
+        return QByteArrayLiteral("X-Machine-Name");
     }
 
     return QByteArray();

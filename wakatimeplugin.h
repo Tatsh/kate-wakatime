@@ -67,8 +67,8 @@ public:
     enum WakaTimeApiHttpHeaders {
         AuthorizationHeader,
         TimeZoneHeader,
-        XHostname,
-        XIgnoreHeader
+        XIgnoreHeader,
+        XMachineName,
     };
 
     WakaTimeView(KTextEditor::MainWindow *);
