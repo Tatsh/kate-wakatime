@@ -436,11 +436,13 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
                                  bool isWrite,
                                  bool saveToQueue) {
     QJsonDocument object = QJsonDocument::fromVariant(data);
-    QByteArray requestContent = object.toJson();
+    QByteArray requestContent =
+        QByteArray("[") + object.toJson() + QByteArray("]");
     static const QString contentType = QLatin1String("application/json");
 
     static QUrl url(
-        QString(QStringLiteral("%1/v1/users/current/heartbeats")).arg(apiUrl));
+        QString(QStringLiteral("%1/v1/users/current/heartbeats.bulk"))
+            .arg(apiUrl));
     QNetworkRequest request(url);
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
@@ -450,7 +452,8 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     request.setRawHeader(headerName(WakaTimeView::TimeZoneHeader),
                          timeZoneBytes());
 
-    qCDebug(gLogWakaTime) << object;
+    qCDebug(gLogWakaTime) << "Single heartbeat in array:" << object;
+    ;
 #ifndef NDEBUG
     request.setRawHeader(headerName(WakaTimeView::XIgnoreHeader),
                          QByteArray("If this request is bad, please ignore it "
