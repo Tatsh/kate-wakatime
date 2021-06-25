@@ -147,7 +147,14 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
         connectDocumentSignals(view->document());
     }
 
-    sendQueuedHeartbeats();
+    QNetworkAccessManager *m = new QNetworkAccessManager(this);
+    connect(m, &QNetworkAccessManager::finished, [this](QNetworkReply *reply) {
+        if (reply->error() == QNetworkReply::NoError) {
+            this->sendQueuedHeartbeats();
+        }
+    });
+    QNetworkRequest req(QUrl(QStringLiteral("https://wakatime.com/api")));
+    m->get(req);
 }
 
 WakaTimeView::~WakaTimeView() {
@@ -399,9 +406,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
 }
 
 void WakaTimeView::sendQueuedHeartbeats() {
-    if (nam->networkAccessible() != QNetworkAccessManager::Accessible) {
-        return;
-    }
     QString heartbeats = QLatin1String("[");
     int i = 0;
     const int limit = 25;
