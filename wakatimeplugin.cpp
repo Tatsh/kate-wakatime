@@ -625,10 +625,7 @@ void WakaTimeView::slotNetworkReplyFinished(QNetworkReply *reply) {
     if (reply->error() == QNetworkReply::NoError &&
         (statusCode == 201 || statusCode == 202)) {
         qCDebug(gLogWakaTime) << "Sent data successfully";
-
-        if (statusCode == 201) { // 202 only happens from the bulk request
-            queue->pop();
-        }
+        queue->pop();
         hasSent = true;
     } else {
         qCDebug(gLogWakaTime) << "URL:" << reply->url().toString();
