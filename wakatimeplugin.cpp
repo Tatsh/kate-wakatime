@@ -33,6 +33,7 @@
 #include <KCoreAddons/KAboutData>
 #include <KCoreAddons/KPluginFactory>
 #include <KCoreAddons/KPluginLoader>
+#include <KF5/ktexteditor_version.h>
 #include <KI18n/KLocalizedString>
 #include <KWidgetsAddons/KMessageBox>
 #include <KXmlGui/KActionCollection>
@@ -56,10 +57,29 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
                            "ktexteditor_wakatime.json",
                            registerPlugin<WakaTimePlugin>();)
 
+const QString kUrlHeartsBulk =
+    QStringLiteral("%1/v1/users/current/heartbeats.bulk");
+
+const QString kSettingsKeyApiKey = QStringLiteral("settings/api_key");
+const QString kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
+const QString kSettingsKeyHideFilenames =
+    QStringLiteral("settings/hidefilenames");
+
+const QString kContentTypeJson = QStringLiteral("application/json");
+
+const QString kJsonKeyBranch = QStringLiteral("branch");
+const QString kJsonKeyCategory = QStringLiteral("category");
+const QString kJsonKeyEntity = QStringLiteral("entity");
+const QString kJsonKeyProject = QStringLiteral("project");
+const QString kJsonKeyTime = QStringLiteral("time");
+const QString kJsonKeyType = QStringLiteral("type");
+const QString kJsonValueCoding = QStringLiteral("coding");
+const QString kJsonValueFile = QStringLiteral("file");
+
 const QByteArray timeZoneBytes() {
-    const QDateTime dt = QDateTime::currentDateTime();
-    const QString timeZone = QTimeZone::systemTimeZone().displayName(dt);
-    return timeZone.toLocal8Bit();
+    return QTimeZone::systemTimeZone()
+        .displayName(QDateTime::currentDateTime())
+        .toLocal8Bit();
 }
 
 static QByteArray headerName(WakaTimeView::WakaTimeApiHttpHeaders header) {
@@ -128,7 +148,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.release) : unk)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.nodename) : unk)
             .arg(unameRes == 0 ? QString::fromUtf8(buf.machine) : unk)
-            .arg(unk)
+            .arg(QStringLiteral(KTEXTEDITOR_VERSION_STRING))
             .arg(QStringLiteral(kWakaTimePluginVersion))
             .toUtf8();
 
@@ -153,7 +173,9 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
             this->sendQueuedHeartbeats();
         }
     });
-    QNetworkRequest req(QUrl(QStringLiteral("https://wakatime.com/api")));
+    QUrl u(this->apiUrl);
+    QUrl requestUrl(u.scheme().append(QStringLiteral("://")).append(u.host()));
+    QNetworkRequest req(requestUrl);
     m->get(req);
 }
 
@@ -309,13 +331,10 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     }
 
     QVariantMap data;
-    static const QString keyTime = QStringLiteral("time");
-    static const QString keyProject = QStringLiteral("project");
-    static const QString keyBranch = QStringLiteral("branch");
 
-    data.insert(keyTime, currentMs / 1000);
+    data.insert(kJsonKeyTime, currentMs / 1000);
     if (projectName.length()) {
-        data.insert(keyProject, projectName);
+        data.insert(kJsonKeyProject, projectName);
     } else {
         qCDebug(gLogWakaTime) << "Warning: No project name found";
     }
@@ -334,7 +353,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             QByteArray out = proc.readAllStandardOutput();
             QString branch = QString::fromUtf8(out.constData()).trimmed();
             if (!branch.isNull() && branch.size() > 0) {
-                data.insert(keyBranch, branch);
+                data.insert(kJsonKeyBranch, branch);
             }
         } else {
             qCDebug(gLogWakaTime) << "Failed to get branch (git)";
@@ -371,31 +390,24 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         }
     }
 
-    static const QString keyType = QStringLiteral("type");
-    static const QString keyCategory = QStringLiteral("category");
-    static const QString valueFile = QStringLiteral("file");
-    static const QString valueCoding = QStringLiteral("coding");
-    static const QString keyEntity = QStringLiteral("entity");
-
-    data.insert(keyType, valueFile);
-    data.insert(keyCategory, valueCoding);
+    data.insert(kJsonKeyType, kJsonValueFile);
+    data.insert(kJsonKeyCategory, kJsonValueCoding);
 
     if (!hideFilenames) {
-        static const QString keyLines = QStringLiteral("lines");
-        static const QString keyLineNo = QStringLiteral("lineno");
-        static const QString keyCursorPos = QStringLiteral("cursorpos");
-        data.insert(keyEntity, filePath);
-        data.insert(keyLines, doc->lines());
+        data.insert(kJsonKeyEntity, filePath);
+        data.insert(QStringLiteral("lines"), doc->lines());
         for (KTextEditor::View *view : m_mainWindow->views()) {
             if (view->document() == doc) {
-                data.insert(keyLineNo, view->cursorPosition().line() + 1);
-                data.insert(keyCursorPos, view->cursorPosition().column() + 1);
+                data.insert(QStringLiteral("lineno"),
+                            view->cursorPosition().line() + 1);
+                data.insert(QStringLiteral("cursorpos"),
+                            view->cursorPosition().column() + 1);
                 break;
             }
         }
     } else {
         data.insert(
-            keyEntity,
+            kJsonKeyEntity,
             QStringLiteral("HIDDEN.%1").arg(fileInfo.completeSuffix()));
     }
 
@@ -423,14 +435,11 @@ void WakaTimeView::sendQueuedHeartbeats() {
         i++;
     }
     heartbeats.append(QStringLiteral("]"));
-    static QUrl url(
-        QString(QStringLiteral("%1/v1/users/current/heartbeats.bulk"))
-            .arg(apiUrl));
-    static const QString contentType = QStringLiteral("application/json");
+    static QUrl url(QString(kUrlHeartsBulk).arg(apiUrl));
     QNetworkRequest request(url);
     QByteArray requestContent = heartbeats.toUtf8();
 
-    request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, kContentTypeJson);
     request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
     request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
                          WakaTimeView::apiAuthBytes());
@@ -458,14 +467,11 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
     QJsonDocument object = QJsonDocument::fromVariant(data);
     QByteArray requestContent =
         QByteArrayLiteral("[") + object.toJson() + QByteArrayLiteral("]");
-    static const QString contentType = QStringLiteral("application/json");
 
-    static QUrl url(
-        QString(QStringLiteral("%1/v1/users/current/heartbeats.bulk"))
-            .arg(apiUrl));
+    static QUrl url(QString(kUrlHeartsBulk).arg(apiUrl));
     QNetworkRequest request(url);
 
-    request.setHeader(QNetworkRequest::ContentTypeHeader, contentType);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, kContentTypeJson);
     request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
     request.setRawHeader(headerName(WakaTimeView::AuthorizationHeader),
                          WakaTimeView::apiAuthBytes());
@@ -480,24 +486,15 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 #endif
 
     if (saveToQueue) {
-        static const QString keyType = QStringLiteral("type");
-        static const QString keyCategory = QStringLiteral("category");
-        static const QString valueFile = QStringLiteral("file");
-        static const QString valueCoding = QStringLiteral("coding");
-        static const QString keyEntity = QStringLiteral("entity");
-        static const QString keyTime = QStringLiteral("time");
-        static const QString keyProject = QStringLiteral("project");
-        static const QString keyBranch = QStringLiteral("branch");
-
         // time-type-category-project-branch-entity-is_write
         const QString rowId =
             QStringLiteral("%1-%2-%3-%4-%5-%6-%7")
-                .arg(data[keyTime].toString(),
-                     data[keyType].toString(),
-                     data[keyCategory].toString(),
-                     data[keyProject].toString(),
-                     data[keyBranch].toString(),
-                     data[keyEntity].toString(),
+                .arg(data[kJsonKeyTime].toString(),
+                     data[kJsonKeyType].toString(),
+                     data[kJsonKeyCategory].toString(),
+                     data[kJsonKeyProject].toString(),
+                     data[kJsonKeyBranch].toString(),
+                     data[kJsonKeyEntity].toString(),
                      isWrite ? QStringLiteral("1") : QStringLiteral("0"));
         const QString rowData = QString::fromUtf8(requestContent.constData());
         QStringList row;
@@ -509,9 +506,9 @@ void WakaTimeView::sendHeartbeat(const QVariantMap &data,
 }
 
 void WakaTimeView::writeConfig(void) {
-    config->setValue(QStringLiteral("settings/api_key"), apiKey);
-    config->setValue(QStringLiteral("settings/api_url"), apiUrl);
-    config->setValue(QStringLiteral("settings/hidefilenames"), hideFilenames);
+    config->setValue(kSettingsKeyApiKey, apiKey);
+    config->setValue(kSettingsKeyApiUrl, apiUrl);
+    config->setValue(kSettingsKeyHideFilenames, hideFilenames);
     config->sync();
     QSettings::Status status = config->status();
     if (status != QSettings::NoError) {
@@ -520,31 +517,32 @@ void WakaTimeView::writeConfig(void) {
 }
 
 void WakaTimeView::readConfig(void) {
-    const QString apiKeyPath = QStringLiteral("settings/api_key");
-    const QString apiUrlPath = QStringLiteral("settings/api_url");
+    const QString apiKeyPath = kSettingsKeyApiKey;
+    const QString apiUrlPath = kSettingsKeyApiUrl;
 
-    if (!config->contains(apiKeyPath)) {
+    if (!config->contains(kSettingsKeyApiKey)) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
         return;
     }
 
-    QString key = config->value(apiKeyPath).toString().trimmed();
+    QString key = config->value(kSettingsKeyApiKey).toString().trimmed();
     if (!key.length()) {
         qCDebug(gLogWakaTime) << "API Key is blank";
         return;
     }
 
     QString url = QStringLiteral("https://wakatime.com/api");
-    if (config->contains(apiUrlPath) &&
-        QString(config->value(apiUrlPath).toString()).trimmed().length()) {
-        url = QString(config->value(apiUrlPath).toString()).trimmed();
+    if (config->contains(kSettingsKeyApiUrl) &&
+        QString(config->value(kSettingsKeyApiUrl).toString())
+            .trimmed()
+            .length()) {
+        url = QString(config->value(kSettingsKeyApiUrl).toString()).trimmed();
     }
 
     // Assume valid at this point
     apiKey = key;
     apiUrl = url;
-    hideFilenames =
-        config->value(QStringLiteral("settings/hidefilenames")).toBool();
+    hideFilenames = config->value(kSettingsKeyHideFilenames).toBool();
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
