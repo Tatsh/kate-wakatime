@@ -31,7 +31,7 @@
 
 #include "ui_configdialog.h"
 
-#define kWakaTimePluginVersion "1.3.7"
+#define kWakaTimePluginVersion "1.3.8"
 
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
