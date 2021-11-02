@@ -1,4 +1,5 @@
 {
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.includePath": [
     "/opt/local/include",
     "/opt/local/include/KF5",
