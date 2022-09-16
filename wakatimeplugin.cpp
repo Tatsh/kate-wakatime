@@ -33,7 +33,7 @@
 #include <KCoreAddons/KAboutData>
 #include <KCoreAddons/KPluginFactory>
 #include <KCoreAddons/KPluginLoader>
-#include <KF5/ktexteditor_version.h>
+#include <KF5/KTextEditor/ktexteditor_version.h>
 #include <KI18n/KLocalizedString>
 #include <KWidgetsAddons/KMessageBox>
 #include <KXmlGui/KActionCollection>
