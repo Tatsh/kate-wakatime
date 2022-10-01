@@ -2,6 +2,16 @@
 
 This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tatsh/kate-wakatime/releases).
 
+## Dependencies
+
+* [CMake](https://cmake.org/)
+* [Extra CMake Modules](https://invent.kde.org/frameworks/extra-cmake-modules)
+* [KF5:I18n](https://develop.kde.org/products/frameworks/)
+* [KF5:TextEditor](https://develop.kde.org/products/frameworks/)
+* [Qt5::Sql](https://doc.qt.io/qt-5/qtsql-index.html)
+
+How to install these on your distro is beyond the scope of this document. Generally, install the Kate text editor, CMake, KDE framework development packages, and Qt development packages.
+
 ## How to use
 
 1. Get an account at [WakaTime](https://wakatime.com).
