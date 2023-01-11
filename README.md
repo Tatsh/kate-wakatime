@@ -58,4 +58,4 @@ To be certain this will work, check the file at `~/.wakatime.cfg`.
 
 Short answer is no.
 
-See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/master/wakatimeplugin.cpp#L198) method if you want to be certain.
+See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/3c03b3431cf374afeec45dca638f928ab5169bdd/wakatimeplugin.cpp#L268-L423) method if you want to be certain.
