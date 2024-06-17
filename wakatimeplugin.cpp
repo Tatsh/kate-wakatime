@@ -30,14 +30,13 @@
 #include <KTextEditor/MainWindow>
 #include <KTextEditor/View>
 
-#include <KCoreAddons/KAboutData>
-#include <KCoreAddons/KPluginFactory>
-#include <KCoreAddons/KPluginLoader>
-#include <KF5/KTextEditor/ktexteditor_version.h>
-#include <KI18n/KLocalizedString>
-#include <KWidgetsAddons/KMessageBox>
-#include <KXmlGui/KActionCollection>
-#include <KXmlGui/KXMLGUIFactory>
+#include <KAboutData>
+#include <KPluginFactory>
+#include <KF6/KTextEditor/ktexteditor_version.h>
+#include <KLocalizedString>
+#include <KMessageBox>
+#include <KActionCollection>
+#include <KXMLGUIFactory>
 
 #include <QtCore/QDateTime>
 #include <QtCore/QDir>
