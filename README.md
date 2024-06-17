@@ -1,6 +1,10 @@
 # Note
 
-This is for Kate 5 (KTextEditor from KF 5). If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tatsh/kate-wakatime/releases).
+This is for Kate 6 (KTextEditor from KF 6).
+
+If you need a version for Kate 5, use the [v1.3.10 release](https://github.com/Tatsh/kate-wakatime/releases).
+
+If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tatsh/kate-wakatime/releases).
 
 ## Dependencies
 

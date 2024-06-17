@@ -51,7 +51,7 @@ class WakaTimeView;
 
 class WakaTimePlugin : public KTextEditor::Plugin {
 public:
-    explicit WakaTimePlugin(QObject *parent = 0,
+    explicit WakaTimePlugin(QObject *parent = nullptr,
                             const QList<QVariant> & = QList<QVariant>());
     virtual ~WakaTimePlugin();
     QObject *createView(KTextEditor::MainWindow *mainWindow) override;
