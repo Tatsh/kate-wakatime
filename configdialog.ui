@@ -57,7 +57,7 @@
     </rect>
    </property>
    <property name="maxLength">
-    <number>36</number>
+    <number>41</number>
    </property>
    <property name="showClearButton" stdset="0">
     <bool>true</bool>

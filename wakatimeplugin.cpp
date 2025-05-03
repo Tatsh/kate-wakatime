@@ -225,7 +225,7 @@ void WakaTimeView::slotConfigureWakaTime() {
     dialog.setWindowTitle(i18n("Configure WakaTime"));
     if (dialog.exec() == QDialog::Accepted) {
         QString newApiKey = ui.lineEdit_apiKey->text();
-        if (newApiKey.size() == 36) {
+        if (newApiKey.size() >= 36 && newApiKey.size() <= 41) {
             apiKey = newApiKey;
         }
         hideFilenames = ui.checkBox_hideFilenames->isChecked();
