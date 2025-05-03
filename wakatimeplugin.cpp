@@ -57,7 +57,7 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
                            registerPlugin<WakaTimePlugin>();)
 
 const QString kUrlHeartsBulk =
-    QStringLiteral("%1/v1/users/current/heartbeats.bulk");
+    QStringLiteral("%1users/current/heartbeats.bulk");
 
 const QString kSettingsKeyApiKey = QStringLiteral("settings/api_key");
 const QString kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
@@ -534,7 +534,7 @@ void WakaTimeView::readConfig(void) {
         return;
     }
 
-    QString url = QStringLiteral("https://wakatime.com/api");
+    QString url = QStringLiteral("https://api.wakatime.com/api/v1/");
     if (config->contains(kSettingsKeyApiUrl) &&
         QString(config->value(kSettingsKeyApiUrl).toString())
             .trimmed()
