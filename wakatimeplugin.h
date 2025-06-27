@@ -31,28 +31,20 @@
 
 #include "ui_configdialog.h"
 
-#define kWakaTimePluginVersion "1.3.10"
-
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
 
 namespace KTextEditor {
-class Document;
-class MainWindow;
-class View;
+    class Document;
+    class MainWindow;
+    class View;
 } // namespace KTextEditor
 
-class QDateTime;
-class QFile;
-class QNetworkAccessManager;
-class QNetworkReply;
-
-class OfflineQueue;
+class QFileInfo;
 class WakaTimeView;
 
 class WakaTimePlugin : public KTextEditor::Plugin {
 public:
-    explicit WakaTimePlugin(QObject *parent = nullptr,
-                            const QList<QVariant> & = QList<QVariant>());
+    explicit WakaTimePlugin(QObject *parent = nullptr, const QList<QVariant> & = QList<QVariant>());
     virtual ~WakaTimePlugin();
     QObject *createView(KTextEditor::MainWindow *mainWindow) override;
 
@@ -64,13 +56,6 @@ class WakaTimeView : public QObject, public KXMLGUIClient {
     Q_OBJECT
 
 public:
-    enum WakaTimeApiHttpHeaders {
-        AuthorizationHeader,
-        TimeZoneHeader,
-        XIgnoreHeader,
-        XMachineName,
-    };
-
     WakaTimeView(KTextEditor::MainWindow *);
     ~WakaTimeView();
 
@@ -78,7 +63,6 @@ private Q_SLOTS:
     void slotConfigureWakaTime();
     void slotDocumentModifiedChanged(KTextEditor::Document *);
     void slotDocumentWrittenToDisk(KTextEditor::Document *);
-    void slotNetworkReplyFinished(QNetworkReply *);
     void viewCreated(KTextEditor::View *);
     void viewDestroyed(QObject *);
 
@@ -87,11 +71,10 @@ private:
     bool documentIsConnected(KTextEditor::Document *);
     void connectDocumentSignals(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
-    QString getBinPath(QString);
+    QString getBinPath(const QString &);
+    QString getProjectDirectory(const QFileInfo &);
     void readConfig();
     void sendAction(KTextEditor::Document *, bool);
-    void sendHeartbeat(const QVariantMap &, bool, bool saveToQueue = true);
-    void sendQueuedHeartbeats();
     void writeConfig();
 
 private:
@@ -101,14 +84,11 @@ private:
     QMap<QString, QString> binPathCache;
     bool hasSent;
     bool hideFilenames;
-
-    // Initialised in constructor definition
+    // Initialised in constructor definition.
     QList<KTextEditor::Document *> connectedDocuments;
     QSettings *config;
     QString lastFileSent;
     QDateTime lastTimeSent;
-    QNetworkAccessManager *nam;
-    OfflineQueue *queue;
     QByteArray userAgent;
 };
 

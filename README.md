@@ -12,11 +12,14 @@ If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tats
 * [Extra CMake Modules](https://invent.kde.org/frameworks/extra-cmake-modules)
 * [KF5:I18n](https://develop.kde.org/products/frameworks/)
 * [KF5:TextEditor](https://develop.kde.org/products/frameworks/)
-* [Qt5::Sql](https://doc.qt.io/qt-5/qtsql-index.html)
+* [wakatime-cli](https://github.com/wakatime/wakatime-cli)
 
-How to install these on your distro is beyond the scope of this document. Generally, install the Kate text editor, CMake, KDE framework development packages, and Qt development packages.
+How to install these on your distro is beyond the scope of this document. Generally, install the
+Kate text editor, CMake, KDE framework development packages, and Qt development packages.
 
 ## How to use
+
+`wakatime-cli` or `wakatime` must be in `PATH` or located in `~/.wakatime`.
 
 1. Get an account at [WakaTime](https://wakatime.com).
 2. Get your [API key](https://wakatime.com/settings).
@@ -57,9 +60,3 @@ How to install these on your distro is beyond the scope of this document. Genera
 7. Go to _Settings_, _Configure WakaTime..._. In the dialog, fill in your API key. Click _OK_ to save.
 
 To be certain this will work, check the file at `~/.wakatime.cfg`.
-
-## Is this a keylogger?
-
-Short answer is no.
-
-See the [`WakaTimeView::sendAction()`](https://github.com/Tatsh/kate-wakatime/blob/3c03b3431cf374afeec45dca638f928ab5169bdd/wakatimeplugin.cpp#L268-L423) method if you want to be certain.
