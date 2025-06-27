@@ -8,11 +8,11 @@ If you need a version for Kate 4, use the [v0.6 release](https://github.com/Tats
 
 ## Dependencies
 
-* [CMake](https://cmake.org/)
-* [Extra CMake Modules](https://invent.kde.org/frameworks/extra-cmake-modules)
-* [KF5:I18n](https://develop.kde.org/products/frameworks/)
-* [KF5:TextEditor](https://develop.kde.org/products/frameworks/)
-* [wakatime-cli](https://github.com/wakatime/wakatime-cli)
+- [CMake](https://cmake.org/)
+- [Extra CMake Modules](https://invent.kde.org/frameworks/extra-cmake-modules)
+- [KF5:I18n](https://develop.kde.org/products/frameworks/)
+- [KF5:TextEditor](https://develop.kde.org/products/frameworks/)
+- [wakatime-cli](https://github.com/wakatime/wakatime-cli)
 
 How to install these on your distro is beyond the scope of this document. Generally, install the
 Kate text editor, CMake, KDE framework development packages, and Qt development packages.

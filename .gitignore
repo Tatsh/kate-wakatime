@@ -1,1 +1,11 @@
-build/
+*.info
+*.kate-swp
+*.log
+*.swp*
+*~
+.cspellcache
+/.cache/
+/.yarn/install-state.gz
+/CMakeUserPresets.json
+/build/
+node_modules/

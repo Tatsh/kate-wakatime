@@ -1,5 +1,6 @@
 {
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.defines": ["-DVERSION=\"1.0.0\""],
   "C_Cpp.default.includePath": [
     "/opt/local/include",
     "/usr/include",

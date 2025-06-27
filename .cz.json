@@ -1,0 +1,8 @@
+{
+  "commitizen": {
+    "tag_format": "v$version",
+    "version_files": ["CMakeLists.txt", "README.md"],
+    "version_provider": "npm",
+    "version_scheme": "semver"
+  }
+}
