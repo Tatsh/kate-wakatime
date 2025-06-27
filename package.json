@@ -14,7 +14,9 @@
       "*": true
     },
     "enableGlobDot": true,
-    "files": ["*"],
+    "files": [
+      "*"
+    ],
     "ignorePaths": [
       "*.1",
       "*.har",
@@ -27,7 +29,9 @@
     "language": "en-GB",
     "languageSettings": [
       {
-        "dictionaries": ["main"],
+        "dictionaries": [
+          "main"
+        ],
         "languageId": "*"
       }
     ],
@@ -49,7 +53,9 @@
   "markdownlint-cli2": {
     "config": {
       "MD033": {
-        "allowed_elements": ["kbd"]
+        "allowed_elements": [
+          "kbd"
+        ]
       },
       "default": true,
       "line-length": {
@@ -67,18 +73,31 @@
     "jsonRecursiveSort": true,
     "overrides": [
       {
-        "files": ["package.json"],
+        "files": [
+          "package.json"
+        ],
         "options": {
           "parser": "json"
         }
       },
       {
-        "files": ["*.qrc", "*.rc", "*.ui"],
+        "files": [
+          "*.qrc",
+          "*.rc",
+          "*.ui"
+        ],
         "options": {
           "parser": "xml"
         }
       },
-      { "files": [".clang-format"], "options": { "parser": "yaml" } }
+      {
+        "files": [
+          ".clang-format"
+        ],
+        "options": {
+          "parser": "yaml"
+        }
+      }
     ],
     "plugins": [
       "@prettier/plugin-xml",
@@ -98,5 +117,5 @@
     "format": "cmake-format -i CMakeLists.txt && clang-format -i *.cpp *.h && yarn prettier -w .",
     "qa": "yarn check-spelling && yarn check-formatting"
   },
-  "version": "1.4.1"
+  "version": "1.5.0"
 }

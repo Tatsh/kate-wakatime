@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.31)
 
 project(
   ktexteditor_wakatime
-  VERSION 1.4.1
+  VERSION 1.5.0
   DESCRIPTION "Kate plugin to interface with WakaTime."
   HOMEPAGE_URL https://tatsh.github.io/kate-wakatime/)
 
