@@ -197,22 +197,7 @@ QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
 }
 
 void WakaTimeView::slotConfigureWakaTime() {
-    if (!KTextEditor::Editor::instance()->application()->activeMainWindow()) {
-        return;
-    }
-
-    const KTextEditor::View *const kv(KTextEditor::Editor::instance()
-                                          ->application()
-                                          ->activeMainWindow()
-                                          ->activeView());
-    if (!kv) {
-        return;
-    }
-
-    QDialog dialog(KTextEditor::Editor::instance()
-                       ->application()
-                       ->activeMainWindow()
-                       ->window());
+    QDialog dialog(KTextEditor::Editor::instance()->application()->activeMainWindow()->window());
     Ui::ConfigureWakaTimeDialog ui;
     ui.setupUi(&dialog);
     ui.lineEdit_apiKey->setText(apiKey);
