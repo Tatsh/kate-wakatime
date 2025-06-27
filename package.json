@@ -98,5 +98,5 @@
     "format": "cmake-format -i CMakeLists.txt && clang-format -i *.cpp *.h && yarn prettier -w .",
     "qa": "yarn check-spelling && yarn check-formatting"
   },
-  "version": "0.0.2"
+  "version": "1.4.1"
 }
