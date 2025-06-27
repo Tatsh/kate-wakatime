@@ -39,7 +39,6 @@ add_definitions(
 # Needed to find the moc file.
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(Qt6Sql REQUIRED)
 find_package(KF6 ${KF_DEP_VERSION} REQUIRED COMPONENTS I18n TextEditor CoreAddons)
 
 set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp)
@@ -47,7 +46,7 @@ ki18n_wrap_ui(ktexteditor_wakatime_SRCS configdialog.ui)
 qt6_add_resources(ktexteditor_wakatime_SRCS plugin.qrc)
 kcoreaddons_add_plugin(ktexteditor_wakatime INSTALL_NAMESPACE "kf6/ktexteditor" SOURCES
                        ${ktexteditor_wakatime_SRCS})
-target_link_libraries(ktexteditor_wakatime KF6::I18n KF6::TextEditor KF6::CoreAddons Qt6::Sql)
+target_link_libraries(ktexteditor_wakatime KF6::I18n KF6::TextEditor KF6::CoreAddons)
 
 set(WAKATIME_ICONS
     ${CMAKE_CURRENT_SOURCE_DIR}/icons/512-apps-wakatime.png
