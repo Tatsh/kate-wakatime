@@ -7,7 +7,6 @@
 [![Tests](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml)
 [![Coverage Status](https://coveralls.io/repos/github/Tatsh/kate-wakatime/badge.svg?branch=master)](https://coveralls.io/github/Tatsh/kate-wakatime?branch=master)
 [![GitHub Pages](https://github.com/Tatsh/kate-wakatime/actions/workflows/pages.yml/badge.svg)](https://tatsh.github.io/kate-wakatime/)
-[![Downloads](https://static.pepy.tech/badge/kate-wakatime/month)](https://pepy.tech/project/kate-wakatime)
 [![Stargazers](https://img.shields.io/github/stars/Tatsh/kate-wakatime?logo=github&style=flat)](https://github.com/Tatsh/kate-wakatime/stargazers)
 
 [![@Tatsh](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpublic.api.bsky.app%2Fxrpc%2Fapp.bsky.actor.getProfile%2F%3Factor%3Ddid%3Aplc%3Auq42idtvuccnmtl57nsucz72%26query%3D%24.followersCount%26style%3Dsocial%26logo%3Dbluesky%26label%3DFollow%2520%40Tatsh&query=%24.followersCount&style=social&logo=bluesky&label=Follow%20%40Tatsh)](https://bsky.app/profile/Tatsh.bsky.social)
