@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Service
-Comment=WakaTime
-Name=WakaTime
-ServiceTypes=KTextEditor/Plugin
-X-KDE-Library=ktexteditor_wakatime
