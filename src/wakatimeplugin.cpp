@@ -55,8 +55,6 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
                            "ktexteditor_wakatime.json",
                            registerPlugin<WakaTimePlugin>();)
 
-const QString kUrlHeartsBulk = QStringLiteral("%1users/current/heartbeats.bulk");
-
 const QString kSettingsKeyApiKey = QStringLiteral("settings/api_key");
 const QString kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
 const QString kSettingsKeyHideFilenames = QStringLiteral("settings/hidefilenames");
@@ -93,22 +91,11 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     a->setIcon(QIcon::fromTheme(QStringLiteral("wakatime")));
     connect(a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);
-
+    // Configuration
     const QString configFilePath =
         QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
-    struct utsname buf;
     config = new QSettings(configFilePath, QSettings::IniFormat, this);
     readConfig();
-    int unameRes = uname(&buf);
-    userAgent = QString(QStringLiteral("wakatime/%1 (%2-%3-%4-%5) KTextEditor/%6 kate-wakatime/%7"))
-                    .arg(config->value(QStringLiteral("internal/cli_version")).toString().trimmed())
-                    .arg(unameRes == 0 ? QString::fromUtf8(buf.sysname) : kStringLiteralUnknown)
-                    .arg(unameRes == 0 ? QString::fromUtf8(buf.release) : kStringLiteralUnknown)
-                    .arg(unameRes == 0 ? QString::fromUtf8(buf.nodename) : kStringLiteralUnknown)
-                    .arg(unameRes == 0 ? QString::fromUtf8(buf.machine) : kStringLiteralUnknown)
-                    .arg(QStringLiteral(KTEXTEDITOR_VERSION_STRING))
-                    .arg(QStringLiteral(VERSION))
-                    .toUtf8();
     // Connections
     connect(m_mainWindow, &KTextEditor::MainWindow::viewCreated, this, &WakaTimeView::viewCreated);
     for (KTextEditor::View *const view : m_mainWindow->views()) {

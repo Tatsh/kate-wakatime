@@ -89,7 +89,6 @@ private:
     QSettings *config;
     QString lastFileSent;
     QDateTime lastTimeSent;
-    QByteArray userAgent;
 };
 
 #endif
