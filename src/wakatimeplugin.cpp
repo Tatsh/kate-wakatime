@@ -58,10 +58,7 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
 const QString kSettingsKeyApiKey = QStringLiteral("settings/api_key");
 const QString kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
 const QString kSettingsKeyHideFilenames = QStringLiteral("settings/hidefilenames");
-
 const QString kStringLiteralSlash = QStringLiteral("/");
-const QString kStringLiteralUnknown = QStringLiteral("Unknown");
-
 const QString kWakaTimeCli = QStringLiteral("wakatime-cli");
 
 WakaTimePlugin::WakaTimePlugin(QObject *parent, const QVariantList &args)
