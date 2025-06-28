@@ -3,9 +3,11 @@
 [![GitHub tag (with filter)](https://img.shields.io/github/v/tag/Tatsh/kate-wakatime)](https://github.com/Tatsh/kate-wakatime/tags)
 [![License](https://img.shields.io/github/license/Tatsh/kate-wakatime)](https://github.com/Tatsh/kate-wakatime/blob/master/LICENSE.txt)
 [![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/Tatsh/kate-wakatime/v1.5.1/master)](https://github.com/Tatsh/kate-wakatime/compare/v1.5.1...master)
+[![CodeQL](https://github.com/Tatsh/ifup-systemd-resolved/actions/workflows/codeql.yml/badge.svg)](https://github.com/Tatsh/ifup-systemd-resolved/actions/workflows/codeql.yml)
 [![QA](https://github.com/Tatsh/kate-wakatime/actions/workflows/qa.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/qa.yml)
 [![Tests](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml)
 [![Coverage Status](https://coveralls.io/repos/github/Tatsh/kate-wakatime/badge.svg?branch=master)](https://coveralls.io/github/Tatsh/kate-wakatime?branch=master)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![GitHub Pages](https://github.com/Tatsh/kate-wakatime/actions/workflows/pages.yml/badge.svg)](https://tatsh.github.io/kate-wakatime/)
 [![Stargazers](https://img.shields.io/github/stars/Tatsh/kate-wakatime?logo=github&style=flat)](https://github.com/Tatsh/kate-wakatime/stargazers)
 
