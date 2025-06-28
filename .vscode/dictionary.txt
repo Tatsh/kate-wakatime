@@ -20,6 +20,7 @@ customwidgets
 datarootdir
 dbuild
 dcmake
+dearmor
 destinationlabel
 dialog
 docstrings

@@ -19,11 +19,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 add_definitions(-DTRANSLATION_DOMAIN=\"katewakatime\")
 
-option(BUILD_DOCS "Build documentation." OFF)
+option(BUILD_DOCS_ONLY "Build documentation only." OFF)
 option(BUILD_TESTS "Build tests." OFF)
 
-if(BUILD_DOCS)
-  find_package(Doxygen REQUIRED)
+find_package(Doxygen)
+if(Doxygen_FOUND)
   set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${DOXYGEN_OUT} @ONLY)
   add_custom_target(
@@ -35,27 +35,29 @@ if(BUILD_DOCS)
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/doc/${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION})
 endif()
 
-find_package(ECM ${KF_DEP_VERSION} REQUIRED NO_MODULE)
-list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+if(NOT BUILD_DOCS_ONLY)
+  find_package(ECM ${KF_DEP_VERSION} REQUIRED NO_MODULE)
+  list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
-include(KDEInstallDirs6)
-include(KDECMakeSettings)
-include(ECMInstallIcons)
-include(KDECompilerSettings NO_POLICY_SCOPE)
+  include(KDEInstallDirs6)
+  include(KDECMakeSettings)
+  include(ECMInstallIcons)
+  include(KDECompilerSettings NO_POLICY_SCOPE)
 
-# Sane flags from Kate project.
-add_definitions(
-  -DQT_NO_CAST_FROM_ASCII
-  -DQT_NO_CAST_FROM_BYTEARRAY
-  -DQT_NO_CAST_TO_ASCII
-  -DQT_NO_SIGNALS_SLOTS_KEYWORDS
-  -DQT_NO_URL_CAST_FROM_STRING
-  -DQT_STRICT_ITERATORS
-  -DQT_USE_FAST_OPERATOR_PLUS
-  -DQT_USE_QSTRINGBUILDER
-  -DVERSION=\"${CMAKE_PROJECT_VERSION}\")
+  # Sane flags from Kate project.
+  add_definitions(
+    -DQT_NO_CAST_FROM_ASCII
+    -DQT_NO_CAST_FROM_BYTEARRAY
+    -DQT_NO_CAST_TO_ASCII
+    -DQT_NO_SIGNALS_SLOTS_KEYWORDS
+    -DQT_NO_URL_CAST_FROM_STRING
+    -DQT_STRICT_ITERATORS
+    -DQT_USE_FAST_OPERATOR_PLUS
+    -DQT_USE_QSTRINGBUILDER
+    -DVERSION=\"${CMAKE_PROJECT_VERSION}\")
 
-# Needed to find the moc file.
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+  # Needed to find the moc file.
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_subdirectory(src)
+  add_subdirectory(src)
+endif()

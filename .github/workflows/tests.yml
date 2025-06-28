@@ -6,7 +6,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -14,8 +14,11 @@ jobs:
       - name: Install dependencies
         run: |
           pipx install cpp-coveralls
+          curl -s http://archive.neon.kde.org/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/neon-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/neon-archive-keyring.gpg] http://archive.neon.kde.org/user noble main" | sudo tee /etc/apt/sources.list.d/neon.list > /dev/null
           sudo apt-get update
-          sudo apt-get install -y kate extra-cmake-modules lcov
+          sudo apt-get upgrade
+          sudo apt-get install -y kf6-ktexteditor-dev extra-cmake-modules lcov
       - name: Configure
         run: >-
           cmake -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -B ${{github.workspace}}/build
@@ -44,7 +47,6 @@ jobs:
       fail-fast: false
       matrix:
         build-type: [Debug, Release]
-        os: [ubuntu-24.04, ubuntu-22.04]
 name: Tests
 'on':
   pull_request:

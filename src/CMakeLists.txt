@@ -8,15 +8,15 @@ kcoreaddons_add_plugin(ktexteditor_wakatime INSTALL_NAMESPACE "kf6/ktexteditor" 
 target_link_libraries(ktexteditor_wakatime KF6::I18n KF6::TextEditor KF6::CoreAddons)
 
 set(WAKATIME_ICONS
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/512-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/16-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/22-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/sc-apps-wakatime.svg
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/128-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/256-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/32-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/48-apps-wakatime.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/icons/64-apps-wakatime.png)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/16-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/22-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/32-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/48-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/64-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/128-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/256-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/512-apps-wakatime.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/../icons/sc-apps-wakatime.svg)
 
 ecm_install_icons(ICONS ${WAKATIME_ICONS} DESTINATION ${KDE_INSTALL_ICONDIR} THEME hicolor)
 
