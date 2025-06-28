@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "cStandard": "gnu23",
+      "compilerPath": "/usr/bin/gcc",
+      "cppStandard": "gnu++23",
+      "defines": [
+        "QT_NO_CAST_FROM_ASCII",
+        "QT_NO_CAST_FROM_BYTEARRAY",
+        "QT_NO_CAST_TO_ASCII",
+        "QT_NO_SIGNALS_SLOTS_KEYWORDS",
+        "QT_NO_URL_CAST_FROM_STRING",
+        "QT_STRICT_ITERATORS",
+        "QT_USE_FAST_OPERATOR_PLUS",
+        "QT_USE_QSTRINGBUILDER",
+        "VERSION=\"unknown\""
+      ],
+      "includePath": ["${workspaceFolder}/src/**", "${workspaceFolder}/build/generated"],
+      "name": "Linux"
+    }
+  ],
+  "version": 4
+}

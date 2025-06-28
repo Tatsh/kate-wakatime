@@ -1,13 +1,34 @@
 {
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-  "C_Cpp.default.defines": ["-DVERSION=\"1.0.0\""],
-  "C_Cpp.default.includePath": [
-    "/opt/local/include",
-    "/usr/include",
-    "build",
-    "build/ktexteditor_wakatime_autogen/include"
-  ],
-  "[cpp]": {
+  "[c]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools",
     "editor.tabSize": 4
-  }
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "editor.tabSize": 4
+  },
+  "[jsonnet]": {
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
+  },
+  "[shellscript]": {
+    "editor.tabSize": 4
+  },
+  "cSpell.enabled": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.insertSpaces": true,
+  "editor.rulers": [100],
+  "editor.tabSize": 2,
+  "editor.wordWrapColumn": 100,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "yaml.format.printWidth": 100
 }

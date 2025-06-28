@@ -1,5 +1,5 @@
 {
-  "author": "Andrew Udvare <audvare@gmail.com>",
+  "contributors": ["Andrew Udvare <audvare@gmail.com>"],
   "cspell": {
     "cache": {
       "useCache": true
@@ -14,9 +14,7 @@
       "*": true
     },
     "enableGlobDot": true,
-    "files": [
-      "*"
-    ],
+    "files": ["*"],
     "ignorePaths": [
       "*.1",
       "*.har",
@@ -29,15 +27,12 @@
     "language": "en-GB",
     "languageSettings": [
       {
-        "dictionaries": [
-          "main"
-        ],
+        "dictionaries": ["main"],
         "languageId": "*"
       }
     ],
     "useGitignore": true
   },
-  "description": "Kate plugin to interface with WakaTime.",
   "devDependencies": {
     "@prettier/plugin-xml": "^3.4.1",
     "cspell": "^9.1.1",
@@ -48,13 +43,13 @@
     "prettier-plugin-toml": "^2.0.5",
     "yarn-audit-fix": "^10.1.1"
   },
+  "homepage": "https://tatsh.github.io/kate-wakatime/",
+  "keywords": ["kate", "kde", "plasma", "wakatime"],
   "license": "MIT",
   "markdownlint-cli2": {
     "config": {
       "MD033": {
-        "allowed_elements": [
-          "kbd"
-        ]
+        "allowed_elements": ["kbd"]
       },
       "default": true,
       "line-length": {
@@ -72,29 +67,21 @@
     "jsonRecursiveSort": true,
     "overrides": [
       {
-        "files": [
-          "package.json"
-        ],
+        "files": ["package.json"],
         "options": {
           "parser": "json"
         }
       },
       {
-        "files": [
-          "*.qrc",
-          "*.rc",
-          "*.ui"
-        ],
+        "files": [".clang-format"],
         "options": {
-          "parser": "xml"
+          "parser": "yaml"
         }
       },
       {
-        "files": [
-          ".clang-format"
-        ],
+        "files": ["*.qrc", "*.rc", "*.ui"],
         "options": {
-          "parser": "yaml"
+          "parser": "xml"
         }
       }
     ],
@@ -105,15 +92,18 @@
       "prettier-plugin-toml"
     ],
     "printWidth": 100,
-    "singleQuote": true,
-    "xmlSortAttributesByKey": true
+    "reorderKeys": true,
+    "singleQuote": true
   },
-  "repository": "git@github.com:Tatsh/kate-wakatime.git",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Tatsh/kate-wakatime.git"
+  },
   "scripts": {
     "build": "cmake --preset=default -DBUILD_DOCS=ON && cmake --build build",
-    "check-formatting": "cmake-format --check CMakeLists.txt && clang-format -n *.cpp *.h && prettier -c . && markdownlint-cli2 '**/*.md' '#node_modules'",
+    "check-formatting": "cmake-format --check CMakeLists.txt src/CMakeLists.txt && clang-format -n src/*.cpp src/*.h && prettier -c . && markdownlint-cli2 '**/*.md' '#node_modules'",
     "check-spelling": "cspell --no-progress .",
-    "format": "cmake-format -i CMakeLists.txt && clang-format -i *.cpp *.h && yarn prettier -w .",
+    "format": "cmake-format -i CMakeLists.txt src/CMakeLists.txt && clang-format -i src/*.cpp src/*.h && yarn prettier -w .",
     "qa": "yarn check-spelling && yarn check-formatting"
   },
   "version": "1.5.1"
