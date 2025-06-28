@@ -1,5 +1,7 @@
 {
   "KPlugin": {
+    "Description": "Coding statistics with WakaTime",
+    "Description[zh_CN]": "使用 WakaTime 来统计编程时间",
     "Name": "WakaTime"
   }
 }
