@@ -68,7 +68,8 @@ Kate text editor, CMake, KDE framework development packages, and Qt development 
    sudo make install
    ```
 
-4. Once this plugin is installed, open Kate and go to _Settings_, _Configure Kate..._, then in the dialog choose _Plugins_.
+4. Once this plugin is installed, open Kate and go to _Settings_, _Configure Kate..._, then in the
+   dialog choose _Plugins_.
 5. Use the checkbox to enable _WakaTime_ and click _OK_:
 
    ![screenshot](https://user-images.githubusercontent.com/724848/53671349-f6a91280-3c4b-11e9-88b9-01f2cdc3cf67.png)
