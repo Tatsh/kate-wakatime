@@ -9,6 +9,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Added missing description.
+
+### Changed
+
+- API URL in settings may be left blank or unset. Default will then be used.
+
 ## [1.5.1] - 2025-06-26
 
 Minor release.

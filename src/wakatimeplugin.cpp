@@ -223,7 +223,9 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     arguments << QStringLiteral("--plugin")
               << QStringLiteral("ktexteditor-wakatime/%1").arg(VERSION);
     arguments << QStringLiteral("--key") << apiKey;
-    arguments << QStringLiteral("--api-url") << apiUrl;
+    if (!apiUrl.isEmpty()) {
+        arguments << QStringLiteral("--api-url") << apiUrl;
+    }
     if (hideFilenames) {
         arguments << QStringLiteral("--hide-filenames");
     }
