@@ -15,7 +15,7 @@
     "editor.tabSize": 4
   },
   "cSpell.enabled": true,
-  "cmake.configureArgs": ["-DBUILD_TESTING=ON", "-DCOVERAGE=ON"],
+  "cmake.configureArgs": ["-DCOVERAGE=ON"],
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
   },
@@ -27,6 +27,12 @@
   "editor.rulers": [100],
   "editor.tabSize": 2,
   "editor.wordWrapColumn": 100,
+  "files.associations": {
+    "*.moc": "cpp",
+    "*.qrc": "xml",
+    "*.rc": "xml",
+    "*.ui": "xml"
+  },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,

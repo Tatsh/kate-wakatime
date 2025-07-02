@@ -17,6 +17,7 @@
       ],
       "includePath": [
         "${workspaceFolder}/build/src",
+        "${workspaceFolder}/build/src/autotests/test_wakatime_autogen/include",
         "${workspaceFolder}/build/src/ktexteditor_wakatime_autogen/include",
         "${workspaceFolder}/src/**",
         "/usr/include/KF6/KCompletion",
