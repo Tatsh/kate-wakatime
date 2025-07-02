@@ -1,7 +1,19 @@
 {
   "KPlugin": {
+    "Authors": [
+      {
+        "Email": "audvare@gmail.com",
+        "Name": "Andrew Udvare"
+      }
+    ],
+    "BugReportUrl": "https://github.com/Tatsh/kate-wakatime/issues",
+    "Category": "Productivity",
     "Description": "Coding statistics with WakaTime",
     "Description[zh_CN]": "使用 WakaTime 来统计编程时间",
-    "Name": "WakaTime"
+    "Icon": "wakatime",
+    "License": "GPL-3",
+    "Name": "WakaTime",
+    "Version": "1.5.1",
+    "Website": "https://github.com/Tatsh/kate-wakatime"
   }
 }
