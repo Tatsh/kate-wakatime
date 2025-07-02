@@ -21,8 +21,6 @@
 
 #include "wakatimeplugin.h"
 
-#include <sys/utsname.h>
-
 #include <KTextEditor/Application>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
@@ -110,7 +108,7 @@ QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
 }
 
 void WakaTimeView::slotConfigureWakaTime() {
-    QDialog dialog(KTextEditor::Editor::instance()->application()->activeMainWindow()->window());
+    QDialog dialog(m_mainWindow->window());
     Ui::ConfigureWakaTimeDialog ui;
     ui.setupUi(&dialog);
     ui.lineEdit_apiKey->setText(apiKey);
