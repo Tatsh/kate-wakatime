@@ -15,7 +15,7 @@
     "editor.tabSize": 4
   },
   "cSpell.enabled": true,
-  "cmake.configureArgs": ["-DBUILD_TESTS=ON"],
+  "cmake.configureArgs": ["-DBUILD_TESTS=ON", "-DCOVERAGE=ON"],
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
   },

@@ -21,6 +21,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"katewakatime\")
 
 option(BUILD_DOCS_ONLY "Build documentation only." OFF)
 option(BUILD_TESTS "Build tests." OFF)
+option(COVERAGE "Enable code coverage." OFF)
 
 find_package(Doxygen)
 if(Doxygen_FOUND)

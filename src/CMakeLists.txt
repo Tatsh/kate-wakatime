@@ -1,6 +1,6 @@
 find_package(KF6 ${KF_DEP_VERSION} REQUIRED COMPONENTS I18n TextEditor CoreAddons)
 
-set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp)
+set(ktexteditor_wakatime_SRCS wakatimeplugin.cpp wakatimeplugin.h)
 ki18n_wrap_ui(ktexteditor_wakatime_SRCS configdialog.ui)
 qt6_add_resources(ktexteditor_wakatime_SRCS plugin.qrc)
 kcoreaddons_add_plugin(ktexteditor_wakatime INSTALL_NAMESPACE "kf6/ktexteditor" SOURCES

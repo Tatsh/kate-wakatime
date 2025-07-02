@@ -20,6 +20,7 @@ customwidgets
 datarootdir
 dbuild
 dcmake
+dcoverage
 dearmor
 destinationlabel
 dialog
@@ -31,15 +32,11 @@ esbenp
 evenodd
 gcov
 geninfo
+ggdb
 gmock
 gnucxx
 googletest
 graphviz
-qverify
-qtest
-ggdb
-kateapp
-offscreen
 gtest
 horstretch
 hsizetype
@@ -50,6 +47,7 @@ interprocedural
 iwyu
 jsonnet
 jsonschema
+kateapp
 katewakatime
 kcoreaddons
 kdec
@@ -64,11 +62,14 @@ mainpage
 mathjax
 mdfile
 nonzero
+offscreen
 pipx
 pycache
 pyyaml
 qresource
 qstringbuilder
+qtest
+qverify
 rect
 reflow
 schemafile
