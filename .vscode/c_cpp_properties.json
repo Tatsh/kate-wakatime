@@ -15,7 +15,26 @@
         "QT_USE_QSTRINGBUILDER",
         "VERSION=\"unknown\""
       ],
-      "includePath": ["${workspaceFolder}/src/**", "${workspaceFolder}/build/generated"],
+      "includePath": [
+        "${workspaceFolder}/build/src",
+        "${workspaceFolder}/build/src/ktexteditor_wakatime_autogen/include",
+        "${workspaceFolder}/src/**",
+        "/usr/include/KF6/KCompletion",
+        "/usr/include/KF6/KConfig",
+        "/usr/include/KF6/KConfigGui",
+        "/usr/include/KF6/KConfigWidgets",
+        "/usr/include/KF6/KCoreAddons",
+        "/usr/include/KF6/KI18n",
+        "/usr/include/KF6/KParts",
+        "/usr/include/KF6/KSyntaxHighlighting",
+        "/usr/include/KF6/KTextEditor",
+        "/usr/include/KF6/KWidgetsAddons",
+        "/usr/include/KF6/KXmlGui",
+        "/usr/include/qt6",
+        "/usr/include/qt6/QtCore",
+        "/usr/include/qt6/QtGui",
+        "/usr/include/qt6/QtWidgets"
+      ],
       "name": "Linux"
     }
   ],

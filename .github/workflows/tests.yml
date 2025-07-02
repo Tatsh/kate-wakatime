@@ -23,26 +23,26 @@ jobs:
         run: >-
           cmake -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -B ${{github.workspace}}/build
           --install-prefix ${{github.workspace}}/build/prefix
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DCOVERAGE=ON
       - name: Build
         run: cmake --build ${{github.workspace}}/build --verbose --config ${{matrix.build-type}}
       - name: Install
         run: cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose
-      # - name: Run tests
-      #   run: ctest --test-dir ${{github.workspace}}/build/src
-      # - if: ${{ matrix.build-type == 'Debug' }}
-      #   name: Generate coverage information
-      #   run: >-
-      #     geninfo
-      #     '--include=src/*'
-      #     '--exclude=google*/*'
-      #     --exclude=test.cpp
-      #     -b ${{github.workspace}}
-      #     -o coverage1.info
-      #     ${{github.workspace}}/build/src/CMakeFiles/ifup-systemd-resolved-tests.dir
-      # - if: ${{ matrix.build-type == 'Debug' }}
-      #   name: Coveralls
-      #   run: coveralls -i src -e src/specialtypes.cpp -e src/test.cpp '--exclude-lines-pattern=^\}$'
+      - name: Run tests
+        run: ctest --test-dir ${{github.workspace}}/build/src
+      - if: ${{ matrix.build-type == 'Debug' }}
+        name: Generate coverage information
+        run: >-
+          geninfo
+          '--include=src/*'
+          --exclude=src/autotests/basic.cpp
+          -b ${{github.workspace}}
+          -o coverage1.info
+          ${{github.workspace}}/build/src/autotests/CMakeFiles/test_wakatime.dir
+          ${{github.workspace}}/build/src/CMakeFiles/ktexteditor_wakatime.dir
+      - if: ${{ matrix.build-type == 'Debug' }}
+        name: Coveralls
+        run: coveralls -i src -e src/autotests/basic.cpp '--exclude-lines-pattern=^\}$'
     strategy:
       fail-fast: false
       matrix:

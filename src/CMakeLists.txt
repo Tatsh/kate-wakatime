@@ -20,6 +20,7 @@ set(WAKATIME_ICONS
 
 ecm_install_icons(ICONS ${WAKATIME_ICONS} DESTINATION ${KDE_INSTALL_ICONDIR} THEME hicolor)
 
-if(BUILD_TESTS)
+if(BUILD_TESTING)
+  enable_testing()
   add_subdirectory(autotests)
 endif()
