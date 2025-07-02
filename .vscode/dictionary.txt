@@ -35,6 +35,11 @@ gmock
 gnucxx
 googletest
 graphviz
+qverify
+qtest
+ggdb
+kateapp
+offscreen
 gtest
 horstretch
 hsizetype
