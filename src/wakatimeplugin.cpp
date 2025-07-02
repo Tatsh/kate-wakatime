@@ -270,12 +270,6 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     hasSent = true;
 }
 
-QByteArray WakaTimeView::apiAuthBytes() {
-    return QStringLiteral("Basic %1")
-        .arg(QString::fromLocal8Bit(apiKey.toLocal8Bit().toBase64()))
-        .toLocal8Bit();
-}
-
 void WakaTimeView::writeConfig(void) {
     config->setValue(kSettingsKeyApiKey, apiKey);
     config->setValue(kSettingsKeyApiUrl, apiUrl);

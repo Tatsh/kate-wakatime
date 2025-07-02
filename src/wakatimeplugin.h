@@ -57,7 +57,7 @@ class WakaTimeView : public QObject, public KXMLGUIClient {
 
 public:
     WakaTimeView(KTextEditor::MainWindow *);
-    ~WakaTimeView();
+    ~WakaTimeView() override;
 
 private Q_SLOTS:
     void slotConfigureWakaTime();
@@ -67,7 +67,6 @@ private Q_SLOTS:
     void viewDestroyed(QObject *);
 
 private:
-    QByteArray apiAuthBytes();
     bool documentIsConnected(KTextEditor::Document *);
     void connectDocumentSignals(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
