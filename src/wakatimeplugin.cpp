@@ -53,11 +53,11 @@ K_PLUGIN_FACTORY_WITH_JSON(WakaTimePluginFactory,
                            "ktexteditor_wakatime.json",
                            registerPlugin<WakaTimePlugin>();)
 
-const QString kSettingsKeyApiKey = QStringLiteral("settings/api_key");
-const QString kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
-const QString kSettingsKeyHideFilenames = QStringLiteral("settings/hidefilenames");
-const QString kStringLiteralSlash = QStringLiteral("/");
-const QString kWakaTimeCli = QStringLiteral("wakatime-cli");
+const auto kSettingsKeyApiKey = QStringLiteral("settings/api_key");
+const auto kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
+const auto kSettingsKeyHideFilenames = QStringLiteral("settings/hidefilenames");
+const auto kStringLiteralSlash = QStringLiteral("/");
+const auto kWakaTimeCli = QStringLiteral("wakatime-cli");
 
 WakaTimePlugin::WakaTimePlugin(QObject *parent, const QVariantList &args)
     : KTextEditor::Plugin(parent) {
@@ -81,19 +81,19 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
       lastTimeSent(QDateTime::currentDateTime()) {
     KXMLGUIClient::setComponentName(QStringLiteral("katewakatime"), i18n("WakaTime"));
     setXMLFile(QStringLiteral("ui.rc"));
-    QAction *const a = actionCollection()->addAction(QStringLiteral("configure_wakatime"));
+    auto a = actionCollection()->addAction(QStringLiteral("configure_wakatime"));
     a->setText(i18n("Configure WakaTime..."));
     a->setIcon(QIcon::fromTheme(QStringLiteral("wakatime")));
     connect(a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);
     // Configuration
-    const QString configFilePath =
+    const auto configFilePath =
         QDir::homePath() + QDir::separator() + QStringLiteral(".wakatime.cfg");
     config = new QSettings(configFilePath, QSettings::IniFormat, this);
     readConfig();
     // Connections
     connect(m_mainWindow, &KTextEditor::MainWindow::viewCreated, this, &WakaTimeView::viewCreated);
-    for (KTextEditor::View *const view : m_mainWindow->views()) {
+    for (auto view : m_mainWindow->views()) {
         connectDocumentSignals(view->document());
     }
 }
@@ -119,7 +119,7 @@ void WakaTimeView::slotConfigureWakaTime() {
     ui.checkBox_hideFilenames->setChecked(hideFilenames);
     dialog.setWindowTitle(i18n("Configure WakaTime"));
     if (dialog.exec() == QDialog::Accepted) {
-        QString newApiKey = ui.lineEdit_apiKey->text();
+        auto newApiKey = ui.lineEdit_apiKey->text();
         if (newApiKey.size() >= 36 && newApiKey.size() <= 41) {
             apiKey = newApiKey;
         }
@@ -135,17 +135,15 @@ QString WakaTimeView::getBinPath(const QString &binName) {
     if (binPathCache.contains(binName)) {
         return binPathCache.value(binName);
     }
-    QString dotWakaTime = QStringLiteral("%1/.wakatime").arg(QDir::homePath());
-    static const char *const kDefaultPath = "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
-    static const QString colon = QStringLiteral(":");
+    auto dotWakaTime = QStringLiteral("%1/.wakatime").arg(QDir::homePath());
+    static const auto *const kDefaultPath = "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
+    static const auto colon = QStringLiteral(":");
 
-    const char *const path = getenv("PATH");
-    QStringList paths =
-        QString::fromUtf8(path ? path : kDefaultPath).split(colon, Qt::SkipEmptyParts);
+    const auto *const path = getenv("PATH");
+    auto paths = QString::fromUtf8(path ? path : kDefaultPath).split(colon, Qt::SkipEmptyParts);
     paths.insert(0, dotWakaTime);
-    for (QString path : paths) {
-        QStringList dirListing = QDir(path).entryList();
-        for (QString entry : dirListing) {
+    for (auto path : paths) {
+        for (auto entry : QDir(path).entryList()) {
             if (entry == binName) {
                 entry = path.append(kStringLiteralSlash).append(entry);
                 binPathCache[binName] = entry;
@@ -157,20 +155,20 @@ QString WakaTimeView::getBinPath(const QString &binName) {
 }
 
 QString WakaTimeView::getProjectDirectory(const QFileInfo &fileInfo) {
-    QDir currentDirectory = QDir(fileInfo.canonicalPath());
+    QDir currentDirectory(fileInfo.canonicalPath());
     static QStringList filters;
-    static const QString gitStr = QStringLiteral(".git");
-    static const QString svnStr = QStringLiteral(".svn");
+    static const auto gitStr = QStringLiteral(".git");
+    static const auto svnStr = QStringLiteral(".svn");
     filters << gitStr << svnStr;
     bool vcDirFound = false;
     while (!vcDirFound) {
         if (!currentDirectory.canonicalPath().compare(kStringLiteralSlash)) {
             break;
         }
-        QFileInfoList entries =
+        auto entries =
             currentDirectory.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
-        for (QFileInfo entry : entries) {
-            QString name = entry.fileName();
+        for (auto entry : entries) {
+            auto name = entry.fileName();
             if ((name.compare(gitStr) || name.compare(svnStr)) && entry.isDir()) {
                 vcDirFound = true;
                 return currentDirectory.dirName();
@@ -238,8 +236,8 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
         arguments << QStringLiteral("--write");
     }
     // This is good enough for the language most of the time.
-    QString mode = doc->mode();
-    static const QString keyLanguage = QStringLiteral("language");
+    auto mode = doc->mode();
+    static const auto keyLanguage = QStringLiteral("language");
     if (!mode.isEmpty()) {
         arguments << QStringLiteral("--language") << mode;
     } else {
@@ -248,7 +246,7 @@ void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
             arguments << QStringLiteral("--language") << mode;
         }
     }
-    for (KTextEditor::View *view : m_mainWindow->views()) {
+    for (auto view : m_mainWindow->views()) {
         if (view->document() == doc) {
             arguments << QStringLiteral("--lineno")
                       << QString::number(view->cursorPosition().line() + 1);
@@ -281,21 +279,21 @@ void WakaTimeView::writeConfig(void) {
 }
 
 void WakaTimeView::readConfig(void) {
-    const QString apiKeyPath = kSettingsKeyApiKey;
-    const QString apiUrlPath = kSettingsKeyApiUrl;
+    const auto apiKeyPath = kSettingsKeyApiKey;
+    const auto apiUrlPath = kSettingsKeyApiUrl;
 
     if (!config->contains(kSettingsKeyApiKey)) {
         qCDebug(gLogWakaTime) << "No API key set in ~/.wakatime.cfg";
         return;
     }
 
-    const QString key = config->value(kSettingsKeyApiKey).toString().trimmed();
+    const auto key = config->value(kSettingsKeyApiKey).toString().trimmed();
     if (!key.length()) {
         qCDebug(gLogWakaTime) << "API Key is blank";
         return;
     }
 
-    QString url = QStringLiteral("https://api.wakatime.com/api/v1/");
+    auto url = QStringLiteral("https://api.wakatime.com/api/v1/");
     if (config->contains(kSettingsKeyApiUrl) &&
         QString(config->value(kSettingsKeyApiUrl).toString()).trimmed().length()) {
         url = QString(config->value(kSettingsKeyApiUrl).toString()).trimmed();
@@ -308,7 +306,7 @@ void WakaTimeView::readConfig(void) {
 }
 
 bool WakaTimeView::documentIsConnected(KTextEditor::Document *document) {
-    for (const KTextEditor::Document *const doc : connectedDocuments) {
+    for (auto doc : connectedDocuments) {
         if (doc == document) {
             return true;
         }
