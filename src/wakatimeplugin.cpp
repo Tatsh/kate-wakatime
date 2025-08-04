@@ -351,7 +351,6 @@ void WakaTimeView::disconnectDocumentSignals(KTextEditor::Document *document) {
     }
     disconnect(document, SIGNAL(modifiedChanged(KTextEditor::Document *)));
     disconnect(document, SIGNAL(documentSavedOrUploaded(KTextEditor::Document *, bool)));
-    disconnect(document, SIGNAL(documentSavedOrUploaded(KTextEditor::Document *, bool)));
     disconnect(document, SIGNAL(textChanged(KTextEditor::Document *)));
     connectedDocuments.removeOne(document);
 }
