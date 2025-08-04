@@ -19,8 +19,7 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WAKATIMEPLUGIN_H
-#define WAKATIMEPLUGIN_H
+#pragma once
 
 #include <KTextEditor/Plugin>
 #include <KTextEditor/View>
@@ -30,8 +29,10 @@
 #include <QtCore/QSettings>
 
 #include "ui_configdialog.h"
+#include "wakatime.h"
+#include "wakatimeconfig.h"
 
-Q_DECLARE_LOGGING_CATEGORY(gLogWakaTime)
+Q_DECLARE_LOGGING_CATEGORY(gLogWakaTimePlugin)
 
 namespace KTextEditor {
     class Document;
@@ -39,7 +40,6 @@ namespace KTextEditor {
     class View;
 } // namespace KTextEditor
 
-class QFileInfo;
 class WakaTimeView;
 
 class WakaTimePlugin : public KTextEditor::Plugin {
@@ -67,27 +67,14 @@ private Q_SLOTS:
     void viewDestroyed(QObject *);
 
 private:
-    bool documentIsConnected(KTextEditor::Document *);
     void connectDocumentSignals(KTextEditor::Document *);
     void disconnectDocumentSignals(KTextEditor::Document *);
-    QString getBinPath(const QString &);
-    QString getProjectDirectory(const QFileInfo &);
-    void readConfig();
     void sendAction(KTextEditor::Document *, bool);
-    void writeConfig();
 
 private:
     KTextEditor::MainWindow *m_mainWindow;
-    QString apiKey;
-    QString apiUrl;
-    QMap<QString, QString> binPathCache;
-    bool hasSent;
-    bool hideFilenames;
+    WakaTime client;
+    WakaTimeConfig config;
     // Initialised in constructor definition.
     QList<KTextEditor::Document *> connectedDocuments;
-    QSettings *config;
-    QString lastFileSent;
-    QDateTime lastTimeSent;
 };
-
-#endif

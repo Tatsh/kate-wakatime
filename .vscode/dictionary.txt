@@ -88,5 +88,6 @@ vcpkg
 verstretch
 vsizetype
 wakatime
+wakatimeconfig
 wakatimeplugin
 xlink

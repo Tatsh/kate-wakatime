@@ -20,10 +20,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 add_definitions(-DTRANSLATION_DOMAIN=\"katewakatime\")
 
 option(BUILD_DOCS_ONLY "Build documentation only." OFF)
+option(BUILD_DOCS "Build documentation." OFF)
 option(COVERAGE "Enable code coverage." OFF)
 
 find_package(Doxygen)
-if(Doxygen_FOUND)
+if(Doxygen_FOUND AND (BUILD_DOCS OR BUILD_DOCS_ONLY))
   set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${DOXYGEN_OUT} @ONLY)
   add_custom_target(

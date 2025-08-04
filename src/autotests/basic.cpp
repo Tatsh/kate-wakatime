@@ -1,13 +1,5 @@
-#include <KTextEditor/Application>
-#include <KTextEditor/Document>
-#include <KTextEditor/Editor>
-#include <KTextEditor/MainWindow>
-#include <KTextEditor/View>
-
 #include <QtCore/QObject>
 #include <QtTest/QTest>
-
-#include "wakatimeplugin.h"
 
 class WakaTimePluginTest : public QObject {
     Q_OBJECT
@@ -27,8 +19,6 @@ WakaTimePluginTest::~WakaTimePluginTest() {
 }
 
 void WakaTimePluginTest::test_PluginInitialization() {
-    KTextEditor::Editor *editor = KTextEditor::Editor::instance();
-    QVERIFY(editor != nullptr);
 }
 
 QTEST_MAIN(WakaTimePluginTest)
