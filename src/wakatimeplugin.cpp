@@ -1,24 +1,4 @@
-/**
- * This file is part of kate-wakatime.
- * Copyright 2014 Andrew Udvare <audvare@gmail.com>
- *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License version
- *   3, or (at your option) any later version, as published by the Free
- *   Software Foundation.
- *
- *   This library is distributed in the hope that it will be useful, but
- *   WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   Library General Public License for more details.
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with the kdelibs library; see the file COPYING.LIB. If
- *   not, write to the Free Software Foundation, Inc., 51 Franklin Street,
- *   Fifth Floor, Boston, MA 02110-1301, USA. or see
- *   <http://www.gnu.org/licenses/>.
- */
-
+// SPDX-License-Identifier: MIT
 #include <KTextEditor/Application>
 #include <KTextEditor/Document>
 #include <KTextEditor/Editor>
@@ -140,20 +120,19 @@ void WakaTimeView::connectDocumentSignals(KTextEditor::Document *document) {
     if (connectedDocuments.contains(document)) {
         return;
     }
-    // When document goes from saved state to changed state (not yet saved on
-    // disk)
+    // When document goes from saved state to changed state (not yet saved on disk).
     connect(document,
             &KTextEditor::Document::modifiedChanged,
             this,
             &WakaTimeView::slotDocumentModifiedChanged);
-    // Written to disk
+    // Written to disk.
     connect(document,
             &KTextEditor::Document::documentSavedOrUploaded,
             this,
             &WakaTimeView::slotDocumentWrittenToDisk);
-    // Text changes (might be heavy)
-    // This event unfortunately is emitted twice in separate threads for every
-    // key stroke (maybe key up and down is the reason)
+    // Text changes (might be heavy).
+    // This event unfortunately is emitted twice in separate threads for every key stroke (maybe key
+    // up and down is the reason).
     connect(document,
             &KTextEditor::Document::textChanged,
             this,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #include <QtCore/QDir>
 #include <QtCore/QProcess>
 
