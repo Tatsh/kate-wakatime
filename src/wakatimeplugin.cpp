@@ -103,6 +103,7 @@ void WakaTimeView::slotConfigureWakaTime() {
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
+    // The view is necessary here to get the cursor position and line count.
     for (auto view : m_mainWindow->views()) {
         if (view->document() == doc) {
             client.send(doc->url().toLocalFile(),

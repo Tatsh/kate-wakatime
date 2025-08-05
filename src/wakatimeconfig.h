@@ -15,6 +15,10 @@ const auto kSettingsKeyHideFilenames = QStringLiteral("settings/hidefilenames");
  */
 class WakaTimeConfig : public QObject {
     Q_OBJECT
+#ifdef TESTING
+    friend class WakaTimeConfigTest;
+#endif
+
 public:
     explicit WakaTimeConfig(QObject *parent = nullptr) {
         Q_UNUSED(parent);

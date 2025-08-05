@@ -13,8 +13,8 @@ WakaTime::WakaTime(QObject *parent) : lastTimeSent(QDateTime::fromMSecsSinceEpoc
     Q_UNUSED(parent);
 }
 
-/** Find the full path to a binary based on the `PATH` environment variable. Equivalent to
- * `command -v` or `which`.
+/** Find the full path to a file based on the `PATH` environment variable. Equivalent to
+ * `command -v` or `which`. Does not check if the file is executable.
  *
  * @param binName The name of the binary to find.
  * @return The full path to the binary if found, otherwise an empty string.
@@ -65,7 +65,7 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
             currentDirectory.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
         for (auto entry : entries) {
             auto name = entry.fileName();
-            if ((name.compare(gitStr) || name.compare(svnStr)) && entry.isDir()) {
+            if ((name == gitStr || name == svnStr) && entry.isDir()) {
                 vcDirFound = true;
                 return currentDirectory.dirName();
             }
@@ -84,25 +84,26 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
  * @param cursorPosition The column number of the cursor position.
  * @param linesInFile The total number of lines in the file.
  * @param isWrite Whether this is a write event (`true`) or just a heartbeat (`false`).
+ * @return WakaTime::State indicating the result of the send operation.
  */
-void WakaTime::send(const QString &filePath,
-                    const QString &mode,
-                    int lineNumber,
-                    int cursorPosition,
-                    int linesInFile,
-                    bool isWrite) {
+WakaTime::State WakaTime::send(const QString &filePath,
+                               const QString &mode,
+                               int lineNumber,
+                               int cursorPosition,
+                               int linesInFile,
+                               bool isWrite) {
     auto wakatimeCliPath = getBinPath(kWakaTimeCli);
     if (wakatimeCliPath.isEmpty()) {
         wakatimeCliPath = getBinPath(QStringLiteral("wakatime"));
         if (wakatimeCliPath.isEmpty()) {
             qCWarning(gLogWakaTime) << "wakatime-cli not found in PATH.";
-            return;
+            return WakaTimeCliNotInPath;
         }
     }
     // Could be untitled, or a URI (including HTTP). Only local files are handled for now.
     if (filePath.isEmpty()) {
         qCDebug(gLogWakaTime) << "Nothing to send about";
-        return;
+        return NothingToSend;
     }
     QStringList arguments;
     const QFileInfo fileInfo(filePath);
@@ -120,7 +121,7 @@ void WakaTime::send(const QString &filePath,
         if (hasSent && deltaMs <= intervalMs && lastFileSent == canonicalFilePath) {
             qCDebug(gLogWakaTime) << "Not enough time has passed since last send";
             qCDebug(gLogWakaTime) << "Delta:" << deltaMs / 1000 / 60 << "/ 2 minutes";
-            return;
+            return TooSoon;
         }
     }
     arguments << QStringLiteral("--entity") << canonicalFilePath;
@@ -130,7 +131,9 @@ void WakaTime::send(const QString &filePath,
     if (!projectName.isEmpty()) {
         arguments << QStringLiteral("--alternate-project") << projectName;
     } else {
+        // LCOV_EXCL_START
         qCDebug(gLogWakaTime) << "Warning: No project name found";
+        // LCOV_EXCL_STOP
     }
     if (isWrite) {
         arguments << QStringLiteral("--write");
@@ -145,9 +148,10 @@ void WakaTime::send(const QString &filePath,
     auto ret = QProcess::execute(wakatimeCliPath, arguments);
     if (ret != 0) {
         qCWarning(gLogWakaTime) << "wakatime-cli returned error code" << ret;
-        return;
+        return ErrorSending;
     }
     lastTimeSent = QDateTime::currentDateTime();
     lastFileSent = canonicalFilePath;
     hasSent = true;
+    return SentSuccessfully;
 }

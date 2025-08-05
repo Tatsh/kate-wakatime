@@ -29,19 +29,13 @@ jobs:
       - name: Install
         run: cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose
       - name: Run tests
-        run: ctest --test-dir ${{github.workspace}}/build/src
+        run: ctest --test-dir ${{github.workspace}}/build/src --output-on-failure
       - if: ${{ matrix.build-type == 'Debug' }}
         name: Generate coverage information
-        run: >-
-          geninfo
-          '--include=src/*'
-          --exclude=src/autotests/basic.cpp
-          -b ${{github.workspace}}
-          -o coverage1.info
-          ${{github.workspace}}/build
+        run: geninfo -b ${{github.workspace}} -o coverage1.info ${{github.workspace}}/build
       - if: ${{ matrix.build-type == 'Debug' }}
         name: Coveralls
-        run: coveralls -i src -e src/autotests/basic.cpp '--exclude-lines-pattern=^\}$'
+        run: coveralls -i src/wakatime.cpp -i src/wakatime.h -i src/wakatimeconfig.h -e src/autotests
     strategy:
       fail-fast: false
       matrix:

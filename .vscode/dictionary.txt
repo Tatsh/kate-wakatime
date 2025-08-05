@@ -9,9 +9,11 @@ bsky
 buglist
 buildsystems
 bytearray
+clienttest
 codeowners
 colorstyle
 configdialog
+configtest
 coveragerc
 cpptools
 ctest
@@ -29,6 +31,7 @@ docstrings
 doxyfile
 dtranslation
 dversion
+endfunction
 esbenp
 evenodd
 gcov
@@ -67,6 +70,8 @@ offscreen
 pipx
 pycache
 pyyaml
+qcompare
+qputenv
 qresource
 qstringbuilder
 qtest
