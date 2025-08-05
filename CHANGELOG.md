@@ -11,11 +11,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added missing description.
+- Description.
 
 ### Changed
 
 - API URL in settings may be left blank or unset. Default will then be used.
+
+### Fixed
+
+- Duplicate call to `disconnect()`.
+- Project name detection.
 
 ## [1.5.1] - 2025-06-26
 
@@ -32,4 +37,4 @@ Minor release.
 
 - Configuration dialog was not able to be opened on Welcome page. Closes #34.
 
-[unreleased]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.1...HEAD
+[unreleased]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.2...HEAD
