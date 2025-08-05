@@ -29,12 +29,11 @@ public:
     };
     ~WakaTimeConfig() override {
         delete config_;
-    };
+    }; // LCOV_EXCL_START
     /** Get the API key from the configuration.
-     *
      * @return The API key.
      */
-    QString apiKey() const {
+    QString apiKey() const { // LCOV_EXCL_STOP
         return config_->value(kSettingsKeyApiKey).toString();
     };
     /**

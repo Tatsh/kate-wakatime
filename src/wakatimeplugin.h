@@ -22,9 +22,12 @@ namespace KTextEditor {
 
 class WakaTimeView;
 
+/** Plugin for initialisation by KTextEditor. */
 class WakaTimePlugin : public KTextEditor::Plugin {
 public:
+    /** Constructor. */
     explicit WakaTimePlugin(QObject *parent = nullptr, const QList<QVariant> & = QList<QVariant>());
+    /** Destructor. */
     virtual ~WakaTimePlugin();
     QObject *createView(KTextEditor::MainWindow *mainWindow) override;
 
@@ -32,10 +35,12 @@ private:
     QList<WakaTimeView *> m_views;
 };
 
+/** The plugin view. */
 class WakaTimeView : public QObject, public KXMLGUIClient {
     Q_OBJECT
 
 public:
+    /** Constructor. */
     WakaTimeView(KTextEditor::MainWindow *);
     ~WakaTimeView() override;
 

@@ -13,12 +13,6 @@ WakaTime::WakaTime(QObject *parent) : lastTimeSent(QDateTime::fromMSecsSinceEpoc
     Q_UNUSED(parent);
 }
 
-/** Find the full path to a file based on the `PATH` environment variable. Equivalent to
- * `command -v` or `which`. Does not check if the file is executable.
- *
- * @param binName The name of the binary to find.
- * @return The full path to the binary if found, otherwise an empty string.
- */
 QString WakaTime::getBinPath(const QString &binName) {
 #ifdef Q_OS_WIN
     return QString();
@@ -44,12 +38,6 @@ QString WakaTime::getBinPath(const QString &binName) {
     return QString();
 }
 
-/**
- * Get the project name by traversing up until .git or .svn is found.
- *
- * @param fileInfo The QFileInfo of the file to get the project directory for.
- * @return The project directory name if found, otherwise an empty string.
- */
 QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
     QDir currentDirectory(fileInfo.canonicalPath());
     static QStringList filters;
@@ -75,17 +63,6 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
     return QString();
 }
 
-/**
- * Send statistics to WakaTime.
- *
- * @param filePath The file path to send statistics for.
- * @param mode The language mode of the file.
- * @param lineNumber The line number of the cursor position.
- * @param cursorPosition The column number of the cursor position.
- * @param linesInFile The total number of lines in the file.
- * @param isWrite Whether this is a write event (`true`) or just a heartbeat (`false`).
- * @return WakaTime::State indicating the result of the send operation.
- */
 WakaTime::State WakaTime::send(const QString &filePath,
                                const QString &mode,
                                int lineNumber,
