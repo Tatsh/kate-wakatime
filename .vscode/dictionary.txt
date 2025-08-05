@@ -15,6 +15,7 @@ colorstyle
 configdialog
 configtest
 coveragerc
+coverallsapp
 cpptools
 ctest
 cursorpos

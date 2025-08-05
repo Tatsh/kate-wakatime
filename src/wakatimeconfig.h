@@ -2,8 +2,16 @@
 #pragma once
 
 #include <QtCore/QDir>
+#include <QtCore/QLoggingCategory>
 #include <QtCore/QObject>
 #include <QtCore/QSettings>
+#include <QtWidgets/QDialog>
+
+#include <KLocalizedString>
+
+#include "ui_configdialog.h"
+
+Q_DECLARE_LOGGING_CATEGORY(gLogWakaTimeConfig)
 
 const auto kSettingsKeyApiKey = QStringLiteral("settings/api_key");
 const auto kSettingsKeyApiUrl = QStringLiteral("settings/api_url");
@@ -29,11 +37,12 @@ public:
     };
     ~WakaTimeConfig() override {
         delete config_;
-    }; // LCOV_EXCL_START
+        delete dialog_;
+    };
     /** Get the API key from the configuration.
      * @return The API key.
      */
-    QString apiKey() const { // LCOV_EXCL_STOP
+    QString apiKey() const {
         return config_->value(kSettingsKeyApiKey).toString();
     };
     /**
@@ -81,7 +90,18 @@ public:
     void save() const {
         config_->sync();
     };
+    /**
+     * Configure the dialog. Should be called before showDialog().
+     *
+     * @param parent Parent widget.
+     * @param flags Window flags.
+     */
+    void configureDialog(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+    /** Show configuration dialog. */
+    void showDialog();
 
 private:
-    QSettings *config_;
+    QSettings *config_ = nullptr;
+    QDialog *dialog_ = nullptr;
+    Ui::ConfigureWakaTimeDialog ui_;
 };

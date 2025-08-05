@@ -58,6 +58,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     a->setIcon(QIcon::fromTheme(QStringLiteral("wakatime")));
     connect(a, &QAction::triggered, this, &WakaTimeView::slotConfigureWakaTime);
     mainWindow->guiFactory()->addClient(this);
+    config.configureDialog(m_mainWindow->window());
     // Connections
     connect(m_mainWindow, &KTextEditor::MainWindow::viewCreated, this, &WakaTimeView::viewCreated);
     for (auto view : m_mainWindow->views()) {
@@ -74,32 +75,7 @@ QObject *WakaTimePlugin::createView(KTextEditor::MainWindow *mainWindow) {
 }
 
 void WakaTimeView::slotConfigureWakaTime() {
-    QDialog dialog(m_mainWindow->window());
-    Ui::ConfigureWakaTimeDialog ui;
-    ui.setupUi(&dialog);
-    auto apiKey = config.apiKey();
-    auto apiUrl = config.apiUrl();
-    const auto hideFilenames = config.hideFilenames();
-    ui.lineEdit_apiKey->setText(apiKey);
-    if (apiKey.isNull() || !apiKey.isEmpty()) {
-        ui.lineEdit_apiKey->setFocus();
-    }
-    ui.lineEdit_apiUrl->setText(apiUrl);
-    ui.checkBox_hideFilenames->setChecked(hideFilenames);
-    dialog.setWindowTitle(i18n("Configure WakaTime"));
-    if (dialog.exec() == QDialog::Accepted) {
-        auto newApiKey = ui.lineEdit_apiKey->text();
-        if (newApiKey.size() >= 36 && newApiKey.size() <= 41) {
-            config.setApiKey(newApiKey);
-        }
-        auto newApiUrl = ui.lineEdit_apiUrl->text();
-        if (!newApiUrl.isEmpty() && (newApiUrl.startsWith(QStringLiteral("http://")) ||
-                                     newApiUrl.startsWith(QStringLiteral("https://")))) {
-            config.setApiUrl(newApiUrl);
-        }
-        config.setHideFilenames(ui.checkBox_hideFilenames->isChecked());
-        config.save();
-    }
+    config.showDialog();
 }
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {

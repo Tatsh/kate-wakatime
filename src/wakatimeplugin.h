@@ -8,7 +8,6 @@
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QSettings>
 
-#include "ui_configdialog.h"
 #include "wakatime.h"
 #include "wakatimeconfig.h"
 

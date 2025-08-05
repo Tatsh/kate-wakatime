@@ -16,10 +16,13 @@ public:
     ~WakaTimeConfigTest() override;
 
 private Q_SLOTS:
-    void testInit();
     void testApiKey();
     void testApiUrl();
+    void testConfigureDialogKeepsPointer();
     void testHideFilenames();
+    void testInit();
+    void testShowDialogClearApiKey();
+    void testShowDialogDoesNothingIfNotConfigured();
 };
 
 WakaTimeConfigTest::WakaTimeConfigTest(QObject *parent) : QObject(parent) {
@@ -65,6 +68,47 @@ void WakaTimeConfigTest::testHideFilenames() {
     config.save();
     WakaTimeConfig newConfig;
     QCOMPARE(newConfig.hideFilenames(), hideFilenames);
+}
+
+void WakaTimeConfigTest::testShowDialogClearApiKey() {
+    WakaTimeConfig config;
+    config.configureDialog();
+    QVERIFY(config.dialog_ != nullptr);
+    QVERIFY(!config.apiKey().isEmpty());
+    // Ctrl+A to select all text in the API key field and delete it.
+    QApplication::postEvent(
+        config.ui_.lineEdit_apiKey,
+        new QKeyEvent(QEvent::KeyPress, Qt::Key_A, Qt::KeyboardModifier::ControlModifier));
+    QApplication::postEvent(
+        config.ui_.lineEdit_apiKey,
+        new QKeyEvent(QEvent::KeyRelease, Qt::Key_A, Qt::KeyboardModifier::ControlModifier));
+    QApplication::postEvent(config.ui_.lineEdit_apiKey,
+                            new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+    QApplication::postEvent(config.ui_.lineEdit_apiKey,
+                            new QKeyEvent(QEvent::KeyRelease, Qt::Key_Delete, Qt::NoModifier));
+    QApplication::postEvent(config.ui_.lineEdit_apiKey,
+                            new QKeyEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier));
+    QApplication::postEvent(config.ui_.lineEdit_apiKey,
+                            new QKeyEvent(QEvent::KeyRelease, Qt::Key_Return, Qt::NoModifier));
+    config.showDialog();
+    QVERIFY(config.apiKey().isEmpty());
+}
+
+void WakaTimeConfigTest::testConfigureDialogKeepsPointer() {
+    WakaTimeConfig config;
+    config.configureDialog();
+    QVERIFY(config.dialog_ != nullptr);
+    QDialog *oldDialog = config.dialog_;
+    config.configureDialog();
+    QCOMPARE(config.dialog_, oldDialog);
+}
+
+void WakaTimeConfigTest::testShowDialogDoesNothingIfNotConfigured() {
+    WakaTimeConfig config;
+    QVERIFY(config.dialog_ == nullptr);
+    // If the dialog is not configured, this will not hang on dialog_.exec() but instead returns
+    // immediately.
+    config.showDialog();
 }
 
 QTEST_MAIN(WakaTimeConfigTest)

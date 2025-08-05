@@ -3,7 +3,7 @@ include(ECMMarkAsTest)
 find_package(Qt6Test ${QT_MIN_VERSION} QUIET REQUIRED)
 
 set(kate_wakatime_client_tests_SRCS clienttest.cpp ../wakatime.h ../wakatime.cpp)
-set(kate_wakatime_config_tests_SRCS configtest.cpp ../wakatimeconfig.h)
+set(kate_wakatime_config_tests_SRCS configtest.cpp ../wakatimeconfig.cpp ../wakatimeconfig.h)
 
 function(create_test test_name test_srcs)
   add_executable(${test_name} ${test_srcs})
@@ -20,3 +20,4 @@ endfunction()
 
 create_test(kate-wakatime-client-test "${kate_wakatime_client_tests_SRCS}")
 create_test(kate-wakatime-config-test "${kate_wakatime_config_tests_SRCS}")
+target_link_libraries(kate-wakatime-config-test PRIVATE KF6::I18n KF6::TextEditor)
