@@ -61,7 +61,7 @@ WakaTimeView::WakaTimeView(KTextEditor::MainWindow *mainWindow)
     config.configureDialog(m_mainWindow->window());
     // Connections
     connect(m_mainWindow, &KTextEditor::MainWindow::viewCreated, this, &WakaTimeView::viewCreated);
-    for (auto view : m_mainWindow->views()) {
+    for (const auto &view : m_mainWindow->views()) {
         connectDocumentSignals(view->document());
     }
 }
@@ -80,7 +80,7 @@ void WakaTimeView::slotConfigureWakaTime() {
 
 void WakaTimeView::sendAction(KTextEditor::Document *doc, bool isWrite) {
     // The view is necessary here to get the cursor position and line count.
-    for (auto view : m_mainWindow->views()) {
+    for (const auto &view : m_mainWindow->views()) {
         if (view->document() == doc) {
             client.send(doc->url().toLocalFile(),
                         doc->mode(),

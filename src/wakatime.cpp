@@ -51,7 +51,7 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
         }
         auto entries =
             currentDirectory.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
-        for (auto entry : entries) {
+        for (const auto &entry : entries) {
             auto name = entry.fileName();
             if ((name == gitStr || name == svnStr) && entry.isDir()) {
                 vcDirFound = true;
