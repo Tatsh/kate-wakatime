@@ -9,9 +9,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.2] - 2025-08-05
+
 ### Added
 
-- Description.
+- Plugin description (appears in the Settings dialog under Plugins).
 
 ### Changed
 
