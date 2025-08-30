@@ -40,3 +40,6 @@ Minor release.
 - Configuration dialog was not able to be opened on Welcome page. Closes #34.
 
 [unreleased]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.1...v1.5.2
+[1.5.1]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/Tatsh/kate-wakatime/compare/v1.4.1...v1.5.0
