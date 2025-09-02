@@ -16,6 +16,8 @@
 
 Kate plugin to interface with WakaTime.
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/kate-wakatime.svg)](https://repology.org/project/kate-wakatime/versions)
+
 ## Note
 
 This is for Kate 6 (KTextEditor from KF 6).
