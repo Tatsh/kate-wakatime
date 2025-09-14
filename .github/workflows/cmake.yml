@@ -1,0 +1,60 @@
+name: C/C++ CI
+on:
+  push:
+    branches: [master]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [master]
+jobs:
+  build-msys:
+    runs-on: windows-latest
+    steps:
+      - id: fixed_workspace
+        name: Fix path
+        run: >-
+          echo out=$("${{github.workspace}}" -Replace "\\","/") | Out-File
+          -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.sys}}
+          pacboy: >-
+            cmake:p
+            extra-cmake-modules:p
+            kcompletion:p
+            ki18n:p
+            kparts:p
+            ktexteditor:p
+            kwidgetsaddons:p
+            kxmlgui:p
+            ninja:p
+            qt6-base:p
+            qt6-declarative:p
+            qt6-tools:p
+            toolchain:p
+          update: true
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Configure
+        run: >-
+          cmake -G Ninja -B ${{steps.fixed_workspace.outputs.out}}/build
+          --install-prefix ${{steps.fixed_workspace.outputs.out}}/build/prefix
+          -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+        shell: msys2 {0}
+      - name: Build
+        run: cmake --build ${{steps.fixed_workspace.outputs.out}}/build --verbose
+        shell: msys2 {0}
+      - name: Install
+        run: >-
+          cmake --install ${{steps.fixed_workspace.outputs.out}}/build
+          --config ${{matrix.build-type}} --verbose
+        shell: msys2 {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [Debug, Release]
+        sys:
+          - clang64
+          - clangarm64
+          - ucrt64
