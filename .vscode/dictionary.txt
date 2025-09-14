@@ -66,6 +66,7 @@ libkatewakatime
 mainpage
 mathjax
 mdfile
+msys2
 nonzero
 offscreen
 pipx
