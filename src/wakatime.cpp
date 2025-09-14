@@ -13,25 +13,31 @@ WakaTime::WakaTime(QObject *parent) : lastTimeSent(QDateTime::fromMSecsSinceEpoc
     Q_UNUSED(parent);
 }
 
-QString WakaTime::getBinPath(const QString &binName) {
-#ifdef Q_OS_WIN
-    return QString();
-#endif
-    if (binPathCache.contains(binName)) {
-        return binPathCache.value(binName);
+QString WakaTime::getBinPath(const QStringList &binNames) {
+    for (auto &name : binNames) {
+        if (binPathCache.contains(name)) {
+            return binPathCache.value(name);
+        }
     }
     auto dotWakaTime = QStringLiteral("%1/.wakatime").arg(QDir::homePath());
-    static const auto *const kDefaultPath = "/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin";
-    static const auto colon = QStringLiteral(":");
-    const auto *const path = getenv("PATH");
-    auto paths = QString::fromUtf8(path ? path : kDefaultPath).split(colon, Qt::SkipEmptyParts);
+#ifndef Q_OS_WIN
+    static const auto pathSeparator = QStringLiteral(":");
+    static const auto kDefaultPath =
+        QStringLiteral("/usr/bin:/usr/local/bin:/opt/bin:/opt/local/bin");
+#else
+    static const auto pathSeparator = QStringLiteral(";");
+    static const auto kDefaultPath = QStringLiteral("C:\\Windows\\System32;C:\\Windows");
+#endif
+    const auto path = qEnvironmentVariable("PATH", kDefaultPath);
+    auto paths = path.split(pathSeparator, Qt::SkipEmptyParts);
     paths.insert(0, dotWakaTime);
     for (auto path : paths) {
-        for (auto entry : QDir(path).entryList()) {
-            if (entry == binName) {
-                entry = path.append(kStringLiteralSlash).append(entry);
-                binPathCache[binName] = entry;
-                return entry;
+        for (auto &name : binNames) {
+            auto lookFor = path + QDir::separator() + name;
+            auto fi = QFileInfo(lookFor);
+            if (fi.exists(lookFor) && fi.isExecutable()) {
+                binPathCache[name] = lookFor;
+                return lookFor;
             }
         }
     }
@@ -69,13 +75,31 @@ WakaTime::State WakaTime::send(const QString &filePath,
                                int cursorPosition,
                                int linesInFile,
                                bool isWrite) {
-    auto wakatimeCliPath = getBinPath(kWakaTimeCli);
+#ifdef Q_OS_WIN
+#ifdef Q_PROCESSOR_X86_64
+    auto wakatimeCliPath = getBinPath({QStringLiteral("wakatime-cli-windows-amd64.exe"),
+                                       QStringLiteral("wakatime-cli.exe"),
+                                       QStringLiteral("wakatime.exe")});
+#elif defined(Q_PROCESSOR_ARM)
+    auto wakatimeCliPath = getBinPath({QStringLiteral("wakatime-cli-windows-arm64.exe"),
+                                       QStringLiteral("wakatime-cli.exe"),
+                                       QStringLiteral("wakatime.exe")});
+#else
+    auto wakatimeCliPath = getBinPath({QStringLiteral("wakatime-cli-windows-386.exe"),
+                                       QStringLiteral("wakatime-cli.exe"),
+                                       QStringLiteral("wakatime.exe")});
+#endif // Q_PROCESSOR_X86_64
+#elif defined(Q_OS_APPLE)
+    auto wakatimeCliPath = getBinPath({QStringLiteral("wakatime-cli-darwin-arm64"),
+                                       QStringLiteral("wakatime-cli-darwin-amd64"),
+                                       kWakaTimeCli,
+                                       QStringLiteral("wakatime")});
+#else
+    auto wakatimeCliPath = getBinPath({kWakaTimeCli, QStringLiteral("wakatime")});
+#endif // Q_OS_WIN
     if (wakatimeCliPath.isEmpty()) {
-        wakatimeCliPath = getBinPath(QStringLiteral("wakatime"));
-        if (wakatimeCliPath.isEmpty()) {
-            qCWarning(gLogWakaTime) << "wakatime-cli not found in PATH.";
-            return WakaTimeCliNotInPath;
-        }
+        qCWarning(gLogWakaTime) << "wakatime-cli not found in PATH.";
+        return WakaTimeCliNotInPath;
     }
     // Could be untitled, or a URI (including HTTP). Only local files are handled for now.
     if (filePath.isEmpty()) {

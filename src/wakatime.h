@@ -32,10 +32,10 @@ public:
     /** Find the full path to a file based on the `PATH` environment variable. Equivalent to
      * `command -v` or `which`. Does not check if the file is executable.
      *
-     * @param binName The name of the binary to find.
+     * @param binNames The names of the binary to find.
      * @return The full path to the binary if found, otherwise an empty string.
      */
-    QString getBinPath(const QString &binName);
+    QString getBinPath(const QStringList &binNames);
     /**
      * Get the project name by traversing up until `.git` or `.svn` is found.
      *

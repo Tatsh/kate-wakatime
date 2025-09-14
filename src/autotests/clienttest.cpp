@@ -42,7 +42,7 @@ WakaTimeClientTest::~WakaTimeClientTest() {
 void WakaTimeClientTest::testGetBinPathNotFound() {
     qputenv("PATH", QByteArrayLiteral(""));
     WakaTime wakatime;
-    QString binPath = wakatime.getBinPath(QStringLiteral("zzzzzzzzzzzzz"));
+    QString binPath = wakatime.getBinPath({QStringLiteral("zzzzzzzzzzzzz")});
     QVERIFY(binPath.isEmpty());
     qputenv("PATH", QByteArray(oldPath));
 }
@@ -56,17 +56,19 @@ void WakaTimeClientTest::testGetBinPathFound() {
     QDir::temp().mkdir(QStringLiteral("kate-wakatime-client-test"));
     QFile someExec(tempDir.filePath(QStringLiteral("some-executable")));
     someExec.open(QIODevice::WriteOnly);
+    someExec.setPermissions(QFileDevice::ExeUser | QFileDevice::ReadUser | QFileDevice::WriteUser |
+                            QFileDevice::ReadGroup | QFileDevice::ReadOther);
     someExec.write("echo 'Hello World'");
     someExec.close();
 
     WakaTime wakatime;
-    QString binPath = wakatime.getBinPath(QStringLiteral("some-executable"));
+    QString binPath = wakatime.getBinPath({QStringLiteral("some-executable")});
     QVERIFY(!binPath.isEmpty());
     QVERIFY(binPath.endsWith(QStringLiteral("/some-executable")));
 
     // Cache call.
     QVERIFY(wakatime.binPathCache.contains(QStringLiteral("some-executable")));
-    wakatime.getBinPath(QStringLiteral("some-executable"));
+    wakatime.getBinPath({QStringLiteral("some-executable")});
 
     qputenv("PATH", QByteArray(oldPath));
 }
