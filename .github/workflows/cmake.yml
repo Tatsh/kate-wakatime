@@ -56,5 +56,4 @@ jobs:
         build-type: [Debug, Release]
         sys:
           - clang64
-          - clangarm64
           - ucrt64
