@@ -106,5 +106,5 @@
     "format": "cmake-format -i CMakeLists.txt src/CMakeLists.txt && clang-format -i src/*.cpp src/*.h && yarn prettier -w .",
     "qa": "yarn check-spelling && yarn check-formatting"
   },
-  "version": "1.5.2"
+  "version": "1.5.3"
 }
