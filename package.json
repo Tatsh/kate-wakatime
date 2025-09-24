@@ -22,6 +22,7 @@
       ".git/**",
       ".yarn/**/*.cjs",
       ".vscode/extensions.json",
+      "dist/**",
       "man/**"
     ],
     "language": "en-GB",
@@ -33,16 +34,18 @@
     ],
     "useGitignore": true
   },
+  "description": "Kate plugin to interface with WakaTime.",
   "devDependencies": {
     "@prettier/plugin-xml": "^3.4.2",
     "cspell": "^9.2.1",
     "markdownlint-cli2": "^0.18.1",
-    "prettier": "^3.6.0",
+    "prettier": "^3.6.2",
     "prettier-plugin-ini": "^1.3.0",
     "prettier-plugin-sort-json": "^4.1.1",
     "prettier-plugin-toml": "^2.0.6",
     "yarn-audit-fix": "^10.1.1"
   },
+  "files": ["LICENSE.txt", "README.md"],
   "homepage": "https://tatsh.github.io/kate-wakatime/",
   "keywords": ["kate", "kde", "plasma", "wakatime"],
   "license": "MIT",
@@ -60,7 +63,7 @@
     }
   },
   "name": "kate-wakatime",
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.10.2",
   "prettier": {
     "endOfLine": "lf",
     "iniSpaceAroundEquals": true,
@@ -79,7 +82,7 @@
         }
       },
       {
-        "files": ["*.qrc", "*.rc", "*.ui"],
+        "files": ["*.qrc", "*.rc", "*.ts", "*.ui"],
         "options": {
           "parser": "xml"
         }

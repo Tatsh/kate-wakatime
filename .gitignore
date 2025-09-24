@@ -14,6 +14,7 @@
 /dist/
 /docs/_build/
 /man/_static/
+/vcpkg_installed/
 __pycache__/
 htmlcov/
 node_modules/
