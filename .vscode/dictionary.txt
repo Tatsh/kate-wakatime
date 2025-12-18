@@ -1,5 +1,4 @@
 autobuild
-autogen
 autoinstall
 automoc
 autorcc
@@ -36,15 +35,14 @@ dversion
 endfunction
 esbenp
 evenodd
+foxundermoon
 gcov
 geninfo
 gmock
 gnucxx
 graphviz
-gtest
 horstretch
 hsizetype
-htmlcov
 icondir
 interprocedural
 iwyu
@@ -54,12 +52,14 @@ katewakatime
 kcompletion
 kcoreaddons
 kdec
+kdeplasma
 klineedit
 kpartgui
 kparts
 ktexteditor
 kwidgetsaddons
 kxmlgui
+libera
 libjsonnet
 libkatewakatime
 mainpage
@@ -72,7 +72,6 @@ nullptr
 offscreen
 pacboy
 pipx
-pycache
 pyproject
 pyyaml
 qcompare
@@ -84,6 +83,7 @@ qverify
 rect
 reflow
 schemafile
+shellformat
 sizepolicy
 sourcelabel
 srcs
@@ -94,7 +94,6 @@ todolist
 ucrt
 udvare
 undoc
-vcpkg
 verstretch
 vsizetype
 wakatime
