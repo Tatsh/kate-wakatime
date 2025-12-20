@@ -12,7 +12,7 @@
 [![GitHub Pages](https://github.com/Tatsh/kate-wakatime/actions/workflows/pages.yml/badge.svg)](https://tatsh.github.io/kate-wakatime/)
 [![Stargazers](https://img.shields.io/github/stars/Tatsh/kate-wakatime?logo=github&style=flat)](https://github.com/Tatsh/kate-wakatime/stargazers)
 [![CMake](https://img.shields.io/badge/CMake-6E6E6E?logo=cmake)](https://cmake.org/)
-[![KDE Plasma](https://img.shields.io/badge/KDE Plasma-blue?logo=kdeplasma)](https://kde.org/)
+[![KDE Plasma](https://img.shields.io/badge/KDE%20Plasma-6E6E6E?logo=kdeplasma)](https://kde.org/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Prettier](https://img.shields.io/badge/Prettier-enabled-black?logo=prettier)](https://prettier.io/)
 
