@@ -13,6 +13,7 @@ local utils = import 'utils.libjsonnet';
     intro: 'kate-wakatime is a Kate plugin that interfaces with WakaTime, a service that provides metrics and insights about your coding activity.',
   },
   // C++ only
+  clang_format_args: 'src/*.cpp src/*.h src/autotests/*.cpp',
   cmake+: {
     uses_qt: true,
   },

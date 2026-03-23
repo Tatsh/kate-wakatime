@@ -1,5 +1,7 @@
 ---
-applyTo: '**/*.md'
+description: Markdown guidelines
+globs: '**/*.md'
+alwaysApply: false
 ---
 
 # Markdown guidelines

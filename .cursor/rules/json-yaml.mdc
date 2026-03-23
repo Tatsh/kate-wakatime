@@ -1,5 +1,7 @@
 ---
-applyTo: '**/*.cff, **/*.json, **/*.yaml, **/*.yml, **/.clang-format'
+description: JSON and YAML guidelines
+globs: '**/*.cff, **/*.json, **/*.yaml, **/*.yml, **/.clang-format'
+alwaysApply: false
 ---
 
 # JSON and YAML

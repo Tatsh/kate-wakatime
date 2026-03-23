@@ -1,5 +1,7 @@
 ---
-applyTo: '**/*.cfg, **/*.conf, **/*.ini, **/*.toml'
+description: TOML and INI-like file guidelines
+globs: '**/*.cfg, **/*.conf, **/*.ini, **/*.toml'
+alwaysApply: false
 ---
 
 # TOML and INI-like file guidelines

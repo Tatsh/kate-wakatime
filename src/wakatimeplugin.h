@@ -14,9 +14,9 @@
 Q_DECLARE_LOGGING_CATEGORY(gLogWakaTimePlugin)
 
 namespace KTextEditor {
-    class Document;
-    class MainWindow;
-    class View;
+class Document;
+class MainWindow;
+class View;
 } // namespace KTextEditor
 
 class WakaTimeView;
