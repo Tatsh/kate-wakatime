@@ -57,3 +57,5 @@ jobs:
         sys:
           - clang64
           - ucrt64
+permissions:
+  contents: 'read'
