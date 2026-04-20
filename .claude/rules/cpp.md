@@ -1,9 +1,3 @@
----
-description: C++/Qt guidelines
-globs: '**/*.cpp, **/*.h'
-alwaysApply: false
----
-
 # C++/Qt guidelines
 
 - No tabs.

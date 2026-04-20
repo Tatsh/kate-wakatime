@@ -1,6 +1,7 @@
 local utils = import 'utils.libjsonnet';
 
 {
+  uses_user_defaults: true,
   local top = self,
   github_username: 'Tatsh',
   security_policy_supported_versions: { '1.5.x': ':white_check_mark:' },
@@ -9,9 +10,6 @@ local utils = import 'utils.libjsonnet';
   description: 'Kate plugin to interface with WakaTime.',
   keywords: ['kate', 'kde', 'plasma', 'wakatime'],
   want_main: false,
-  copilot+: {
-    intro: 'kate-wakatime is a Kate plugin that interfaces with WakaTime, a service that provides metrics and insights about your coding activity.',
-  },
   // C++ only
   clang_format_args: 'src/*.cpp src/*.h src/autotests/*.cpp',
   cmake+: {

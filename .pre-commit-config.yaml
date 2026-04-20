@@ -40,7 +40,7 @@ repos:
           - 'c'
           - 'c++'
     repo: 'https://github.com/pre-commit/mirrors-clang-format'
-    rev: 'v22.1.1'
+    rev: 'v22.1.3'
   - hooks:
       - id: 'check-github-actions'
       - id: 'check-github-workflows'
@@ -51,7 +51,7 @@ repos:
         id: 'check-jsonschema'
         name: 'validate package.json'
     repo: 'https://github.com/python-jsonschema/check-jsonschema'
-    rev: '0.37.0'
+    rev: '0.37.1'
   - hooks:
       - id: 'validate-cff'
     repo: 'https://github.com/citation-file-format/cffconvert'
@@ -72,8 +72,8 @@ repos:
         stages:
           - 'post-checkout'
           - 'post-merge'
-      - entry: 'yarn prettier -w'
-        exclude: '((requirements|robots).txt|Dockerfile.*|..*ignore|.(coveragerc|gitattributes)|.*.(csv|lock|resource|robot)|CODEOWNERS|py.typed)$'
+      - entry: 'yarn exec prettier --write'
+        exclude: "((requirements|robots).txt|Dockerfile.*|..*ignore|.(coveragerc|gitattributes)|.*.(csv|lock|resource|robot)|pylock.*\\.toml|CODEOWNERS|py.typed)$"
         exclude_types:
           - 'binary'
           - 'dockerfile'
@@ -91,10 +91,8 @@ repos:
         name: 'check Markdown files are formatted'
         types_or:
           - 'markdown'
-      - entry: 'yarn cspell --no-progress --no-must-find-files --no-summary'
-        id: 'cspell'
-        language: 'node'
-        name: 'check spelling'
-        types:
-          - 'text'
     repo: 'local'
+  - hooks:
+      - id: 'cspell'
+    repo: 'https://github.com/streetsidesoftware/cspell-cli'
+    rev: 'v10.0.0'
