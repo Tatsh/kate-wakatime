@@ -113,7 +113,7 @@
     "check-formatting": "clang-format --dry-run src/*.cpp src/*.h src/autotests/*.cpp && prettier --check . && markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2",
     "check-spelling": "cspell --no-progress .",
     "dict:update": "rm -f .vscode/dictionary.txt && cspell lint --no-progress --no-summary --unique --words-only | tr '[:upper:]' '[:lower:]' | sort -u > .vscode/dictionary.txt",
-    "format": "clang-format --in-place src/*.cpp src/*.h src/autotests/*.cpp && prettier --write . && markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2 --fix",
+    "format": "clang-format -i src/*.cpp src/*.h src/autotests/*.cpp && prettier --write . && markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2 --fix",
     "qa": "yarn check-spelling && yarn check-formatting"
   },
   "version": "1.5.3"
