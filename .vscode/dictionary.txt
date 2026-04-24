@@ -1,3 +1,4 @@
+Ångström
 autobuild
 autoinstall
 automoc
@@ -78,11 +79,9 @@ nullptr
 offscreen
 oneline
 pacboy
-pavelzw
 pipx
 pylock
 pyproject
-pytest
 qcompare
 qputenv
 qresource
@@ -120,4 +119,3 @@ wiswa
 wiswa's
 xlink
 yarnrc
-Ångström
