@@ -34,7 +34,6 @@ doxyfile
 dtranslation
 dversion
 endfunction
-esac
 esbenp
 evenodd
 foxundermoon
@@ -55,7 +54,6 @@ katewakatime
 kcompletion
 kcoreaddons
 kdec
-kdeplasma
 klineedit
 kpartgui
 kparts
@@ -106,7 +104,6 @@ todolist
 ucrt
 udvare
 undoc
-vedantmgoyal
 vendored
 venv
 verstretch
@@ -114,7 +111,6 @@ vsizetype
 wakatime
 wakatimeconfig
 wakatimeplugin
-winget
 wiswa
 wiswa's
 xlink
