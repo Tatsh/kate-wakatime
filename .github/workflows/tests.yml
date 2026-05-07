@@ -61,9 +61,29 @@ name: Tests
 'on':
   pull_request:
     branches:
-      - master
+      - 'master'
+    paths:
+      - '**/*.cpp'
+      - '**/*.cxx'
+      - '**/*.hpp'
+      - '**/*.hh'
+      - '**/*.hxx'
+      - '**/*.c'
+      - '**/*.cc'
+      - '**/*.h'
+      - '.github/workflows/tests.yml'
   push:
     branches:
-      - master
+      - 'master'
+    paths:
+      - '**/*.cpp'
+      - '**/*.cxx'
+      - '**/*.hpp'
+      - '**/*.hh'
+      - '**/*.hxx'
+      - '**/*.c'
+      - '**/*.cc'
+      - '**/*.h'
+      - '.github/workflows/tests.yml'
 permissions:
   contents: 'read'

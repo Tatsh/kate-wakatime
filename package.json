@@ -1,8 +1,8 @@
 {
   "_wiswa": {
     "commandLine": "wiswa",
-    "lastRun": "2026-05-03T01:35:27Z",
-    "version": "96ccc73"
+    "lastRun": "2026-05-07T14:07:31Z",
+    "version": "7de193a"
   },
   "contributors": ["Andrew Udvare <audvare@gmail.com>"],
   "cspell": {
@@ -111,7 +111,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Tatsh/kate-wakatime.git"
+    "url": "git+https://github.com/Tatsh/kate-wakatime.git"
   },
   "scripts": {
     "build": "cmake --preset=default -DBUILD_DOCS=ON && cmake --build build",

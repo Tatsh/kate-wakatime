@@ -11,10 +11,10 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
-      - if: ${{ matrix.language == 'cpp' }}
+      - if: ${{ matrix.language == 'c-cpp' }}
         name: Install dependencies
         run: |
           curl -s http://archive.neon.kde.org/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/neon-archive-keyring.gpg > /dev/null
@@ -36,15 +36,41 @@ jobs:
       fail-fast: false
       matrix:
         language:
-          - 'cpp'
+          - 'c-cpp'
           - 'actions'
 name: 'CodeQL'
 'on':
   pull_request:
     branches:
       - 'master'
+    paths:
+      - '**/*.cpp'
+      - '**/*.cxx'
+      - '**/*.hpp'
+      - '**/*.hh'
+      - '**/*.hxx'
+      - '**/*.c'
+      - '**/*.cc'
+      - '**/*.h'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '**/action.yml'
+      - '**/action.yaml'
   push:
     branches:
       - 'master'
+    paths:
+      - '**/*.cpp'
+      - '**/*.cxx'
+      - '**/*.hpp'
+      - '**/*.hh'
+      - '**/*.hxx'
+      - '**/*.c'
+      - '**/*.cc'
+      - '**/*.h'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '**/action.yml'
+      - '**/action.yaml'
   schedule:
     - cron: '15 4 * * 3'
