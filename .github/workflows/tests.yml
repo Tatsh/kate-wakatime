@@ -28,6 +28,12 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --verbose --config ${{matrix.build-type}}
       - name: Install
         run: cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose
+      - name: Upload install prefix
+        uses: actions/upload-artifact@v4
+        with:
+          name: kate-wakatime-linux-${{matrix.build-type}}
+          path: ${{github.workspace}}/build/prefix
+          if-no-files-found: error
       - name: Run tests
         run: ctest -VV --test-dir ${{github.workspace}}/build/src
         env:
