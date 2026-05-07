@@ -39,9 +39,11 @@ evenodd
 foxundermoon
 gcov
 geninfo
+getenv
 gmock
 gnucxx
 graphviz
+hidefilenames
 horstretch
 hsizetype
 icondir
@@ -71,6 +73,7 @@ mktemp
 msys
 msystem
 mypy
+ndebug
 nonzero
 npmjs
 nullptr
@@ -116,6 +119,7 @@ vendored
 venv
 verstretch
 vsizetype
+wakapi
 wakatime
 wakatimeconfig
 wakatimeplugin

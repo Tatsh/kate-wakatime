@@ -5,7 +5,7 @@
 [![C++](https://img.shields.io/badge/C++-00599C?logo=c%2B%2B)](https://isocpp.org)
 [![GitHub tag (with filter)](https://img.shields.io/github/v/tag/Tatsh/kate-wakatime)](https://github.com/Tatsh/kate-wakatime/tags)
 [![License](https://img.shields.io/github/license/Tatsh/kate-wakatime)](https://github.com/Tatsh/kate-wakatime/blob/master/LICENSE.txt)
-[![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/Tatsh/kate-wakatime/v1.5.3/master)](https://github.com/Tatsh/kate-wakatime/compare/v1.5.3...master)
+[![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/Tatsh/kate-wakatime/v1.5.4/master)](https://github.com/Tatsh/kate-wakatime/compare/v1.5.4...master)
 [![CodeQL](https://github.com/Tatsh/kate-wakatime/actions/workflows/codeql.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/codeql.yml)
 [![QA](https://github.com/Tatsh/kate-wakatime/actions/workflows/qa.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/qa.yml)
 [![Tests](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml/badge.svg)](https://github.com/Tatsh/kate-wakatime/actions/workflows/tests.yml)

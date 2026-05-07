@@ -6,7 +6,7 @@ local utils = import 'utils.libjsonnet';
   github_username: 'Tatsh',
   security_policy_supported_versions: { '1.5.x': ':white_check_mark:' },
   project_name: 'kate-wakatime',
-  version: '1.5.3',
+  version: '1.5.4',
   description: 'Kate plugin to interface with WakaTime.',
   keywords: ['kate', 'kde', 'plasma', 'wakatime'],
   want_main: false,
