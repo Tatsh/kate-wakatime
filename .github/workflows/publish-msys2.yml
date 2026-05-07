@@ -1,0 +1,59 @@
+---
+jobs:
+  update-pkgbuild:
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      startsWith(github.event.workflow_run.head_branch, 'v') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version
+        id: version
+        env:
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          TAG="$HEAD_BRANCH"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - name: Checkout MINGW-packages repository
+        uses: actions/checkout@v6
+        with:
+          repository: msys2/MINGW-packages
+          token: ${{ secrets.MSYS2_TOKEN }}
+      - name: Configure git
+        run: |
+          git config user.name "Andrew Udvare"
+          git config user.email "audvare@gmail.com"
+      - name: Update PKGBUILD
+        run: |
+          git remote add upstream https://github.com/msys2/MINGW-packages.git
+          git fetch upstream
+          git checkout master
+          git reset --hard upstream/master
+          VERSION="${{ steps.version.outputs.version }}"
+          cd mingw-w64-kate-wakatime
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+          NEW_SUM=$(curl -L "https://github.com/Tatsh/kate-wakatime/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | awk '{print $1}')
+          sed -i "s/^sha256sums=.*/sha256sums=('${NEW_SUM}')/" PKGBUILD
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          base: master
+          branch: kate-wakatime-${{ steps.version.outputs.version }}
+          commit-message: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
+          title: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
+          token: ${{ secrets.MSYS2_TOKEN }}
+          body: |
+            This PR was automatically created by the [kate-wakatime release workflow](${{ github.event.workflow_run.html_url }}).
+
+            Release: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}
+          push-to-fork: Tatsh/MINGW-packages
+name: Update MSYS2 PKGBUILD
+'on':
+  workflow_run:
+    workflows:
+      - 'Release'
+    types:
+      - 'completed'
