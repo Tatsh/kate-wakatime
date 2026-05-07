@@ -34,6 +34,7 @@ doxyfile
 dtranslation
 dversion
 endfunction
+esac
 esbenp
 evenodd
 foxundermoon
@@ -78,6 +79,9 @@ offscreen
 oneline
 pacboy
 pipx
+pkgbuild
+pkgrel
+pkgver
 pylock
 pyproject
 qcompare
@@ -101,6 +105,7 @@ stdset
 tatsh
 testlist
 todolist
+tostring
 ucrt
 udvare
 undoc
