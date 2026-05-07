@@ -1,18 +1,15 @@
 ---
 jobs:
   update-pkgbuild:
-    if: >-
-      ${{ github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      startsWith(github.event.workflow_run.head_branch, 'v') }}
+    if: '!github.event.release.draft && !github.event.release.prerelease'
     runs-on: ubuntu-latest
     steps:
       - name: Extract version
         id: version
         env:
-          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
-          TAG="$HEAD_BRANCH"
+          TAG="$TAG_NAME"
           VERSION="${TAG#v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
@@ -46,14 +43,10 @@ jobs:
           title: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
           token: ${{ secrets.MSYS2_TOKEN }}
           body: |
-            This PR was automatically created by the [kate-wakatime release workflow](${{ github.event.workflow_run.html_url }}).
-
-            Release: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}
+            This PR was automatically created from the [kate-wakatime ${{ steps.version.outputs.tag }} release](${{ github.event.release.html_url }}).
           push-to-fork: Tatsh/MINGW-packages
 name: Update MSYS2 PKGBUILD
 'on':
-  workflow_run:
-    workflows:
-      - 'Release'
+  release:
     types:
-      - 'completed'
+      - 'published'
