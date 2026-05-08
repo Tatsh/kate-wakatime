@@ -2,14 +2,16 @@
   "dependencies": [
     {
       "name": "ecm",
-      "version>=": "6.7.0"
+      "version>=": "6.25.0"
     }
   ],
   "description": "Kate plugin to interface with WakaTime.",
   "documentation": "https://kate-wakatime.readthedocs.org",
   "homepage": "https://tatsh.github.io/kate-wakatime/",
   "license": "MIT",
-  "maintainers": ["Andrew Udvare <audvare@gmail.com>"],
+  "maintainers": [
+    "Andrew Udvare <audvare@gmail.com>"
+  ],
   "name": "kate-wakatime",
   "version": "1.5.4"
 }
