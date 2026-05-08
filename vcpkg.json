@@ -9,9 +9,7 @@
   "documentation": "https://kate-wakatime.readthedocs.org",
   "homepage": "https://tatsh.github.io/kate-wakatime/",
   "license": "MIT",
-  "maintainers": [
-    "Andrew Udvare <audvare@gmail.com>"
-  ],
+  "maintainers": ["Andrew Udvare <audvare@gmail.com>"],
   "name": "kate-wakatime",
   "version": "1.5.4"
 }
