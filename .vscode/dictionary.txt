@@ -80,7 +80,6 @@ nullptr
 offscreen
 oneline
 pacboy
-pavelzw
 pipx
 pkgbuild
 pkgrel
@@ -88,7 +87,6 @@ pkgver
 preapproved
 pylock
 pyproject
-pytest
 qcompare
 qputenv
 qresource
@@ -114,7 +112,6 @@ tostring
 ucrt
 udvare
 undoc
-vedantmgoyal
 vendored
 venv
 verstretch
@@ -123,7 +120,6 @@ wakapi
 wakatime
 wakatimeconfig
 wakatimeplugin
-winget
 wiswa
 wiswa's
 xlink
