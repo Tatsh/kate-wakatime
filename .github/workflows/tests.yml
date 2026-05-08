@@ -29,7 +29,7 @@ jobs:
       - name: Install
         run: cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose
       - name: Upload install prefix
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: kate-wakatime-linux-${{matrix.build-type}}
           path: ${{github.workspace}}/build/prefix
