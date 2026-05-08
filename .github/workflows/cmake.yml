@@ -51,7 +51,7 @@ jobs:
           --config ${{matrix.build-type}} --verbose
         shell: msys2 {0}
       - name: Upload install prefix
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: kate-wakatime-${{matrix.sys}}-${{matrix.build-type}}
           path: ${{steps.fixed_workspace.outputs.out}}/build/prefix
