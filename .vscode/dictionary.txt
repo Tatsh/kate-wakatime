@@ -75,7 +75,6 @@ msystem
 mypy
 ndebug
 nonzero
-npmjs
 nullptr
 offscreen
 oneline
@@ -112,6 +111,8 @@ tostring
 ucrt
 udvare
 undoc
+undraft
+undrafted
 vendored
 venv
 verstretch
@@ -122,5 +123,6 @@ wakatimeconfig
 wakatimeplugin
 wiswa
 wiswa's
+worktree
 xlink
 yarnrc

@@ -19,7 +19,7 @@ local utils = import 'utils.libjsonnet';
   vcpkg+: {
     dependencies: [{
       name: 'ecm',
-      'version>=': '6.7.0',
+      'version>=': '6.25.0',
     }],
   },
   github+: {
