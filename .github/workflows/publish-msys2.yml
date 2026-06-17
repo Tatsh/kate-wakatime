@@ -50,3 +50,5 @@ name: Update MSYS2 PKGBUILD
   release:
     types:
       - 'published'
+permissions:
+  contents: read
