@@ -2,7 +2,7 @@
   "dependencies": [
     {
       "name": "ecm",
-      "version>=": "6.27.0"
+      "version>=": "6.28.0"
     }
   ],
   "description": "Kate plugin to interface with WakaTime.",
