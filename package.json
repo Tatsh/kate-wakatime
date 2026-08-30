@@ -1,8 +1,8 @@
 {
   "_wiswa": {
-    "commandLine": "wiswa",
-    "lastRun": "2026-05-11T20:11:41Z",
-    "version": "eb1f7cf"
+    "commandLine": "wiswa -d",
+    "lastRun": "2026-08-30T19:46:32Z",
+    "version": "deaad5b"
   },
   "contributors": ["Andrew Udvare <audvare@gmail.com>"],
   "cspell": {
@@ -42,7 +42,7 @@
   "description": "Kate plugin to interface with WakaTime.",
   "devDependencies": {
     "@prettier/plugin-xml": "^3.4.2",
-    "cspell": "^10.0.1",
+    "cspell": "^10.1.0",
     "markdownlint-cli2": "^0.23.2",
     "prettier": "^3.9.6",
     "prettier-plugin-ini": "^1.3.0",
@@ -74,7 +74,7 @@
     "showFound": true
   },
   "name": "kate-wakatime",
-  "packageManager": "yarn@4.14.1",
+  "packageManager": "yarn@4.18.0",
   "prettier": {
     "endOfLine": "lf",
     "iniSpaceAroundEquals": true,
@@ -117,7 +117,7 @@
     "build": "cmake --preset=default -DBUILD_DOCS=ON && cmake --build build",
     "check-formatting": "clang-format --dry-run src/*.cpp src/*.h src/autotests/*.cpp && prettier --check . && markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2",
     "check-spelling": "cspell --no-progress .",
-    "dict:update": "rm -f .vscode/dictionary.txt && cspell lint --no-progress --no-summary --unique --words-only | tr '[:upper:]' '[:lower:]' | sort -u > .vscode/dictionary.txt",
+    "dict:update": "rm -f .vscode/dictionary.txt && cspell lint --no-progress --no-summary --unique --words-only | LC_ALL=C tr '[:upper:]' '[:lower:]' | LC_ALL=C sort -u > .vscode/dictionary.txt",
     "format": "clang-format -i src/*.cpp src/*.h src/autotests/*.cpp && prettier --write . && markdownlint-cli2 --config package.json --configPointer /markdownlint-cli2 --fix",
     "qa": "yarn check-spelling && yarn check-formatting"
   },

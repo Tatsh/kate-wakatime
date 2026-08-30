@@ -1,42 +1,43 @@
----
 concurrency:
   cancel-in-progress: false
-  group: pages
+  group: 'pages'
 jobs:
   pages:
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+      name: 'github-pages'
+      url: '${{ steps.deployment.outputs.page_url }}'
+    runs-on: 'ubuntu-latest'
     steps:
-      - uses: actions/checkout@v7
+      - uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         with:
           fetch-depth: 0
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
-      - name: Install dependencies
+          persist-credentials: false
+      - name: 'Setup Pages'
+        uses: 'actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d'
+      - name: 'Install dependencies'
         run: |
           sudo apt-get update
           sudo apt-get install -y doxygen graphviz
-      - name: Configure
+      - name: 'Configure'
         run: >-
           cmake -DCMAKE_BUILD_TYPE=Release -B ${{github.workspace}}/build
           --install-prefix ${{github.workspace}}/build/prefix
           -DBUILD_DOCS_ONLY=ON
-      - name: Build documentation
-        run: cmake --build ${{github.workspace}}/build --verbose --config Release --target docs
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
+      - name: 'Build documentation'
+        run: 'cmake --build ${{github.workspace}}/build --verbose --config Release --target docs'
+      - name: 'Upload artifact'
+        uses: 'actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9'
         with:
-          path: ${{github.workspace}}/build/docs/html
-      - id: deployment
-        name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v5
-name: GitHub Pages
+          path: '${{github.workspace}}/build/docs/html'
+      - id: 'deployment'
+        name: 'Deploy to GitHub Pages'
+        uses: 'actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128'
+name: 'GitHub Pages'
 'on':
   push:
-    branches: [master]
+    branches:
+      - 'master'
 permissions:
-  contents: read
-  id-token: write
-  pages: write
+  contents: 'read'
+  id-token: 'write'
+  pages: 'write'

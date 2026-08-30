@@ -1,17 +1,17 @@
----
 jobs:
   test:
     env:
-      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COVERALLS_REPO_TOKEN: '${{ secrets.COVERALLS_REPO_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     permissions:
-      contents: write
-    runs-on: ubuntu-latest
+      contents: 'write'
+    runs-on: 'ubuntu-latest'
     steps:
-      - uses: actions/checkout@v7
+      - uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         with:
           fetch-depth: 0
-      - name: Install dependencies
+          persist-credentials: false
+      - name: 'Install dependencies'
         run: |
           pipx install cpp-coveralls
           curl -s http://archive.neon.kde.org/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/neon-archive-keyring.gpg > /dev/null
@@ -19,28 +19,28 @@ jobs:
           sudo apt-get update
           sudo apt-get upgrade
           sudo apt-get install -y kf6-ktexteditor-dev extra-cmake-modules lcov
-      - name: Configure
+      - name: 'Configure'
         run: >-
           cmake -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -B ${{github.workspace}}/build
           --install-prefix ${{github.workspace}}/build/prefix
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DCOVERAGE=ON
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --verbose --config ${{matrix.build-type}}
-      - name: Install
-        run: cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose
-      - name: Upload install prefix
-        uses: actions/upload-artifact@v7
+      - name: 'Build'
+        run: 'cmake --build ${{github.workspace}}/build --verbose --config ${{matrix.build-type}}'
+      - name: 'Install'
+        run: 'cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose'
+      - name: 'Upload install prefix'
+        uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a'
         with:
-          name: kate-wakatime-linux-${{matrix.build-type}}
-          path: ${{github.workspace}}/build/prefix
-          if-no-files-found: error
-      - name: Run tests
-        run: ctest -VV --test-dir ${{github.workspace}}/build/src
-        env:
-          QT_QPA_PLATFORM: offscreen
-          QT_QUICK_BACKEND: software
-      - if: ${{ matrix.build-type == 'Debug' }}
-        name: Generate coverage information
+          if-no-files-found: 'error'
+          name: 'kate-wakatime-linux-${{matrix.build-type}}'
+          path: '${{github.workspace}}/build/prefix'
+      - env:
+          QT_QPA_PLATFORM: 'offscreen'
+          QT_QUICK_BACKEND: 'software'
+        name: 'Run tests'
+        run: 'ctest -VV --test-dir ${{github.workspace}}/build/src'
+      - if: "${{ matrix.build-type == 'Debug' }}"
+        name: 'Generate coverage information'
         run: >-
           geninfo
           --keep-going
@@ -50,40 +50,42 @@ jobs:
           --exclude 'src/autotests/*'
           --exclude 'usr/*'
           ${{github.workspace}}/build
-      - if: ${{ matrix.build-type == 'Debug' }}
-        name: Coveralls
-        uses: coverallsapp/github-action@v2
+      - if: "${{ matrix.build-type == 'Debug' }}"
+        name: 'Coveralls'
+        uses: 'coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329'
     strategy:
       fail-fast: false
       matrix:
-        build-type: [Debug, Release]
-name: Tests
+        build-type:
+          - 'Debug'
+          - 'Release'
+name: 'Tests'
 'on':
   pull_request:
     branches:
       - 'master'
     paths:
-      - '**/*.cpp'
-      - '**/*.cxx'
-      - '**/*.hpp'
-      - '**/*.hh'
-      - '**/*.hxx'
       - '**/*.c'
       - '**/*.cc'
+      - '**/*.cpp'
+      - '**/*.cxx'
       - '**/*.h'
+      - '**/*.hh'
+      - '**/*.hpp'
+      - '**/*.hxx'
       - '.github/workflows/tests.yml'
   push:
     branches:
       - 'master'
     paths:
-      - '**/*.cpp'
-      - '**/*.cxx'
-      - '**/*.hpp'
-      - '**/*.hh'
-      - '**/*.hxx'
       - '**/*.c'
       - '**/*.cc'
+      - '**/*.cpp'
+      - '**/*.cxx'
       - '**/*.h'
+      - '**/*.hh'
+      - '**/*.hpp'
+      - '**/*.hxx'
       - '.github/workflows/tests.yml'
 permissions:
   contents: 'read'

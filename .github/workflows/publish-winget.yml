@@ -1,0 +1,40 @@
+jobs:
+  check:
+    if: "${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && startsWith(github.event.workflow_run.head_branch, 'v') }}"
+    outputs:
+      has_winget_token: '${{ steps.check_secret.outputs.has_winget_token }}'
+      tag: '${{ github.event.workflow_run.head_branch }}'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - env:
+          WINGET_TOKEN: '${{ secrets.WINGET_TOKEN }}'
+        id: 'check_secret'
+        name: 'Check WINGET_TOKEN is set'
+        run: |
+          if [[ -n "$WINGET_TOKEN" ]]; then
+            echo 'has_winget_token=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_winget_token=false' >> "$GITHUB_OUTPUT"
+            echo '::warning::WINGET_TOKEN secret is empty; the update-winget job will be skipped.'
+          fi
+  update-winget:
+    if: "needs.check.outputs.has_winget_token == 'true'"
+    needs:
+      - 'check'
+    runs-on: 'windows-latest'
+    steps:
+      - uses: 'vedantmgoyal9/winget-releaser@4ffc7888bffd451b357355dc214d43bb9f23917e'
+        with:
+          identifier: 'Tatsh.kate-wakatime'
+          max-versions-to-keep: 3
+          release-tag: '${{ needs.check.outputs.tag }}'
+          token: '${{ secrets.WINGET_TOKEN }}'
+name: 'Publish to WinGet'
+'on':
+  workflow_run:
+    types:
+      - 'completed'
+    workflows:
+      - 'Release'
+permissions:
+  contents: 'read'

@@ -1,13 +1,6 @@
----
-name: release
-description: Drives the release process for the kate-wakatime project: changelog, version bump, pre-commit checks, push, and GitHub release notes. Use when the user asks to cut a release.
----
+# Release
 
-# Release Agent
-
-Prepares and publishes a new release for the kate-wakatime project.
-
-## Role
+Prepare and publish a new release for the kate-wakatime project.
 
 You manage the release process: update the changelog, determine the version bump, run pre-commit
 checks, bump the version, and push, and align GitHub release notes
@@ -28,6 +21,13 @@ with the changelog.
 
 1. **Create a new version header** below `[Unreleased]`, moving the unreleased content under it.
    Format: `## [X.Y.Z] - YYYY-MM-DD`. Leave `[Unreleased]` empty above it.
+
+1. **Bring the security policy's supported versions up to date.** `SECURITY.md` is generated from
+   `security_policy_supported_versions` in `.wiswa.jsonnet`, so edit that setting and the rendered
+   table in the same commit. Editing `SECURITY.md` alone is reverted by the next regen. When NEW
+   opens a series the table does not already name, replace the stale entry with the new one (a
+   `0.5.1` release is covered by `0.5.x`); a patch inside a series already listed needs no change.
+   State which series you dropped, since dropping one ends its support.
 
 1. **Launch agents in parallel** before bumping:
    - **copy-editor** - to fix prose in the changelog entries.
@@ -57,7 +57,11 @@ with the changelog.
 
 1. **Run `cz bump --files-only --increment {MAJOR,MINOR,PATCH}`** with the appropriate increment.
    This only updates version strings in files without committing or tagging. Never pass
-   `--changelog` or `-ch` to `cz bump`. If `cz bump` fails for any reason:
+   `--changelog` or `-ch` to `cz bump`. When the repository has **no existing tags** (the first
+   release), also pass `--yes`: with no tag to compare against, cz asks "Is this the first tag
+   created?" interactively, and a non-interactive shell aborts with `EOFError` before writing
+   anything. `--yes` answers that prompt truthfully and changes nothing else about the
+   substitution. If `cz bump` fails for any other reason:
    1. **Restore the repository** to the pre-bump state: `git checkout -- .`
    1. **Stop work immediately and alert the user.** Do not attempt to work around the failure.
 

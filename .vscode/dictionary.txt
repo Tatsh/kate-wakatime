@@ -1,4 +1,3 @@
-Ångström
 autobuild
 autoinstall
 automoc
@@ -13,7 +12,6 @@ colorstyle
 commitizen
 configdialog
 configtest
-cooldown
 coveragerc
 coverallsapp
 ctest
@@ -43,6 +41,7 @@ getenv
 gmock
 gnucxx
 graphviz
+handoff
 hidefilenames
 horstretch
 hsizetype
@@ -96,6 +95,7 @@ rect
 reflow
 regen
 ripgreprc
+sbclaude
 schemafile
 shellcheck
 shellformat
@@ -103,6 +103,7 @@ sizepolicy
 snapcraft
 sourcelabel
 srcs
+statusline
 stdset
 tatsh
 testlist
@@ -113,6 +114,7 @@ udvare
 undoc
 undraft
 undrafted
+vedantmgoyal
 vendored
 venv
 verstretch
@@ -121,8 +123,11 @@ wakapi
 wakatime
 wakatimeconfig
 wakatimeplugin
+winget
 wiswa
 wiswa's
 worktree
 xlink
 yarnrc
+zizmor
+Ångström
