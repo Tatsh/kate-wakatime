@@ -24,6 +24,16 @@ local utils = import 'utils.libjsonnet';
   },
   github+: {
     pages_using_jekyll: false,
+    zizmor+: {
+      // The inherited cache-poisoning ignore names a workflow this project does not have.
+      // Every other rule is carried through unchanged.
+      local inherited = super.rules,
+      rules: {
+        [name]: inherited[name]
+        for name in std.objectFields(inherited)
+        if name != 'cache-poisoning'
+      },
+    },
   },
   vscode+: {
     c_cpp+: {
