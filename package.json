@@ -42,12 +42,12 @@
   "description": "Kate plugin to interface with WakaTime.",
   "devDependencies": {
     "@prettier/plugin-xml": "^3.4.2",
-    "cspell": "^10.3.3",
-    "markdownlint-cli2": "^0.23.2",
-    "prettier": "^3.9.8",
+    "cspell": "^10.3.4",
+    "markdownlint-cli2": "^0.23.3",
+    "prettier": "^3.9.9",
     "prettier-plugin-ini": "^1.3.0",
     "prettier-plugin-sort-json": "^4.2.0",
-    "prettier-plugin-toml": "^2.0.6"
+    "prettier-plugin-toml": "^3.0.2"
   },
   "files": ["LICENSE.txt", "README.md"],
   "homepage": "https://tatsh.github.io/kate-wakatime/",
