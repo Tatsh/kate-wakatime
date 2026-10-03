@@ -70,6 +70,7 @@ mainpage
 mathjax
 mdfile
 mktemp
+msix
 msvcp
 msvcprtd
 msvcrtd
