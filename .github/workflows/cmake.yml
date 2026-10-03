@@ -51,6 +51,39 @@ jobs:
           cmake --install "$WORKSPACE/build"
           --config "$BUILD_TYPE" --verbose
         shell: 'msys2 {0}'
+      - if: "matrix.build-type == 'Release'"
+        name: 'Check for debug runtime linkage'
+        run: |
+          $markers = @(
+            'VCRUNTIME140D',
+            'MSVCP140D',
+            'VCOMP140D',
+            'CONCRT140D',
+            'VCCORLIB140D',
+            'ucrtbased',
+            'MSVCRTD',
+            'MSVCPRTD'
+          )
+          $binaries = @(Get-ChildItem build/prefix -Recurse -Include *.dll, *.exe)
+          if ($binaries.Count -eq 0) {
+            Write-Host '::error::No binaries were found in the install prefix.'
+            exit 1
+          }
+          $failed = $false
+          $binaries | ForEach-Object {
+            $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+            $text = [System.Text.Encoding]::ASCII.GetString($bytes)
+            foreach ($marker in $markers) {
+              if ($text.Contains($marker)) {
+                Write-Host "::error::$($_.Name) references debug runtime $marker."
+                $failed = $true
+              }
+            }
+          }
+          if ($failed) {
+            exit 1
+          }
+        shell: 'pwsh'
       - name: 'Upload install prefix'
         uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a'
         with:

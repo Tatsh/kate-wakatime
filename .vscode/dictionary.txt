@@ -1,3 +1,5 @@
+autobuild
+autoinstall
 automoc
 autorcc
 autouic
@@ -8,10 +10,12 @@ bytearray
 clienttest
 colorstyle
 commitizen
+concrt
 configdialog
 configtest
 coveragerc
 coverallsapp
+ctest
 cursorpos
 customwidget
 customwidgets
@@ -19,6 +23,8 @@ dashcam
 datarootdir
 dbuild
 dcmake
+dcoverage
+dearmor
 destinationlabel
 dialog
 docstrings
@@ -31,6 +37,7 @@ esbenp
 evenodd
 foxundermoon
 gcov
+geninfo
 getenv
 gmock
 gnucxx
@@ -40,6 +47,7 @@ hidefilenames
 horstretch
 hsizetype
 icondir
+interprocedural
 iwyu
 jinja
 jsonnet
@@ -62,6 +70,9 @@ mainpage
 mathjax
 mdfile
 mktemp
+msvcp
+msvcprtd
+msvcrtd
 msys
 msystem
 mypy
@@ -70,16 +81,16 @@ nonzero
 noone
 nullptr
 numpydoc
+offscreen
 oneline
 pacboy
-pavelzw
+pipx
 pkgbuild
 pkgrel
 pkgver
 preapproved
 pylock
 pyproject
-pytest
 qcompare
 qputenv
 qresource
@@ -104,10 +115,14 @@ testlist
 todolist
 tostring
 ucrt
+ucrtbased
 udvare
 undoc
 undraft
 undrafted
+vccorlib
+vcomp
+vcruntime
 vedantmgoyal
 vendored
 venv
