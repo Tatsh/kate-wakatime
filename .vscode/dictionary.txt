@@ -1,5 +1,3 @@
-autobuild
-autoinstall
 automoc
 autorcc
 autouic
@@ -14,7 +12,6 @@ configdialog
 configtest
 coveragerc
 coverallsapp
-ctest
 cursorpos
 customwidget
 customwidgets
@@ -22,8 +19,6 @@ dashcam
 datarootdir
 dbuild
 dcmake
-dcoverage
-dearmor
 destinationlabel
 dialog
 docstrings
@@ -36,7 +31,6 @@ esbenp
 evenodd
 foxundermoon
 gcov
-geninfo
 getenv
 gmock
 gnucxx
@@ -46,7 +40,6 @@ hidefilenames
 horstretch
 hsizetype
 icondir
-interprocedural
 iwyu
 jinja
 jsonnet
@@ -74,17 +67,19 @@ msystem
 mypy
 ndebug
 nonzero
+noone
 nullptr
-offscreen
+numpydoc
 oneline
 pacboy
-pipx
+pavelzw
 pkgbuild
 pkgrel
 pkgver
 preapproved
 pylock
 pyproject
+pytest
 qcompare
 qputenv
 qresource
@@ -95,7 +90,6 @@ rect
 reflow
 regen
 ripgreprc
-sbclaude
 schemafile
 shellcheck
 shellformat
@@ -123,10 +117,10 @@ wakapi
 wakatime
 wakatimeconfig
 wakatimeplugin
+werror
 winget
 wiswa
 wiswa's
-worktree
 xlink
 yarnrc
 zizmor

@@ -6,7 +6,7 @@ jobs:
         with:
           persist-credentials: false
       - name: 'Check formatting (clang-format)'
-        run: 'clang-format --dry-run src/*.cpp src/*.h src/autotests/*.cpp'
+        run: 'clang-format --dry-run --Werror src/*.cpp src/*.h src/autotests/*.cpp'
 name: 'clang-format'
 'on':
   pull_request:

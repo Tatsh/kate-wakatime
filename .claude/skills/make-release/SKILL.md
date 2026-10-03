@@ -25,18 +25,27 @@ with the changelog.
 1. **Bring the security policy's supported versions up to date.** `SECURITY.md` is generated from
    `security_policy_supported_versions` in `.wiswa.jsonnet`, so edit that setting and the rendered
    table in the same commit. Editing `SECURITY.md` alone is reverted by the next regen. When NEW
-   opens a series the table does not already name, replace the stale entry with the new one (a
-   `0.5.1` release is covered by `0.5.x`); a patch inside a series already listed needs no change.
-   State which series you dropped, since dropping one ends its support.
+   opens a series the table does not already list, replace the stale entry with the new one (a
+   `0.5.1` release is covered by `0.5.x`); a patch inside a series already listed does not need a
+   change.
+   Record which series you dropped. Dropping one ends its support.
 
 1. **Launch agents in parallel** before bumping:
    - **copy-editor** - to fix prose in the changelog entries.
    - **qa-fixer** - to format and fix any lint/spelling issues.
 
-1. **Sync repo state back to `.wiswa.jsonnet`.** Run the **wiswa-sync** agent so every hand
-   edit to a Wiswa-managed file since the last regen is reflected in `.wiswa.jsonnet`. Any
-   release-time discoveries (for example a `version_files` entry that was missing) must
-   round-trip so the next regen reproduces them.
+1. **Confirm the last CI runs passed.** Nothing is released on top of a red
+   `master`. List the project's workflows with `gh workflow list`, and for
+   each one that runs on pushes rather than only on tags, read its most recent run:
+   `gh run list --workflow <file> --branch master --limit 1`. This covers
+   the QA and test workflows and the packaging ones the project has - Flatpak, Snap, AppImage,
+   and PyInstaller. Every conclusion must be `success`; read a failure with
+   `gh run view <run-id> --log-failed` and fix it before releasing. A workflow that has never run
+   is not a failure.
+
+   Compare the head SHA of the newest **tests** run against `git rev-parse HEAD`. When they
+   differ, the commits about to be released were never tested; say so, and let the user decide
+   whether to push and wait before continuing.
 
 1. **Run `pre-commit run -a` outside the sandbox** to ensure all hooks pass. The hooks write
    across the worktree, which the sandbox's read-only mount blocks. Fix any issues before
@@ -72,10 +81,13 @@ with the changelog.
    are unsure whether a change is intended, prefer to revert and stop with a report rather
    than ship the bump with a corrupted dependency or transitive version.
 
+1. **Set the release date in `CITATION.cff`** if the file exists. Replace the `date-released`
+   value with today's date in `YYYY-MM-DD` form. `cz bump` does not update this field.
+
 1. **Verify version-bound and source-bound files.** Stop and report if any check fails:
    - **`CITATION.cff`** if present: `version` matches `NEW` and `date-released` equals today's
-     date. If `cz bump` did not update either, the file is missing from
-     `[tool.commitizen].version_files` - add it, rerun **wiswa-sync**, and restart the bump.
+     date. If `cz bump` did not update `version`, the file is missing from
+     `[tool.commitizen].version_files` - add it in `.wiswa.jsonnet` and restart the bump.
    - **Flatpak manifest** (`flatpak/**`, any `*.flatpak.{json,yaml}`) if present: every version
      reference is updated to `NEW` (cz must drive this through `version_files` - fix the
      configuration as above if it did not), and every `sources` entry pointing at this
@@ -149,6 +161,8 @@ with the changelog.
 
 - Never use `--no-verify` or skip hooks.
 - Never force-push.
+- Never lower a coverage threshold, skip a test, or exclude a file from measurement to get past
+  the pre-release checks. A shortfall is closed by writing tests or fixing the code.
 - If any step fails, stop and report the error. Do not continue the release process.
 - The `[Unreleased]` section must always exist at the top of the changelog after the release.
 - Run `pre-commit run -a` and the version-bump `git commit` outside the sandbox; both need
@@ -157,8 +171,7 @@ with the changelog.
   pushed tag, never from a local path or moving branch.
 - Never hand-patch a version reference in `CITATION.cff`, a flatpak manifest, or
   `snapcraft.yaml` to compensate for a missing `[tool.commitizen].version_files` entry. Fix
-  the configuration, run **wiswa-sync** so the fix reaches `.wiswa.jsonnet`, then restart the
-  bump.
+  the configuration in `.wiswa.jsonnet`, then restart the bump.
 - `cz bump --files-only` is plain string substitution, not pattern-aware. Always pre-scan
   every `version_files` entry for OLD substrings before bumping, and revert non-canonical
   matches afterwards so unrelated literals like `10.0.0` are not corrupted into `10.0.1`.
