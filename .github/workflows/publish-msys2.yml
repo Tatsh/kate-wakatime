@@ -7,6 +7,7 @@ jobs:
     if: "github.event.workflow_run.conclusion == 'success'"
     name: 'Find Release'
     outputs:
+      has_msys2_token: '${{ steps.check_secret.outputs.has_msys2_token }}'
       tag: '${{ steps.release.outputs.tag }}'
     runs-on: 'ubuntu-latest'
     steps:
@@ -44,8 +45,19 @@ jobs:
           fi
           echo "Found published release ${tag}."
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+      - env:
+          MSYS2_TOKEN: '${{ secrets.MSYS2_TOKEN }}'
+        id: 'check_secret'
+        name: 'Check MSYS2_TOKEN is set'
+        run: |
+          if [[ -n "$MSYS2_TOKEN" ]]; then
+            echo 'has_msys2_token=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_msys2_token=false' >> "$GITHUB_OUTPUT"
+            echo '::warning::MSYS2_TOKEN secret is empty; the update-pkgbuild job will be skipped.'
+          fi
   update-pkgbuild:
-    if: "needs.check.outputs.tag != ''"
+    if: "needs.check.outputs.tag != '' && needs.check.outputs.has_msys2_token == 'true'"
     name: 'Update PKGBUILD'
     needs:
       - 'check'
