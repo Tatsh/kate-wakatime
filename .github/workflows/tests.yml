@@ -1,8 +1,12 @@
+concurrency:
+  cancel-in-progress: true
+  group: '${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}'
 jobs:
   test:
     env:
       COVERALLS_REPO_TOKEN: '${{ secrets.COVERALLS_REPO_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+    name: 'Test'
     permissions:
       contents: 'write'
     runs-on: 'ubuntu-latest'
@@ -19,15 +23,21 @@ jobs:
           sudo apt-get update
           sudo apt-get upgrade
           sudo apt-get install -y kf6-ktexteditor-dev extra-cmake-modules lcov
-      - name: 'Configure'
+      - env:
+          BUILD_TYPE: '${{ matrix.build-type }}'
+        name: 'Configure'
         run: >-
-          cmake -DCMAKE_BUILD_TYPE=${{matrix.build-type}} -B ${{github.workspace}}/build
-          --install-prefix ${{github.workspace}}/build/prefix
+          cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -B "${GITHUB_WORKSPACE}/build"
+          --install-prefix "${GITHUB_WORKSPACE}/build/prefix"
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON -DCOVERAGE=ON
-      - name: 'Build'
-        run: 'cmake --build ${{github.workspace}}/build --verbose --config ${{matrix.build-type}}'
-      - name: 'Install'
-        run: 'cmake --install ${{github.workspace}}/build --config ${{matrix.build-type}} --verbose'
+      - env:
+          BUILD_TYPE: '${{ matrix.build-type }}'
+        name: 'Build'
+        run: 'cmake --build "${GITHUB_WORKSPACE}/build" --verbose --config "$BUILD_TYPE"'
+      - env:
+          BUILD_TYPE: '${{ matrix.build-type }}'
+        name: 'Install'
+        run: 'cmake --install "${GITHUB_WORKSPACE}/build" --config "$BUILD_TYPE" --verbose'
       - name: 'Upload install prefix'
         uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a'
         with:
@@ -38,18 +48,18 @@ jobs:
           QT_QPA_PLATFORM: 'offscreen'
           QT_QUICK_BACKEND: 'software'
         name: 'Run tests'
-        run: 'ctest -VV --test-dir ${{github.workspace}}/build/src'
+        run: 'ctest -VV --test-dir "${GITHUB_WORKSPACE}/build/src"'
       - if: "${{ matrix.build-type == 'Debug' }}"
         name: 'Generate coverage information'
         run: >-
           geninfo
           --keep-going
-          -b ${{github.workspace}}
+          -b "$GITHUB_WORKSPACE"
           -o coverage1.lcov
           --exclude 'build/*'
           --exclude 'src/autotests/*'
           --exclude 'usr/*'
-          ${{github.workspace}}/build
+          "${GITHUB_WORKSPACE}/build"
       - if: "${{ matrix.build-type == 'Debug' }}"
         name: 'Coveralls'
         uses: 'coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329'

@@ -1,5 +1,10 @@
+concurrency:
+  cancel-in-progress: false
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  queue: 'max'
 jobs:
   build-msys:
+    name: 'Build'
     runs-on: 'windows-latest'
     steps:
       - id: 'fixed_workspace'

@@ -3,6 +3,10 @@ concurrency:
   group: 'release-${{ github.event.workflow_run.head_sha }}'
 jobs:
   publish-release:
+    name: 'Publish Release'
+    permissions:
+      actions: 'write'
+      contents: 'write'
     runs-on: 'ubuntu-latest'
     steps:
       - uses: 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
@@ -184,6 +188,4 @@ name: 'Release'
       - 'Tests'
       - 'clang-format'
       - 'markdownlint'
-permissions:
-  actions: 'write'
-  contents: 'write'
+permissions: {}
