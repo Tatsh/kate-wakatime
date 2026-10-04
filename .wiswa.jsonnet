@@ -11,6 +11,7 @@ local utils = import 'utils.libjsonnet';
   keywords: ['kate', 'kde', 'plasma', 'wakatime'],
   want_main: false,
   want_msys2: true,
+  want_winget: false,
   // C++ only
   clang_format_args: 'src/*.cpp src/*.h src/autotests/*.cpp',
   cmake+: {

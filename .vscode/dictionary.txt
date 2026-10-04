@@ -70,7 +70,6 @@ mainpage
 mathjax
 mdfile
 mktemp
-msix
 msvcp
 msvcprtd
 msvcrtd
@@ -124,7 +123,6 @@ undrafted
 vccorlib
 vcomp
 vcruntime
-vedantmgoyal
 vendored
 venv
 verstretch
