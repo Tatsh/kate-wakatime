@@ -1,6 +1,11 @@
+concurrency:
+  cancel-in-progress: false
+  group: '${{ github.workflow }}-${{ github.event.workflow_run.head_sha }}'
+  queue: 'max'
 jobs:
   check:
     if: "github.event.workflow_run.conclusion == 'success'"
+    name: 'Find Release'
     outputs:
       tag: '${{ steps.release.outputs.tag }}'
     runs-on: 'ubuntu-latest'
@@ -41,6 +46,7 @@ jobs:
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
   update-pkgbuild:
     if: "needs.check.outputs.tag != ''"
+    name: 'Update PKGBUILD'
     needs:
       - 'check'
     runs-on: 'ubuntu-latest'
@@ -72,22 +78,44 @@ jobs:
           git fetch upstream
           git checkout master
           git reset --hard upstream/master
-          cd mingw-w64-kate-wakatime
+          cd mingw-w64-kate-wakatime || exit 1
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           NEW_SUM=$(curl -L "https://github.com/Tatsh/kate-wakatime/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | awk '{print $1}')
           sed -i "s/^sha256sums=.*/sha256sums=('${NEW_SUM}')/" PKGBUILD
-      - name: 'Create Pull Request'
-        uses: 'peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1'
-        with:
-          base: 'master'
-          body: |
-            This PR was automatically created from the [kate-wakatime ${{ steps.version.outputs.tag }} release](https://github.com/Tatsh/kate-wakatime/releases/tag/${{ steps.version.outputs.tag }}).
-          branch: 'kate-wakatime-${{ steps.version.outputs.version }}'
-          commit-message: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
-          push-to-fork: 'Tatsh/MINGW-packages'
-          title: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
-          token: '${{ secrets.MSYS2_TOKEN }}'
+      - env:
+          FORK: 'Tatsh/MINGW-packages'
+          GH_TOKEN: '${{ secrets.MSYS2_TOKEN }}'
+          TAG: '${{ steps.version.outputs.tag }}'
+          VERSION: '${{ steps.version.outputs.version }}'
+        name: 'Create pull request'
+        run: |
+          base_repo='msys2/MINGW-packages'
+          branch="kate-wakatime-${VERSION}"
+          title="mingw-w64-kate-wakatime: update to ${VERSION}"
+          body="This PR was automatically created from the [kate-wakatime ${TAG} release](https://github.com/Tatsh/kate-wakatime/releases/tag/${TAG})."
+          git checkout -B "$branch"
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'The PKGBUILD is already up to date.'
+            exit 0
+          fi
+          git commit -m "$title"
+          gh auth setup-git
+          push_repo="${FORK:-$base_repo}"
+          git push --force "https://github.com/${push_repo}.git" "HEAD:refs/heads/${branch}"
+          head="$branch"
+          if [[ -n "$FORK" ]]; then
+            head="${FORK%%/*}:${branch}"
+          fi
+          existing=$(gh pr list --repo "$base_repo" --head "$branch" --state open \
+            --json number --jq '.[0].number // empty')
+          if [[ -n "$existing" ]]; then
+            echo "Pull request #${existing} exists; its branch was updated."
+            exit 0
+          fi
+          gh pr create --repo "$base_repo" --base master --head "$head" --title "$title" \
+            --body "$body"
 name: 'Update MSYS2 PKGBUILD'
 'on':
   workflow_run:
