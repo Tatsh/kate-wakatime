@@ -10,6 +10,7 @@ local utils = import 'utils.libjsonnet';
   description: 'Kate plugin to interface with WakaTime.',
   keywords: ['kate', 'kde', 'plasma', 'wakatime'],
   want_main: false,
+  want_msys2: true,
   // C++ only
   clang_format_args: 'src/*.cpp src/*.h src/autotests/*.cpp',
   cmake+: {
@@ -24,6 +25,12 @@ local utils = import 'utils.libjsonnet';
   },
   github+: {
     pages_using_jekyll: false,
+    workflows+: {
+      publish_msys2+: {
+        fork: 'Tatsh/MINGW-packages',
+        package_name: 'kate-wakatime',
+      },
+    },
     zizmor+: {
       // The inherited cache-poisoning ignore names a workflow this project does not have.
       // Every other rule is carried through unchanged.

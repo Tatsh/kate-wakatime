@@ -1,10 +1,52 @@
 jobs:
-  update-pkgbuild:
-    if: '!github.event.release.draft && !github.event.release.prerelease'
+  check:
+    if: "github.event.workflow_run.conclusion == 'success'"
+    outputs:
+      tag: '${{ steps.release.outputs.tag }}'
     runs-on: 'ubuntu-latest'
     steps:
       - env:
-          TAG_NAME: '${{ github.event.release.tag_name }}'
+          GH_TOKEN: '${{ github.token }}'
+          HEAD_SHA: '${{ github.event.workflow_run.head_sha }}'
+          REPO: '${{ github.repository }}'
+        id: 'release'
+        name: 'Find the published release for this commit'
+        run: |
+          tag=''
+          while IFS=$'\t' read -r ref obj_type obj_sha; do
+            [[ -z "$ref" ]] && continue
+            if [[ "$obj_type" == 'commit' ]]; then
+              target_sha="$obj_sha"
+            else
+              target_sha=$(gh api "repos/${REPO}/git/tags/${obj_sha}" \
+                --jq '.object.sha' 2>/dev/null || echo '')
+            fi
+            if [[ "$target_sha" == "$HEAD_SHA" ]]; then
+              tag="${ref#refs/tags/}"
+              break
+            fi
+          done < <(gh api "repos/${REPO}/git/matching-refs/tags/v" \
+            --jq '.[] | [.ref, .object.type, .object.sha] | @tsv')
+          if [[ -z "$tag" ]]; then
+            echo "No v* tag points at ${HEAD_SHA}, nothing to do."
+            exit 0
+          fi
+          unpublished=$(gh release view "$tag" --repo "$REPO" --json isDraft,isPrerelease \
+            --jq '.isDraft or .isPrerelease' 2>/dev/null || echo 'true')
+          if [[ "$unpublished" != 'false' ]]; then
+            echo "Release ${tag} is not published, nothing to do."
+            exit 0
+          fi
+          echo "Found published release ${tag}."
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+  update-pkgbuild:
+    if: "needs.check.outputs.tag != ''"
+    needs:
+      - 'check'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - env:
+          TAG_NAME: '${{ needs.check.outputs.tag }}'
         id: 'version'
         name: 'Extract version'
         run: |
@@ -30,7 +72,7 @@ jobs:
           git fetch upstream
           git checkout master
           git reset --hard upstream/master
-          cd mingw-w64-kate-wakatime || exit 1
+          cd mingw-w64-kate-wakatime
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           NEW_SUM=$(curl -L "https://github.com/Tatsh/kate-wakatime/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | awk '{print $1}')
@@ -40,7 +82,7 @@ jobs:
         with:
           base: 'master'
           body: |
-            This PR was automatically created from the [kate-wakatime ${{ steps.version.outputs.tag }} release](${{ github.event.release.html_url }}).
+            This PR was automatically created from the [kate-wakatime ${{ steps.version.outputs.tag }} release](https://github.com/Tatsh/kate-wakatime/releases/tag/${{ steps.version.outputs.tag }}).
           branch: 'kate-wakatime-${{ steps.version.outputs.version }}'
           commit-message: 'mingw-w64-kate-wakatime: update to ${{ steps.version.outputs.version }}'
           push-to-fork: 'Tatsh/MINGW-packages'
@@ -48,8 +90,10 @@ jobs:
           token: '${{ secrets.MSYS2_TOKEN }}'
 name: 'Update MSYS2 PKGBUILD'
 'on':
-  release:
+  workflow_run:
     types:
-      - 'published'
+      - 'completed'
+    workflows:
+      - 'Release'
 permissions:
   contents: 'read'

@@ -1,12 +1,46 @@
 jobs:
   check:
-    if: "${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && startsWith(github.event.workflow_run.head_branch, 'v') }}"
+    if: "github.event.workflow_run.conclusion == 'success'"
     outputs:
       has_installer_assets: '${{ steps.check_assets.outputs.has_installer_assets }}'
       has_winget_token: '${{ steps.check_secret.outputs.has_winget_token }}'
-      tag: '${{ github.event.workflow_run.head_branch }}'
+      tag: '${{ steps.release.outputs.tag }}'
     runs-on: 'ubuntu-latest'
     steps:
+      - env:
+          GH_TOKEN: '${{ github.token }}'
+          HEAD_SHA: '${{ github.event.workflow_run.head_sha }}'
+          REPO: '${{ github.repository }}'
+        id: 'release'
+        name: 'Find the published release for this commit'
+        run: |
+          tag=''
+          while IFS=$'\t' read -r ref obj_type obj_sha; do
+            [[ -z "$ref" ]] && continue
+            if [[ "$obj_type" == 'commit' ]]; then
+              target_sha="$obj_sha"
+            else
+              target_sha=$(gh api "repos/${REPO}/git/tags/${obj_sha}" \
+                --jq '.object.sha' 2>/dev/null || echo '')
+            fi
+            if [[ "$target_sha" == "$HEAD_SHA" ]]; then
+              tag="${ref#refs/tags/}"
+              break
+            fi
+          done < <(gh api "repos/${REPO}/git/matching-refs/tags/v" \
+            --jq '.[] | [.ref, .object.type, .object.sha] | @tsv')
+          if [[ -z "$tag" ]]; then
+            echo "No v* tag points at ${HEAD_SHA}, nothing to do."
+            exit 0
+          fi
+          unpublished=$(gh release view "$tag" --repo "$REPO" --json isDraft,isPrerelease \
+            --jq '.isDraft or .isPrerelease' 2>/dev/null || echo 'true')
+          if [[ "$unpublished" != 'false' ]]; then
+            echo "Release ${tag} is not published, nothing to do."
+            exit 0
+          fi
+          echo "Found published release ${tag}."
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
       - env:
           WINGET_TOKEN: '${{ secrets.WINGET_TOKEN }}'
         id: 'check_secret'
@@ -21,8 +55,9 @@ jobs:
       - env:
           GH_TOKEN: '${{ github.token }}'
           REPO: '${{ github.repository }}'
-          TAG: '${{ github.event.workflow_run.head_branch }}'
+          TAG: '${{ steps.release.outputs.tag }}'
         id: 'check_assets'
+        if: "steps.release.outputs.tag != ''"
         name: 'Check release has installer assets'
         run: |
           count=$(gh release view --repo "$REPO" "$TAG" --json assets \
