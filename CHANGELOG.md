@@ -9,6 +9,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-10-28
+
 ### Fixed
 
 - Kate no longer freezes on save or while typing. `wakatime-cli` now runs detached instead of
@@ -256,7 +258,8 @@ Minor release.
 - Project-name detection when the source file is in the same directory as `.git` or `.svn`.
 - Signals connected to document objects only once.
 
-[unreleased]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.4...HEAD
+[unreleased]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.5...HEAD
+[1.5.5]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.4...v1.5.5
 [1.5.4]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/Tatsh/kate-wakatime/compare/v1.5.1...v1.5.2
