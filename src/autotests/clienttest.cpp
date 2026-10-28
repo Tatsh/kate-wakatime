@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+#include <QtCore/QElapsedTimer>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QObject>
 #include <QtTest/QTest>
@@ -25,6 +26,7 @@ private Q_SLOTS:
     void testSendSuccessful();
     void testSendErrorSending();
     void testSendTooSoon();
+    void testSendDoesNotWait();
 
 private:
     char *oldHome;
@@ -171,9 +173,13 @@ void WakaTimeClientTest::testSendErrorSending() {
                             QFileDevice::ReadGroup | QFileDevice::ReadOther);
 
     WakaTime wakatime;
+    // The binary path is cached, then the binary is removed to make the start fail.
+    QVERIFY(!wakatime.getBinPath({QStringLiteral("wakatime")}).isEmpty());
+    someExec.remove();
     auto state = wakatime.send(
         tempDir.filePath(QStringLiteral("some-file.cpp")), QStringLiteral("cpp"), 10, 5, 100, true);
     QVERIFY(state == WakaTime::ErrorSending);
+    QVERIFY(wakatime.binPathCache.isEmpty());
 
     qputenv("PATH", QByteArray(oldPath));
     qputenv("HOME", QByteArray(oldHome));
@@ -212,6 +218,34 @@ void WakaTimeClientTest::testSendTooSoon() {
                           100,
                           false);
     QVERIFY(state == WakaTime::TooSoon);
+
+    qputenv("PATH", QByteArray(oldPath));
+    qputenv("HOME", QByteArray(oldHome));
+}
+
+void WakaTimeClientTest::testSendDoesNotWait() {
+    qputenv("HOME", QByteArrayLiteral("/non/existent/path"));
+    QDir tempDir(QDir::tempPath() + QDir::separator() +
+                 QStringLiteral("kate-wakatime-client-test"));
+    auto newPath = tempDir.absolutePath().toUtf8();
+    qputenv("PATH", newPath);
+
+    QDir::temp().mkdir(QStringLiteral("kate-wakatime-client-test"));
+    QFile someExec(tempDir.filePath(QStringLiteral("wakatime")));
+    someExec.open(QIODevice::WriteOnly);
+    someExec.write("#!/bin/sh\n");
+    someExec.write("/bin/sleep 10\n");
+    someExec.close();
+    someExec.setPermissions(QFileDevice::ExeUser | QFileDevice::ReadUser | QFileDevice::WriteUser |
+                            QFileDevice::ReadGroup | QFileDevice::ReadOther);
+
+    WakaTime wakatime;
+    QElapsedTimer timer;
+    timer.start();
+    auto state = wakatime.send(
+        tempDir.filePath(QStringLiteral("some-file.cpp")), QStringLiteral("cpp"), 10, 5, 100, true);
+    QVERIFY(state == WakaTime::SentSuccessfully);
+    QVERIFY(timer.elapsed() < 5000);
 
     qputenv("PATH", QByteArray(oldPath));
     qputenv("HOME", QByteArray(oldHome));

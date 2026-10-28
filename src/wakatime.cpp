@@ -6,7 +6,6 @@
 
 Q_LOGGING_CATEGORY(gLogWakaTime, "wakatime")
 
-const auto kStringLiteralSlash = QStringLiteral("/");
 const auto kWakaTimeCli = QStringLiteral("wakatime-cli");
 
 WakaTime::WakaTime(QObject *parent) : lastTimeSent(QDateTime::fromMSecsSinceEpoch(0)) {
@@ -46,25 +45,21 @@ QString WakaTime::getBinPath(const QStringList &binNames) {
 
 QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
     QDir currentDirectory(fileInfo.canonicalPath());
-    static QStringList filters;
     static const auto gitStr = QStringLiteral(".git");
     static const auto svnStr = QStringLiteral(".svn");
-    filters << gitStr << svnStr;
-    bool vcDirFound = false;
-    while (!vcDirFound) {
-        if (!currentDirectory.canonicalPath().compare(kStringLiteralSlash)) {
-            break;
-        }
+    // isRoot() covers drive roots such as C:/ where a comparison with / never matches.
+    while (!currentDirectory.isRoot()) {
         auto entries =
             currentDirectory.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
         for (const auto &entry : entries) {
             auto name = entry.fileName();
             if ((name == gitStr || name == svnStr) && entry.isDir()) {
-                vcDirFound = true;
                 return currentDirectory.dirName();
             }
         }
-        currentDirectory.cdUp();
+        if (!currentDirectory.cdUp()) {
+            break;
+        }
     }
     return QString();
 }
@@ -146,9 +141,10 @@ WakaTime::State WakaTime::send(const QString &filePath,
     arguments << QStringLiteral("--cursorpos") << QString::number(cursorPosition);
     arguments << QStringLiteral("--lines-in-file") << QString::number(linesInFile);
     qCDebug(gLogWakaTime) << "Running:" << wakatimeCliPath << arguments.join(QStringLiteral(" "));
-    auto ret = QProcess::execute(wakatimeCliPath, arguments);
-    if (ret != 0) {
-        qCWarning(gLogWakaTime) << "wakatime-cli returned error code" << ret;
+    // wakatime-cli performs network requests. Waiting for it on the GUI thread freezes Kate.
+    if (!QProcess::startDetached(wakatimeCliPath, arguments)) {
+        qCWarning(gLogWakaTime) << "Failed to start" << wakatimeCliPath;
+        binPathCache.clear();
         return ErrorSending;
     }
     lastTimeSent = QDateTime::currentDateTime();

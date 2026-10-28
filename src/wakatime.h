@@ -20,7 +20,7 @@ class WakaTime : public QObject {
 public:
     /** State returned by send(). */
     enum State {
-        ErrorSending,         /**< `wakatime-cli` exited with non-zero. */
+        ErrorSending,         /**< `wakatime-cli` could not be started. */
         NothingToSend,        /**< Filename was empty. */
         SentSuccessfully,     /**< Successful request. */
         TooSoon,              /**< send() called too soon since last time. */
@@ -44,7 +44,8 @@ public:
      */
     QString getProjectDirectory(const QFileInfo &fileInfo);
     /**
-     * Send statistics to WakaTime.
+     * Send statistics to WakaTime. `wakatime-cli` runs detached and this method does not wait for
+     * it to exit.
      *
      * @param filePath The file path to send statistics for.
      * @param mode The language mode of the file.

@@ -9,6 +9,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Kate no longer freezes on save or while typing. `wakatime-cli` now runs detached instead of
+  blocking the editor until its network request completes.
+- Project detection no longer loops forever on Windows when a file is outside a Git or Subversion
+  repository.
+
 ## [1.5.4] - 2026-05-07
 
 ### Changed
