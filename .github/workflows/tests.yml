@@ -18,11 +18,8 @@ jobs:
       - name: 'Install dependencies'
         run: |
           pipx install cpp-coveralls
-          curl -s http://archive.neon.kde.org/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/neon-archive-keyring.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/neon-archive-keyring.gpg] http://archive.neon.kde.org/user noble main" | sudo tee /etc/apt/sources.list.d/neon.list > /dev/null
           sudo apt-get update
-          sudo apt-get upgrade
-          sudo apt-get install -y kf6-ktexteditor-dev extra-cmake-modules lcov
+          sudo apt-get install -y extra-cmake-modules lcov libkf6texteditor-dev
       - env:
           BUILD_TYPE: '${{ matrix.build-type }}'
         name: 'Configure'
