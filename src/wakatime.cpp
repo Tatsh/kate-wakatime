@@ -47,8 +47,7 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
     QDir currentDirectory(fileInfo.canonicalPath());
     static const auto gitStr = QStringLiteral(".git");
     static const auto svnStr = QStringLiteral(".svn");
-    // isRoot() covers drive roots such as C:/ where a comparison with / never matches.
-    while (!currentDirectory.isRoot()) {
+    do {
         auto entries =
             currentDirectory.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
         for (const auto &entry : entries) {
@@ -57,10 +56,8 @@ QString WakaTime::getProjectDirectory(const QFileInfo &fileInfo) {
                 return currentDirectory.dirName();
             }
         }
-        if (!currentDirectory.cdUp()) {
-            break;
-        }
-    }
+        // isRoot() covers drive roots such as C:/ where a comparison with / never matches.
+    } while (!currentDirectory.isRoot() && currentDirectory.cdUp());
     return QString();
 }
 
