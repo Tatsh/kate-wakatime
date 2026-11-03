@@ -101,6 +101,7 @@ local utils = import 'utils.libjsonnet';
     scan_build+: {
       checkout_options: { 'fetch-depth': 0 },
       configure_command: 'cmake -S . -B build-scan -DCMAKE_BUILD_TYPE=Debug',
+      documentation_path: 'build/docs/html',
       documentation_steps: [
         {
           name: 'Install dependencies',

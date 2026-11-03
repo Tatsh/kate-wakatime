@@ -89,6 +89,7 @@ offscreen
 oneline
 pacboy
 pathlib
+pipefail
 pipx
 pkgbuild
 pkgrel
