@@ -1,3 +1,4 @@
+analyzer
 autobuild
 autoinstall
 automoc
@@ -30,6 +31,7 @@ docstrings
 doxyfile
 dtranslation
 dversion
+elif
 endfunction
 esac
 esbenp
@@ -47,6 +49,7 @@ horstretch
 hsizetype
 icondir
 interprocedural
+iterdir
 iwyu
 jinja
 jsonnet
@@ -77,6 +80,7 @@ msys
 msystem
 mypy
 ndebug
+nojekyll
 nonzero
 noone
 nullptr
@@ -84,6 +88,7 @@ numpydoc
 offscreen
 oneline
 pacboy
+pathlib
 pipx
 pkgbuild
 pkgrel
