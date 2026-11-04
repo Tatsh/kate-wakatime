@@ -103,11 +103,13 @@ qresource
 qstringbuilder
 qtest
 qverify
+rdparty
 rect
 reflow
 regen
 ripgreprc
 rmtree
+sarif
 sbclaude
 schemafile
 shellcheck
