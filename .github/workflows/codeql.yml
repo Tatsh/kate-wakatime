@@ -23,13 +23,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y extra-cmake-modules libkf6texteditor-dev
       - name: 'Initialize CodeQL'
-        uses: 'github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370'
+        uses: 'github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066'
         with:
           languages: '${{ matrix.language }}'
       - name: 'Autobuild'
-        uses: 'github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370'
+        uses: 'github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066'
       - name: 'Perform CodeQL Analysis'
-        uses: 'github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370'
+        uses: 'github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066'
         with:
           output: '${{ runner.temp }}/codeql-sarif'
           upload: false
@@ -38,7 +38,7 @@ jobs:
         name: Restrict native findings to project sources
         run: python3 .github/scripts/static-analysis.py --sarif "$RUNNER_TEMP/codeql-sarif"
       - name: Upload CodeQL results
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
         with:
           category: /language:${{matrix.language}}
           sarif_file: ${{ runner.temp }}/codeql-sarif
