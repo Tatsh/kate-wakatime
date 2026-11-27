@@ -1,3 +1,5 @@
+autobuild
+autoinstall
 automoc
 autorcc
 autouic
@@ -13,6 +15,7 @@ configdialog
 configtest
 coveragerc
 coverallsapp
+ctest
 cursorpos
 customwidget
 customwidgets
@@ -20,6 +23,7 @@ dashcam
 datarootdir
 dbuild
 dcmake
+dcoverage
 destinationlabel
 dialog
 docstrings
@@ -32,6 +36,7 @@ esbenp
 evenodd
 foxundermoon
 gcov
+geninfo
 getenv
 gmock
 gnucxx
@@ -41,6 +46,7 @@ hidefilenames
 horstretch
 hsizetype
 icondir
+interprocedural
 iwyu
 jinja
 jsonnet
@@ -58,6 +64,7 @@ kxmlgui
 libera
 libjsonnet
 libkatewakatime
+libkf
 libsonnet
 mainpage
 mathjax
@@ -75,9 +82,9 @@ nonzero
 noone
 nullptr
 numpydoc
+offscreen
 oneline
 pacboy
-pavelzw
 pipx
 pkgbuild
 pkgrel
@@ -85,7 +92,6 @@ pkgver
 preapproved
 pylock
 pyproject
-pytest
 qcompare
 qputenv
 qresource
@@ -110,6 +116,7 @@ statusline
 stdset
 tatsh
 testlist
+texteditor
 todolist
 tostring
 ucrt
